@@ -1,148 +1,465 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-30T20:12:30.004582+00:00",
+  "generatedAt": "2026-10-30T22:02:59.819457+00:00",
   "title": "Design System: Education",
   "extensions": {
     "colorMeta": {
       "paper": {
         "role": "neutral",
-        "displayName": "Cream paper",
+        "displayName": "Paper",
         "tonalRamp": [
-          "oklch(15% 0.00695 88.64)",
-          "oklch(26% 0.00695 88.64)",
-          "oklch(38% 0.00695 88.64)",
-          "oklch(49% 0.00695 88.64)",
-          "oklch(61% 0.00695 88.64)",
-          "oklch(72% 0.00695 88.64)",
-          "oklch(84% 0.00695 88.64)",
-          "oklch(95% 0.00695 88.64)"
+          "oklch(15% 0.00823 91.48)",
+          "oklch(26% 0.00823 91.48)",
+          "oklch(38% 0.00823 91.48)",
+          "oklch(49% 0.00823 91.48)",
+          "oklch(61% 0.00823 91.48)",
+          "oklch(72% 0.00823 91.48)",
+          "oklch(84% 0.00823 91.48)",
+          "oklch(95% 0.00823 91.48)"
         ]
       },
-      "ink": {
+      "surface": {
         "role": "neutral",
-        "displayName": "Green ink",
+        "displayName": "Surface",
         "tonalRamp": [
-          "oklch(15% 0.03223 166.92)",
-          "oklch(26% 0.03223 166.92)",
-          "oklch(38% 0.03223 166.92)",
-          "oklch(49% 0.03223 166.92)",
-          "oklch(61% 0.03223 166.92)",
-          "oklch(72% 0.03223 166.92)",
-          "oklch(84% 0.03223 166.92)",
-          "oklch(95% 0.03223 166.92)"
+          "oklch(15% 0.00693 88.64)",
+          "oklch(26% 0.00693 88.64)",
+          "oklch(38% 0.00693 88.64)",
+          "oklch(49% 0.00693 88.64)",
+          "oklch(61% 0.00693 88.64)",
+          "oklch(72% 0.00693 88.64)",
+          "oklch(84% 0.00693 88.64)",
+          "oklch(95% 0.00693 88.64)"
+        ]
+      },
+      "forest": {
+        "role": "primary",
+        "displayName": "Forest",
+        "tonalRamp": [
+          "oklch(15% 0.03228 170.51)",
+          "oklch(26% 0.03228 170.51)",
+          "oklch(38% 0.03228 170.51)",
+          "oklch(49% 0.03228 170.51)",
+          "oklch(61% 0.03228 170.51)",
+          "oklch(72% 0.03228 170.51)",
+          "oklch(84% 0.03228 170.51)",
+          "oklch(95% 0.03228 170.51)"
+        ]
+      },
+      "forest-deep": {
+        "role": "primary",
+        "displayName": "Forest deep",
+        "tonalRamp": [
+          "oklch(15% 0.03192 168.93)",
+          "oklch(26% 0.03192 168.93)",
+          "oklch(38% 0.03192 168.93)",
+          "oklch(49% 0.03192 168.93)",
+          "oklch(61% 0.03192 168.93)",
+          "oklch(72% 0.03192 168.93)",
+          "oklch(84% 0.03192 168.93)",
+          "oklch(95% 0.03192 168.93)"
+        ]
+      },
+      "terracotta": {
+        "role": "primary",
+        "displayName": "Terracotta",
+        "tonalRamp": [
+          "oklch(15% 0.12539 36.17)",
+          "oklch(26% 0.12539 36.17)",
+          "oklch(38% 0.12539 36.17)",
+          "oklch(49% 0.12539 36.17)",
+          "oklch(61% 0.12539 36.17)",
+          "oklch(72% 0.12539 36.17)",
+          "oklch(84% 0.12539 36.17)",
+          "oklch(95% 0.12539 36.17)"
+        ]
+      },
+      "terracotta-dark": {
+        "role": "primary",
+        "displayName": "Terracotta dark",
+        "tonalRamp": [
+          "oklch(15% 0.11851 36.25)",
+          "oklch(26% 0.11851 36.25)",
+          "oklch(38% 0.11851 36.25)",
+          "oklch(49% 0.11851 36.25)",
+          "oklch(61% 0.11851 36.25)",
+          "oklch(72% 0.11851 36.25)",
+          "oklch(84% 0.11851 36.25)",
+          "oklch(95% 0.11851 36.25)"
+        ]
+      },
+      "sage": {
+        "role": "secondary",
+        "displayName": "Sage",
+        "tonalRamp": [
+          "oklch(15% 0.02506 129.93)",
+          "oklch(26% 0.02506 129.93)",
+          "oklch(38% 0.02506 129.93)",
+          "oklch(49% 0.02506 129.93)",
+          "oklch(61% 0.02506 129.93)",
+          "oklch(72% 0.02506 129.93)",
+          "oklch(84% 0.02506 129.93)",
+          "oklch(95% 0.02506 129.93)"
+        ]
+      },
+      "sage-light": {
+        "role": "secondary",
+        "displayName": "Sage light",
+        "tonalRamp": [
+          "oklch(15% 0.01395 124.56)",
+          "oklch(26% 0.01395 124.56)",
+          "oklch(38% 0.01395 124.56)",
+          "oklch(49% 0.01395 124.56)",
+          "oklch(61% 0.01395 124.56)",
+          "oklch(72% 0.01395 124.56)",
+          "oklch(84% 0.01395 124.56)",
+          "oklch(95% 0.01395 124.56)"
+        ]
+      },
+      "sand": {
+        "role": "secondary",
+        "displayName": "Sand",
+        "tonalRamp": [
+          "oklch(15% 0.02487 83.41)",
+          "oklch(26% 0.02487 83.41)",
+          "oklch(38% 0.02487 83.41)",
+          "oklch(49% 0.02487 83.41)",
+          "oklch(61% 0.02487 83.41)",
+          "oklch(72% 0.02487 83.41)",
+          "oklch(84% 0.02487 83.41)",
+          "oklch(95% 0.02487 83.41)"
         ]
       },
       "muted": {
         "role": "neutral",
-        "displayName": "Muted green",
+        "displayName": "Muted",
         "tonalRamp": [
-          "oklch(15% 0.02793 162.26)",
-          "oklch(26% 0.02793 162.26)",
-          "oklch(38% 0.02793 162.26)",
-          "oklch(49% 0.02793 162.26)",
-          "oklch(61% 0.02793 162.26)",
-          "oklch(72% 0.02793 162.26)",
-          "oklch(84% 0.02793 162.26)",
-          "oklch(95% 0.02793 162.26)"
-        ]
-      },
-      "accent": {
-        "role": "primary",
-        "displayName": "Green accent",
-        "tonalRamp": [
-          "oklch(15% 0.07433 160.97)",
-          "oklch(26% 0.07433 160.97)",
-          "oklch(38% 0.07433 160.97)",
-          "oklch(49% 0.07433 160.97)",
-          "oklch(61% 0.07433 160.97)",
-          "oklch(72% 0.07433 160.97)",
-          "oklch(84% 0.07433 160.97)",
-          "oklch(95% 0.07433 160.97)"
-        ]
-      },
-      "accent-hover": {
-        "role": "primary",
-        "displayName": "Deep green hover",
-        "tonalRamp": [
-          "oklch(15% 0.06201 160.25)",
-          "oklch(26% 0.06201 160.25)",
-          "oklch(38% 0.06201 160.25)",
-          "oklch(49% 0.06201 160.25)",
-          "oklch(61% 0.06201 160.25)",
-          "oklch(72% 0.06201 160.25)",
-          "oklch(84% 0.06201 160.25)",
-          "oklch(95% 0.06201 160.25)"
+          "oklch(15% 0.02407 156.25)",
+          "oklch(26% 0.02407 156.25)",
+          "oklch(38% 0.02407 156.25)",
+          "oklch(49% 0.02407 156.25)",
+          "oklch(61% 0.02407 156.25)",
+          "oklch(72% 0.02407 156.25)",
+          "oklch(84% 0.02407 156.25)",
+          "oklch(95% 0.02407 156.25)"
         ]
       },
       "rule": {
         "role": "neutral",
-        "displayName": "Soft green rule",
+        "displayName": "Rule",
         "tonalRamp": [
-          "oklch(15% 0.01559 136.09)",
-          "oklch(26% 0.01559 136.09)",
-          "oklch(38% 0.01559 136.09)",
-          "oklch(49% 0.01559 136.09)",
-          "oklch(61% 0.01559 136.09)",
-          "oklch(72% 0.01559 136.09)",
-          "oklch(84% 0.01559 136.09)",
-          "oklch(95% 0.01559 136.09)"
+          "oklch(15% 0.01653 118.16)",
+          "oklch(26% 0.01653 118.16)",
+          "oklch(38% 0.01653 118.16)",
+          "oklch(49% 0.01653 118.16)",
+          "oklch(61% 0.01653 118.16)",
+          "oklch(72% 0.01653 118.16)",
+          "oklch(84% 0.01653 118.16)",
+          "oklch(95% 0.01653 118.16)"
+        ]
+      },
+      "correct": {
+        "role": "secondary",
+        "displayName": "Correct",
+        "tonalRamp": [
+          "oklch(15% 0.07093 160.04)",
+          "oklch(26% 0.07093 160.04)",
+          "oklch(38% 0.07093 160.04)",
+          "oklch(49% 0.07093 160.04)",
+          "oklch(61% 0.07093 160.04)",
+          "oklch(72% 0.07093 160.04)",
+          "oklch(84% 0.07093 160.04)",
+          "oklch(95% 0.07093 160.04)"
+        ]
+      },
+      "incorrect": {
+        "role": "secondary",
+        "displayName": "Incorrect",
+        "tonalRamp": [
+          "oklch(15% 0.13431 30.03)",
+          "oklch(26% 0.13431 30.03)",
+          "oklch(38% 0.13431 30.03)",
+          "oklch(49% 0.13431 30.03)",
+          "oklch(61% 0.13431 30.03)",
+          "oklch(72% 0.13431 30.03)",
+          "oklch(84% 0.13431 30.03)",
+          "oklch(95% 0.13431 30.03)"
+        ]
+      },
+      "clay-surface": {
+        "role": "secondary",
+        "displayName": "Clay surface",
+        "tonalRamp": [
+          "oklch(15% 0.02133 56.11)",
+          "oklch(26% 0.02133 56.11)",
+          "oklch(38% 0.02133 56.11)",
+          "oklch(49% 0.02133 56.11)",
+          "oklch(61% 0.02133 56.11)",
+          "oklch(72% 0.02133 56.11)",
+          "oklch(84% 0.02133 56.11)",
+          "oklch(95% 0.02133 56.11)"
+        ]
+      },
+      "clay-ink": {
+        "role": "secondary",
+        "displayName": "Clay ink",
+        "tonalRamp": [
+          "oklch(15% 0.11049 38.52)",
+          "oklch(26% 0.11049 38.52)",
+          "oklch(38% 0.11049 38.52)",
+          "oklch(49% 0.11049 38.52)",
+          "oklch(61% 0.11049 38.52)",
+          "oklch(72% 0.11049 38.52)",
+          "oklch(84% 0.11049 38.52)",
+          "oklch(95% 0.11049 38.52)"
+        ]
+      },
+      "sand-surface": {
+        "role": "secondary",
+        "displayName": "Sand surface",
+        "tonalRamp": [
+          "oklch(15% 0.02137 85.95)",
+          "oklch(26% 0.02137 85.95)",
+          "oklch(38% 0.02137 85.95)",
+          "oklch(49% 0.02137 85.95)",
+          "oklch(61% 0.02137 85.95)",
+          "oklch(72% 0.02137 85.95)",
+          "oklch(84% 0.02137 85.95)",
+          "oklch(95% 0.02137 85.95)"
+        ]
+      },
+      "sand-ink": {
+        "role": "secondary",
+        "displayName": "Sand ink",
+        "tonalRamp": [
+          "oklch(15% 0.05080 90.32)",
+          "oklch(26% 0.05080 90.32)",
+          "oklch(38% 0.05080 90.32)",
+          "oklch(49% 0.05080 90.32)",
+          "oklch(61% 0.05080 90.32)",
+          "oklch(72% 0.05080 90.32)",
+          "oklch(84% 0.05080 90.32)",
+          "oklch(95% 0.05080 90.32)"
+        ]
+      },
+      "ray-reflected": {
+        "role": "secondary",
+        "displayName": "Ray reflected",
+        "tonalRamp": [
+          "oklch(15% 0.05490 154.23)",
+          "oklch(26% 0.05490 154.23)",
+          "oklch(38% 0.05490 154.23)",
+          "oklch(49% 0.05490 154.23)",
+          "oklch(61% 0.05490 154.23)",
+          "oklch(72% 0.05490 154.23)",
+          "oklch(84% 0.05490 154.23)",
+          "oklch(95% 0.05490 154.23)"
+        ]
+      },
+      "ray-outgoing": {
+        "role": "secondary",
+        "displayName": "Ray outgoing",
+        "tonalRamp": [
+          "oklch(15% 0.04360 87.50)",
+          "oklch(26% 0.04360 87.50)",
+          "oklch(38% 0.04360 87.50)",
+          "oklch(49% 0.04360 87.50)",
+          "oklch(61% 0.04360 87.50)",
+          "oklch(72% 0.04360 87.50)",
+          "oklch(84% 0.04360 87.50)",
+          "oklch(95% 0.04360 87.50)"
         ]
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "Hello World page heading."
+        "purpose": "Global page heading."
+      },
+      "display-home": {
+        "displayName": "Display home",
+        "purpose": "Home introduction; narrower-screen override is documented in DESIGN.md."
+      },
+      "display-course": {
+        "displayName": "Display course",
+        "purpose": "Optik course hero; narrower-screen override is documented in DESIGN.md."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Counter section heading."
+        "purpose": "Shared section headings."
+      },
+      "lesson-headline": {
+        "displayName": "Lesson headline",
+        "purpose": "Chapter headings."
+      },
+      "lesson-title": {
+        "displayName": "Lesson title",
+        "purpose": "Instructional subsection headings."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Paragraphs, links, and counter controls."
+        "purpose": "Shared prose."
       },
-      "label": {
-        "displayName": "Label",
-        "purpose": "Shared header and footer text."
+      "lesson-body": {
+        "displayName": "Lesson body",
+        "purpose": "Optik paragraphs and list items."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Shared primary and secondary actions."
+      },
+      "subject-title": {
+        "displayName": "Subject title",
+        "purpose": "Subject directory names."
       }
     },
-    "shadows": [],
-    "motion": [],
-    "breakpoints": []
+    "shadows": [
+      {
+        "name": "chapter-picker",
+        "value": "0 12px 28px rgba(38, 61, 53, 0.1)",
+        "purpose": "Floating chapter navigation only."
+      },
+      {
+        "name": "critical-marker",
+        "value": "0 2px 8px rgba(0,0,0,.18)",
+        "purpose": "Small critical-angle indicator inherited from the simulation."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-color",
+        "value": "background-color 160ms ease-out, color 160ms ease-out",
+        "purpose": "Buttons and subject rows; only when reduced motion is not requested."
+      },
+      {
+        "name": "beam-flow",
+        "value": "beamFlow 1.15s linear infinite",
+        "purpose": "Simulation ray dash flow; disabled for reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "header-wrap-and-single-subject-column",
+        "value": "440px"
+      },
+      {
+        "name": "compact-header",
+        "value": "600px"
+      },
+      {
+        "name": "study-sheet-screen",
+        "value": "720px"
+      },
+      {
+        "name": "stacked-hero",
+        "value": "740px"
+      },
+      {
+        "name": "two-subject-columns",
+        "value": "1050px"
+      },
+      {
+        "name": "single-column-lesson",
+        "value": "1100px"
+      }
+    ]
   },
   "components": [
     {
       "name": "Primary button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Native action used by the click counter; script enables it after initialization.",
-      "html": "<button class=\"ds-button\" type=\"button\">Weiterzählen</button>",
-      "css": ".ds-button { min-height: 48px; padding: 0.75rem 1.5rem; border: 0; border-radius: 6px; color: var(--paper, #faf8f3); background: var(--accent, #235c42); font: 600 1rem/1.65 system-ui, sans-serif; cursor: pointer; } .ds-button:hover:not(:disabled) { background: var(--accent-hover, #17442f); } .ds-button:focus-visible { outline: 3px solid var(--accent, #235c42); outline-offset: 5px; } .ds-button:disabled { opacity: 0.55; cursor: not-allowed; }"
+      "description": "Primary lesson entry or explicit assessment action.",
+      "html": "<a class=\"ds-button\" href=\"#lesson\">Optik entdecken <svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 12h15m-6-6 6 6-6 6\"/></svg></a>",
+      "css": ".ds-button{min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:.75rem;border:1px solid transparent;border-radius:var(--radius-small,6px);padding:.75rem 1.2rem;background:var(--color-forest,#263d35);color:var(--color-paper,#f8f6f0);font:600 .875rem/1.5 var(--font-body,\"Manrope Variable\",system-ui,sans-serif);text-decoration:none;cursor:pointer}.ds-button:hover{background:var(--color-forest-deep,#1a3028);color:var(--color-paper,#f8f6f0)}.ds-button:focus-visible{outline:3px solid var(--color-terracotta,#b75b42);outline-offset:4px;}@media(prefers-reduced-motion:no-preference){.ds-button{transition:background-color 160ms ease-out,color 160ms ease-out}}"
     },
     {
-      "name": "Shared header",
+      "name": "Secondary button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Supporting action with a quiet border.",
+      "html": "<a class=\"ds-button ds-secondary\" href=\"#subjects\">Alle Fächer</a>",
+      "css": ".ds-button{min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:.75rem;border:1px solid transparent;border-radius:var(--radius-small,6px);padding:.75rem 1.2rem;background:var(--color-forest,#263d35);color:var(--color-paper,#f8f6f0);font:600 .875rem/1.5 var(--font-body,\"Manrope Variable\",system-ui,sans-serif);text-decoration:none;cursor:pointer}.ds-button:hover{background:var(--color-forest-deep,#1a3028);color:var(--color-paper,#f8f6f0)}.ds-button:focus-visible{outline:3px solid var(--color-terracotta,#b75b42);outline-offset:4px;}@media(prefers-reduced-motion:no-preference){.ds-button{transition:background-color 160ms ease-out,color 160ms ease-out}}.ds-secondary{background:transparent;color:var(--color-forest,#263d35);border-color:var(--color-rule,#d5d8cc)}.ds-secondary:hover{background:var(--color-sage-light,#e9ede3);color:var(--color-forest,#263d35)}"
+    },
+    {
+      "name": "Shared navigation",
       "kind": "nav",
-      "description": "Wrapping header with the Education home link and supporting text.",
-      "html": "<header class=\"ds-header\"><a class=\"ds-home\" href=\"/\">Education</a><span>Lernen beginnt mit Neugier.</span></header>",
-      "css": ".ds-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.5rem 2rem; padding: 1.75rem 0; border-bottom: 1px solid var(--rule, #cbd2c8); color: var(--muted, #53665c); font: 0.9rem/1.65 system-ui, sans-serif; } .ds-home { color: var(--accent, #235c42); font-size: 1.15rem; font-weight: 700; text-decoration: none; text-underline-offset: 0.25em; } .ds-home:hover { color: var(--accent-hover, #17442f); } .ds-home:focus-visible { outline: 3px solid var(--accent, #235c42); outline-offset: 5px; }"
+      "description": "Text-led navigation with a visible current lesson.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Hauptnavigation\"><a href=\"#subjects\">Fächer entdecken</a><a class=\"ds-lesson\" href=\"#lesson\" aria-current=\"page\">Optik lernen <svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 12h15m-6-6 6 6-6 6\"/></svg></a></nav>",
+      "css": ".ds-nav{display:flex;flex-wrap:wrap;gap:1rem 2.25rem;color:var(--color-forest,#263d35);font:600 .85rem/1.7 var(--font-body,\"Manrope Variable\",system-ui,sans-serif)}.ds-nav a{display:inline-flex;align-items:center;gap:.4rem;padding-block:.5rem;text-decoration:none;color:inherit}.ds-nav a[aria-current]{color:var(--color-terracotta-dark,#99452e)}.ds-nav .ds-lesson{border-bottom:1px solid var(--color-forest,#263d35)}.ds-nav a:hover{color:var(--color-terracotta-dark,#99452e)}.ds-nav a:focus-visible{outline:3px solid var(--color-terracotta,#b75b42);outline-offset:4px;}"
+    },
+    {
+      "name": "Subject row",
+      "kind": "custom",
+      "description": "Flat directory entry with explicit availability.",
+      "html": "<a class=\"ds-subject\" href=\"#physics\"><span class=\"ds-symbol\"><svg width=\"27\" height=\"27\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"2\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(-35 12 12)\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(35 12 12)\"/></svg></span><span class=\"ds-subject-copy\"><strong>Physik</strong><span>Die Welt verstehen.</span><small>1 Lernseite entdecken</small></span><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 12h15m-6-6 6 6-6 6\"/></svg></a>",
+      "css": ".ds-subject{display:flex;align-items:center;gap:1rem;padding:1.75rem 0;border-top:1px solid var(--color-rule,#d5d8cc);color:var(--color-forest,#263d35);text-decoration:none;font-family:var(--font-body,\"Manrope Variable\",system-ui,sans-serif)}.ds-symbol{width:54px;height:54px;display:grid;place-items:center;flex:0 0 auto;border-radius:50%;background:var(--color-sage-light,#e9ede3)}.ds-subject-copy{display:flex;flex-direction:column;gap:.3rem}.ds-subject-copy strong{font:500 1.45rem/1.2 var(--font-display,\"Newsreader Variable\",Georgia,serif)}.ds-subject-copy>span{font-size:.7rem;line-height:1.6;color:var(--color-muted,#59685e)}.ds-subject-copy small{font-size:.65rem;color:var(--color-terracotta-dark,#99452e);font-weight:650}.ds-subject>svg{margin-left:auto}.ds-subject:hover{background:var(--color-sage-light,#e9ede3)}.ds-subject:focus-visible{outline:3px solid var(--color-terracotta,#b75b42);outline-offset:4px;}@media(prefers-reduced-motion:no-preference){.ds-subject{transition:background-color 160ms ease-out,color 160ms ease-out}}"
+    },
+    {
+      "name": "Written response",
+      "kind": "input",
+      "refersTo": "written-response",
+      "description": "A labeled, resizable response field for written work.",
+      "html": "<label class=\"ds-field-label\" for=\"ds-response\">Deine Überlegung</label><textarea class=\"ds-response\" id=\"ds-response\" rows=\"4\"></textarea>",
+      "css": ".ds-field-label{display:block;margin-bottom:.5rem;color:var(--color-forest,#263d35);font:400 .9rem/1.8 var(--font-body,\"Manrope Variable\",system-ui,sans-serif)}.ds-response{width:100%;min-height:120px;padding:.85rem;resize:vertical;background:var(--color-paper,#f8f6f0);color:var(--color-forest,#263d35);border:1px solid var(--color-rule,#d5d8cc);border-radius:var(--radius-small,6px);font:400 .9rem/1.7 var(--font-body,\"Manrope Variable\",system-ui,sans-serif);caret-color:var(--color-terracotta-dark,#99452e)}.ds-response:focus-visible{outline:3px solid var(--color-forest,#263d35);outline-offset:3px}"
+    },
+    {
+      "name": "Chapter panel",
+      "kind": "card",
+      "refersTo": "chapter-panel",
+      "description": "Flat instructional container with a sand chapter number and sage note.",
+      "html": "<section class=\"ds-chapter\"><header class=\"ds-chapter-head\"><span class=\"ds-num\">1</span><h2>Licht und Sehen</h2></header><p>Licht macht unsere Umgebung sichtbar.</p><aside class=\"ds-note\">Beobachte, wie sich der Lichtweg verändert.</aside></section>",
+      "css": ".ds-chapter{padding:clamp(1.5rem,3vw,3rem);border:1px solid var(--color-rule,#d5d8cc);border-radius:var(--radius-panel,14px);background:var(--color-surface,#fffdf8);color:var(--color-forest,#263d35);font:400 .9rem/1.8 var(--font-body,\"Manrope Variable\",system-ui,sans-serif)}.ds-chapter-head{display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.5rem}.ds-num{display:grid;place-items:center;width:42px;height:42px;flex:0 0 auto;background:var(--color-sand,#e4dbca);border-radius:var(--radius-small,6px);font:500 1.5rem/1.7 var(--font-display,\"Newsreader Variable\",Georgia,serif)}.ds-chapter h2{margin:0;font:450 clamp(2rem,3.2vw,2.8rem)/1.12 var(--font-display,\"Newsreader Variable\",Georgia,serif);letter-spacing:-.025em}.ds-note{padding:1.1rem 1.25rem;border-radius:var(--radius-small,6px);background:var(--color-sage-light,#e9ede3)}"
+    },
+    {
+      "name": "Assessment option",
+      "kind": "input",
+      "refersTo": "assessment-option-selected",
+      "description": "Native radio choice with a sage selected surface.",
+      "html": "<label class=\"ds-answer\"><input type=\"radio\" name=\"ds-answer\" checked /> Licht breitet sich geradlinig aus.</label>",
+      "css": ".ds-answer{display:flex;align-items:baseline;gap:.75rem;cursor:pointer;padding:.75rem .5rem;color:var(--color-forest,#263d35);font:400 .85rem/1.7 var(--font-body,\"Manrope Variable\",system-ui,sans-serif)}.ds-answer input{accent-color:var(--color-forest,#263d35);flex:0 0 auto;cursor:pointer}.ds-answer:has(input:checked){background:var(--color-sage-light,#e9ede3);border-radius:var(--radius-small,6px)}.ds-answer input:focus-visible{outline:3px solid var(--color-forest,#263d35);outline-offset:3px}"
+    },
+    {
+      "name": "Simulation badge",
+      "kind": "chip",
+      "refersTo": "live-badge",
+      "description": "A static status badge identifying an interactive simulation.",
+      "html": "<span class=\"ds-badge\">Interaktiv</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid var(--color-rule,#d5d8cc);border-radius:var(--radius-small,6px);background:var(--color-surface,#fffdf8);color:var(--color-muted,#59685e);font:850 .75rem/1.7 var(--font-body,\"Manrope Variable\",system-ui,sans-serif)}.ds-badge::before{content:\"\";width:8px;height:8px;border-radius:50%;background:var(--color-correct,#31654b)}"
     }
   ],
   "narrative": {
-    "overview": "A small, text-led Hello World page serves as a build, publishing, and JavaScript smoke test. Cream paper, green ink, and serif headings give the current scaffold a quiet, readable appearance; this records the shipped interface rather than establishing a larger brand.",
+    "northStar": "Modern Classic",
+    "overview": "Modern Classic is the selected visual world: an inviting editorial learning collection, with warm paper, forest ink, a human serif, and restrained terracotta accents. It pairs spacious introductions with denser, clearly structured learning material. The approved brand board at `documentation/visual-directions/03-modern-classic.png` defines the visual identity; it is not a page-layout specification. The other exploration boards remain unselected alternatives.\n\nThe theme is shared by the home page, subject overviews, Optik and its study sheet, and the √2 mathematics lesson. Subject icons, visible names, and consistent navigation make it extensible across disciplines. The Optik illustration sets an editorial mood; exact scientific relationships remain the job of the diagrams and simulations. Mathematics adds a native vector course cover showing a square of area 2 and side length √2 within the same visual world. The home page presents the newest catalog courses in a reusable featured carousel while preserving this editorial composition.",
     "keyCharacteristics": [
-      "Warm paper background and one green accent.",
-      "Serif headings paired with system sans-serif text.",
-      "Responsive shared header and footer, with a native counter button.",
-      "No imagery or animated transitions in the current page."
+      "Self-hosted Newsreader headings and italic accents with Manrope body text and controls.",
+      "Warm paper and flat tonal surfaces, fine rules, and modest corner rounding.",
+      "A lens brand mark and consistent line icons with visible subject names.",
+      "Responsive subject directories, readable learning panels, and a separate ink-friendly print treatment."
     ],
-    "rules": [],
+    "rules": [
+      {
+        "name": "The Shared World Rule",
+        "body": "Use the same core palette, type families, navigation, and control language across subjects; adapt the subject illustration and scientific diagrams.",
+        "section": "colors"
+      },
+      {
+        "name": "The Flat Surface Rule",
+        "body": "Use spacing, rules, and tonal backgrounds for ordinary content; reserve shadows for floating controls and small functional indicators.",
+        "section": "elevation"
+      }
+    ],
     "dos": [
-      "Do use the shared palette, layout, and typography recorded here when maintaining the scaffold.",
-      "Do preserve visible keyboard focus and the native button's accessible status feedback."
+      "Do reuse the shared theme and base layout when adding a subject or learning page.",
+      "Do use dark terracotta for small accent text and pair feedback colors with explicit status text.",
+      "Do preserve visible keyboard focus, native controls, and the static learning alternatives without JavaScript.",
+      "Do check diagram labels at narrow widths and the study sheet as a two-page A4 printout after relevant changes."
     ],
     "donts": [
-      "Don't describe unimplemented learning-page features as part of this design system."
+      "Don't treat an exploration board as a page-layout template or promote the unselected directions into the active identity.",
+      "Don't replace the flat subject directory with a grid of raised cards.",
+      "Don't use the editorial illustration as a substitute for a scientifically accurate diagram.",
+      "Don't let imported styles escape their `.optics-page`, `.study-sheet-page`, or `.sqrt2-page` scopes."
     ]
   }
 }

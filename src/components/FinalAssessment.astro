@@ -1,0 +1,59 @@
+---
+import type { AssessmentQuestion } from '../data/optics';
+import Icon from './Icon.astro';
+interface Props { questions: AssessmentQuestion[]; }
+const { questions } = Astro.props;
+---
+<section class="chapter assessment" id="gesamtcheck" tabindex="-1" aria-labelledby="assessment-title">
+  <div class="assessment-heading"><Icon name="check" size={30} /><h2 id="assessment-title">Was bleibt hängen?</h2></div>
+  <p class="assessment-intro">Deine Gesamtabfrage zur Optik. Sieben neue Fragen verbinden das Wissen aus allen Kapiteln. Wähle jeweils eine Antwort und werte anschließend deinen Test aus.</p>
+  <noscript><p>Für die automatische Auswertung brauchst du JavaScript. Du kannst die Fragen auch ohne Auswertung bearbeiten und mit den Kapiteln vergleichen.</p></noscript>
+  <form class="assessment-form" data-questions={JSON.stringify(questions)}>
+    {questions.map((question, index) => <fieldset class="assessment-question" data-question={question.id}>
+      <legend><span>{index + 1}.</span> {question.prompt}</legend>
+      {question.options.map((option, optionIndex) => <label class="assessment-option"><input type="radio" name={question.id} value={optionIndex} required /><span>{option}</span></label>)}
+      <div class="assessment-feedback" hidden><p class="answer-status"></p><p>{question.explanation}</p><a href={`#${question.chapter}`}>Kapitel {question.chapter.slice(1)} wiederholen <Icon name="arrow" size={15} /></a></div>
+    </fieldset>)}
+    <div class="assessment-actions"><button class="button assessment-submit" type="submit" disabled>Gesamtabfrage auswerten <Icon name="arrow" size={18}/></button><button class="button button-secondary" type="reset">Neu beginnen</button></div>
+    <div class="assessment-result" role="status" aria-live="polite" tabindex="-1" hidden></div>
+  </form>
+  <div class="transfer-task"><h3>Ein Gedanke zum Weiterdenken</h3><label for="transfer-answer">Ein Lichtstrahl gelangt aus der Luft in einen Glasfaserkern und bleibt anschließend durch Reflexion im Kern. Erkläre, welche beiden optischen Vorgänge dabei wichtig sind und welche Bedingungen im Inneren gelten müssen.</label><textarea id="transfer-answer" placeholder="Erst selbst überlegen, dann die Musterlösung vergleichen …"></textarea><details class="solution"><summary>Musterlösung und Selbstkontrolle</summary><p>Beim schrägen Eintritt aus Luft in den optisch dichteren Kern wird das Licht zum Lot hin gebrochen. Im Inneren kann es an der Grenze zur optisch dünneren Umgebung totalreflektiert werden, wenn der Einfallswinkel dort größer als der Grenzwinkel ist. So bleibt es im Kern geführt.</p><p>Selbstkontrolle: Hast du Brechung, die Reihenfolge der optischen Dichten und den Grenzwinkel genannt? Diese offene Aufgabe wird nicht automatisch bewertet und zählt nicht zum Testergebnis.</p></details></div>
+</section>
+<script>
+  import { evaluateAssessment } from '../data/optics';
+  import type { AssessmentQuestion } from '../data/optics';
+  const form = document.querySelector<HTMLFormElement>('.assessment-form');
+  const result = form?.querySelector<HTMLDivElement>('.assessment-result');
+  const submit = form?.querySelector<HTMLButtonElement>('.assessment-submit');
+  if (form && result && submit) {
+    const questions = JSON.parse(form.dataset.questions ?? '[]') as AssessmentQuestion[];
+    submit.disabled = false;
+    const clearFeedback = () => {
+      form.querySelectorAll<HTMLElement>('.assessment-feedback').forEach(node => { node.hidden = true; });
+      form.querySelectorAll<HTMLElement>('.assessment-question').forEach(node => { delete node.dataset.correct; });
+      result.hidden = true;
+    };
+    form.addEventListener('change', clearFeedback);
+    form.addEventListener('reset', clearFeedback);
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      const data = new FormData(form);
+      const answers = Object.fromEntries(questions.map(question => [question.id, Number(data.get(question.id))]));
+      const evaluated = evaluateAssessment(questions, answers);
+      for (const item of evaluated) {
+        const field = form.querySelector<HTMLElement>(`[data-question="${item.id}"]`);
+        const feedback = field?.querySelector<HTMLElement>('.assessment-feedback');
+        const status = field?.querySelector<HTMLElement>('.answer-status');
+        if (!field || !feedback || !status) continue;
+        field.dataset.correct = String(item.correct);
+        feedback.hidden = false;
+        status.textContent = item.correct ? 'Richtig verstanden.' : 'Hier lohnt sich ein zweiter Blick.';
+      }
+      const correct = evaluated.filter(item => item.correct).length;
+      result.textContent = `${correct} von ${evaluated.length} richtig. ${correct === evaluated.length ? 'Alle Kapitel sicher gemeistert. Probiere jetzt die offene Transferaufgabe aus.' : 'Unter jeder Frage findest du die Erklärung und den Weg zurück zum passenden Kapitel.'}`;
+      result.hidden = false;
+      result.focus();
+    });
+  }
+</script>

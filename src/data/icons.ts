@@ -1,0 +1,20 @@
+export const icons = {
+  arrow: '<path d="M4 12h15m-6-6 6 6-6 6"/>',
+  chevron: '<path d="m9 5 7 7-7 7"/>',
+  physics: '<circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-35 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(35 12 12)"/>',
+  maths: '<path d="m3 14 4 5L12 5h9M14 12l6 6m0-6-6 6"/>',
+  chemistry: '<path d="M9 3h6m-5 0v7L4 20a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1l-6-10V3M7 16h10"/><circle cx="11" cy="13" r=".5"/>',
+  biology: '<path d="M20 3C10 2 3 7 5 14c2 7 13 5 15-11ZM4 21 16 8M9 15l-1-5m5 1 5 1"/>',
+  languages: '<path d="M3 4h12M9 2v2m-4 1c1 5 4 8 8 10M13 4C12 10 8 14 3 16m11 5 4-10 4 10m-6-4h4"/>',
+  history: '<path d="m3 8 9-5 9 5H3Zm1 13h16M6 10v8m6-8v8m6-8v8M3 19h18"/>',
+  geography: '<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 6h14M5 18h14"/>',
+  computing: '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4m-3-13-3 3 3 3m6-6 3 3-3 3"/>',
+  art: '<path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 1-3 2 2 0 0 1 1-3h2a4 4 0 0 0 4-4 9 9 0 0 0-9-8Z"/><circle cx="7" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/>',
+  book: '<path d="M12 5C8 2 4 3 2 4v15c4-2 7-1 10 1 3-2 6-3 10-1V4c-2-1-6-2-10 1Zm0 0v15"/>',
+  print: '<path d="M7 8V3h10v5M7 18H4V9h16v9h-3M7 14h10v7H7Z"/><path d="M17 11h.01"/>',
+  play: '<path d="m9 5 11 7-11 7V5Z"/>',
+  pause: '<path d="M8 5v14M16 5v14"/>',
+  check: '<path d="m5 12 4 4L19 6"/>',
+  lens: '<path d="M12 2c-7 5-7 15 0 20 7-5 7-15 0-20ZM2 7l20 10M2 17 22 7M2 12h20"/>',
+} as const;
+export type IconName = keyof typeof icons;

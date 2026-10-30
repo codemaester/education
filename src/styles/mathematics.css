@@ -1,0 +1,115 @@
+/* Modern Classic adapter for the imported numbers-and-proofs lesson. */
+.sqrt2-page {
+  --ink: var(--color-forest); --ink-soft: var(--color-muted); --muted: var(--color-muted);
+  --navy: var(--color-forest-deep); --navy-2: var(--color-forest);
+  --paper: var(--color-paper); --white: var(--color-surface);
+  --purple: var(--color-forest); --purple-deep: var(--color-forest-deep); --purple-pale: var(--color-sage-light);
+  --mint: var(--color-correct); --mint-dark: var(--color-correct); --mint-pale: var(--color-sage-light);
+  --amber: #8e6430; --amber-pale: #f2e8d9; --red: var(--color-incorrect); --red-pale: #f6e7df;
+  --line: var(--color-rule); --radius: var(--radius-panel); --shadow: none; --font: var(--font-body);
+}
+.sqrt2-page .container { width: min(var(--page-width), calc(100% - 2 * var(--page-gutter))); }
+.sqrt2-page h1, .sqrt2-page h2, .sqrt2-page h3 { font-family: var(--font-display); font-weight: 500; letter-spacing: -.025em; }
+.sqrt2-page .hero { background: var(--color-paper); color: var(--color-forest); overflow: visible; }
+.sqrt2-page .hero::after, .sqrt2-page .hero-art::before { display: none; }
+.sqrt2-page .hero-inner { padding: 2rem 0 3rem; gap: 3rem; grid-template-columns: 1.2fr 1fr; }
+.sqrt2-page .hero h1 { margin: 0 0 1.5rem; font-size: clamp(3rem, 5.5vw, 5.25rem); font-weight: 450; letter-spacing: -.025em; line-height: 1.05; }
+.sqrt2-page .hero h1 em { color: var(--color-terracotta-dark); font-style: italic; }
+.sqrt2-page .math-course-meta { font-size: .75rem; color: var(--color-muted); margin: 0 0 1rem; }
+.sqrt2-page .hero-lead { color: var(--color-muted); font-size: 1rem; max-width: 52ch; }
+.sqrt2-page .hero-art { background: var(--color-sage-light); border: 0; border-radius: var(--radius-panel); box-shadow: none; transform: none; }
+.sqrt2-page .hero-art-head, .sqrt2-page .hero-art-bottom small { color: var(--color-muted); }
+.sqrt2-page .hero-art-head { font-weight: 600; font-size: .7rem; }
+.sqrt2-page .hero-art-pill { color: var(--color-forest); background: var(--color-sand); border: 0; border-radius: var(--radius-small); }
+.sqrt2-page .hero-art-bottom { border-color: var(--color-rule); }
+.sqrt2-page .hero-art-bottom strong { color: var(--color-forest); font-family: var(--font-display); font-weight: 500; }
+.sqrt2-page .btn { border-radius: var(--radius-small); font-size: .85rem; font-weight: 600; box-shadow: none; }
+.sqrt2-page .btn:hover { transform: none; box-shadow: none; }
+.sqrt2-page .btn-primary, .sqrt2-page .btn-purple { color: var(--color-paper); background: var(--color-forest); }
+.sqrt2-page .btn-primary:hover, .sqrt2-page .btn-purple:hover { background: var(--color-forest-deep); }
+.sqrt2-page .btn-outline { color: var(--color-forest); background: transparent; border: 1px solid var(--color-rule); }
+.sqrt2-page .btn-outline:hover, .sqrt2-page .btn-light:hover { background: var(--color-sage-light); }
+.sqrt2-page button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.sqrt2-page .top-note { background: transparent; }
+.sqrt2-page .top-note-inner { border-top: 1px solid var(--color-rule); padding-block: 1.5rem 2rem; align-items: start; }
+.sqrt2-page .goal-pills span { border: 0; border-radius: var(--radius-small); color: var(--color-muted); background: var(--color-sage-light); font-weight: 500; }
+.math-course-nav { position: sticky; top: 0; z-index: 30; background: var(--color-paper); border-block: 1px solid var(--color-rule); }
+.math-nav-inner { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; padding-block: .75rem; }
+.math-nav-inner a { text-decoration: none; font-size: .8rem; padding: .5rem 0; }
+.math-nav-inner .button { margin-left: auto; min-height: 42px; }
+.math-noscript { margin-bottom: 1.5rem; padding: 1rem; border-radius: var(--radius-small); background: var(--color-sage-light); color: var(--color-muted); font-size: .9rem; }
+.sqrt2-page .section { padding-top: 4.5rem; scroll-margin-top: 6rem; }
+.sqrt2-page .section h2 { font-size: clamp(2.2rem, 3.5vw, 3.25rem); line-height: 1.1; letter-spacing: -.025em; }
+.sqrt2-page .section-lead { color: var(--color-muted); font-size: .95rem; max-width: 70ch; }
+.sqrt2-page .card, .sqrt2-page .proof-step, .sqrt2-page .navigator { box-shadow: none; border-radius: var(--radius-panel); }
+.sqrt2-page .card h3, .sqrt2-page .proof-step h3 { font-size: 1.8rem; font-weight: 500; }
+.sqrt2-page .card-icon { background: var(--color-sage-light); color: var(--color-forest); border-radius: var(--radius-small); }
+.sqrt2-page .math-sample, .sqrt2-page .reduce-visual, .sqrt2-page .equation, .sqrt2-page .details-formula { background: var(--color-paper); color: var(--color-forest); border-color: var(--color-rule); border-radius: var(--radius-small); }
+.sqrt2-page .math-sample.mint, .sqrt2-page .equation.mint { background: var(--color-sage-light); color: var(--color-forest); border-color: var(--color-rule); }
+.sqrt2-page .equation.amber { background: var(--color-sand); color: var(--color-forest); border-color: transparent; }
+.sqrt2-page .explain-band, .sqrt2-page .proof-intro { border: 0; background: var(--color-sage-light); border-radius: var(--radius-small); }
+.sqrt2-page .explain-symbol, .sqrt2-page .proof-intro .big-icon { background: var(--color-surface); color: var(--color-terracotta-dark); border-radius: var(--radius-small); }
+.sqrt2-page .tag, .sqrt2-page .tool-card .tool-count { background: var(--color-sand); color: var(--color-forest); border-radius: var(--radius-small); font-weight: 600; letter-spacing: 0; text-transform: none; }
+.sqrt2-page .approx-button, .sqrt2-page .number-button { min-height: 44px; border-color: var(--color-rule); border-radius: var(--radius-small); color: var(--color-forest); font-weight: 600; box-shadow: none; }
+.sqrt2-page .approx-button:hover, .sqrt2-page .number-button:hover { border-color: var(--color-forest); background: var(--color-sage-light); }
+.sqrt2-page .approx-button[aria-pressed='true'], .sqrt2-page .number-button[aria-pressed='true'] { color: var(--color-paper); background: var(--color-forest); border-color: var(--color-forest); box-shadow: none; }
+.sqrt2-page .approx-display, .sqrt2-page .parity-panel { background: var(--color-paper); border-color: var(--color-rule); border-radius: var(--radius-small); }
+.sqrt2-page .approx-equation { color: var(--color-forest); font-weight: 650; letter-spacing: -.02em; }
+.sqrt2-page .tiny-label { color: var(--color-muted); letter-spacing: .05em; font-weight: 600; }
+.sqrt2-page .gap-fill { background: var(--color-terracotta); }
+.sqrt2-page .square-cell { background: #718971; }
+.sqrt2-page .square-cell:nth-child(even) { background: var(--color-sage); }
+.sqrt2-page .square-cell.leftover { background: var(--color-terracotta); box-shadow: none; }
+.sqrt2-page .parity-word, .sqrt2-page .lemma, .sqrt2-page .sticky-hint { background: var(--color-sage-light); color: var(--color-forest); border-color: var(--color-rule); }
+.sqrt2-page .parity-word.odd { background: var(--color-sand); color: var(--color-terracotta-dark); }
+.sqrt2-page .proof-intro .big-icon { font-family: var(--font-display); }
+.sqrt2-page .proof-step.is-current { border-color: var(--color-forest); box-shadow: none; }
+.sqrt2-page .step-num { background: var(--color-sand); color: var(--color-forest); border-radius: var(--radius-small); }
+.sqrt2-page .proof-step.is-current .step-num { color: var(--color-paper); background: var(--color-forest); }
+.sqrt2-page .step-why { border: 0; padding-left: 0; }
+.sqrt2-page .proof-side { top: 6rem; }
+.sqrt2-page .step-nav-list button { min-height: 44px; }
+.sqrt2-page .step-nav-list button[aria-current='step'] { background: var(--color-sage-light); color: var(--color-forest); }
+.sqrt2-page .step-nav-list button[aria-current='step'] .step-nav-number { background: var(--color-sage); color: var(--color-forest); }
+.sqrt2-page .navigator-actions button { min-height: 44px; border-color: var(--color-rule); color: var(--color-forest); }
+.sqrt2-page .contradiction { background: var(--color-forest); color: var(--color-paper); border-radius: var(--radius-panel); box-shadow: none; }
+.sqrt2-page .contradiction h3, .sqrt2-page .contradiction-box strong { color: var(--color-paper); }
+.sqrt2-page .contradiction-top, .sqrt2-page .contradiction-box small, .sqrt2-page .contradiction-arrow { color: var(--color-sage); }
+.sqrt2-page .conclusion { background: var(--color-sage-light); color: var(--color-forest); }
+.sqrt2-page .conclusion strong { color: var(--color-forest); }
+.sqrt2-page .question legend { color: var(--color-forest); }
+.sqrt2-page .choice { background: var(--color-paper); color: var(--color-forest); border-color: var(--color-rule); }
+.sqrt2-page .choice:has(input:checked) { background: var(--color-sage-light); color: var(--color-forest); border-color: var(--color-forest); }
+.sqrt2-page .choice input { accent-color: var(--color-forest); }
+.sqrt2-page .answer-feedback[data-result='correct'] { color: var(--color-correct); }
+.sqrt2-page .answer-feedback[data-result='wrong'] { color: var(--color-incorrect); }
+.sqrt2-page details { border-color: var(--color-rule); border-radius: var(--radius-small); background: var(--color-paper); }
+.sqrt2-page details summary::after { color: var(--color-forest); background: var(--color-sage-light); }
+.math-back { display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; padding-top: 3rem; }
+.math-course-illustration { display: block; width: 100%; height: auto; border-radius: var(--radius-panel); }
+@media (max-width: 910px) { .sqrt2-page .hero-inner { grid-template-columns: 1fr; } .sqrt2-page .hero-art { max-width: 520px; } }
+@media (max-width: 600px) {
+  .math-nav-inner { gap: .25rem 1rem; }
+  .math-nav-inner a { font-size: .75rem; }
+  .math-nav-inner .button { margin-left: 0; font-size: .75rem; padding-inline: .75rem; }
+  .sqrt2-page .hero h1 { font-size: clamp(2.8rem, 10vw, 4rem); letter-spacing: -.025em; }
+  .sqrt2-page .hero-art { padding: 1rem; }
+  .sqrt2-page .hero-art-head { flex-wrap: wrap; }
+  .sqrt2-page .section { padding-top: 3.5rem; scroll-margin-top: 8rem; }
+  .sqrt2-page .section h2 { font-size: 2.15rem; }
+  .sqrt2-page .def-card, .sqrt2-page .tool-card, .sqrt2-page .example-lab, .sqrt2-page .quiz-container { padding: 1.25rem; }
+  .sqrt2-page .parity-panel { grid-template-columns: 1fr; }
+  .sqrt2-page .hero-art-bottom { flex-wrap: wrap; }
+  .sqrt2-page .gap-head { align-items: start; flex-wrap: wrap; }
+}
+@media print {
+  .math-course-nav, .math-back, .math-noscript { display: none !important; }
+  .sqrt2-page .hero { background: white; }
+  .sqrt2-page .hero-inner { display: block; padding: 0 0 1rem; }
+  .sqrt2-page .hero h1 { font-size: 28pt; }
+  .sqrt2-page .hero h1 em { color: var(--color-forest); }
+  .sqrt2-page .section { padding-top: 1.5rem; }
+  .sqrt2-page .section h2 { font-size: 21pt; }
+  .sqrt2-page .contradiction, .sqrt2-page .contradiction-box { background: white; color: #172b22; }
+  .sqrt2-page .contradiction h3, .sqrt2-page .contradiction-box strong, .sqrt2-page .contradiction-box small, .sqrt2-page .contradiction-top { color: #172b22; }
+}

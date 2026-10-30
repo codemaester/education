@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import sheet from '../../../content/optics/study-sheet.html?raw';
+import '../../../styles/imported/study-sheet.css';
+import '../../../styles/study-sheet.css';
+const content = sheet.replace('__COURSE_URL__', `${import.meta.env.BASE_URL}physik/optik/`);
+---
+<BaseLayout title="Optik – Lernzettel" description="Die wichtigsten Inhalte der sieben Optik-Kapitel als druckbare Zusammenfassung auf zwei DIN-A4-Seiten." pageClass="print-page" skipTo="lernzettel"><div class="study-sheet-page"><Fragment set:html={content}/></div></BaseLayout>
+<script>
+  const button = document.querySelector<HTMLButtonElement>('#print-sheet');
+  if (button) { button.hidden = false; button.addEventListener('click', () => window.print()); }
+</script>

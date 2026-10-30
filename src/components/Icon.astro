@@ -1,0 +1,10 @@
+---
+import { icons } from '../data/icons';
+import type { IconName } from '../data/icons';
+interface Props { name: IconName; size?: number; class?: string; title?: string; }
+const { name, size = 22, class: className, title } = Astro.props;
+---
+<svg class:list={['icon', className]} style={`--icon-size: ${size}px`} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden={title ? undefined : 'true'} role={title ? 'img' : undefined} focusable="false">
+  {title && <title>{title}</title>}
+  <Fragment set:html={icons[name]} />
+</svg>

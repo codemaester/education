@@ -13,13 +13,29 @@ bei Pushes auf `main`. npm verwaltet die Abhängigkeiten.
 
 ## Product Purpose
 
-Eine Sammlung verschiedener Lernseiten. Die erste Version enthält eine einfache
-Hello-World-Seite, um Build und Veröffentlichung zu prüfen. Ein Klickzähler
-ermöglicht zusätzlich den Funktionstest des ausgelieferten JavaScripts.
+Eine Sammlung interaktiver Lernseiten für verschiedene Fächer. Die Startseite
+und eigene Fachübersichten ermöglichen den Einstieg. Die erste vollständige
+Lernseite behandelt Optik für Klasse 9 mit sieben Kapiteln, Simulationen,
+Videos, Kapitelübungen, Gesamtabfrage und druckbarem Lernzettel.
+Die Mathematik-Lernseite „Warum √2 irrational ist“ für Klasse 9 ergänzt die
+Sammlung um interaktive Beispiele, einen Beweis-Navigator und Wissenstest.
+
+## Brand Commitments
+
+Die gewählte Gestaltung ist **Modern Classic** aus
+`documentation/visual-directions/03-modern-classic.png`: Newsreader für
+Überschriften, Manrope für Lesetext und Bedienung, Papierweiß, Waldgrün,
+Terrakotta, Salbei und Sand. Das Theme soll über alle Fächer hinweg
+wiederverwendbar sein. Icons und grafische Symbole unterstützen die Orientierung.
 
 ## Capabilities and Constraints
 
 - Ein gemeinsames Astro-Projekt mit erweiterbaren Unterseiten.
+- Neue Lernseiten folgen den
+  [gemeinsamen Anforderungen](documentation/LERNSEITEN_ANFORDERUNGEN.md).
 - Hosting unter `https://edu.promptworks.eu/` über GitHub Pages.
-- Responsive Startseite, gemeinsames Layout und gemeinsame Styles.
-- Konkrete Zielgruppen, Lernthemen und weiterführende Funktionen sind noch offen.
+- Responsive Startseite, Fachseiten, gemeinsames Layout und gemeinsame Styles.
+- Optik ist aus `codemaester/physik-optik` übernommen; das Ursprungsrepository
+  bleibt unverändert. Mathematik ist aus der bereitgestellten `index 2.html`
+  übernommen. Fächer ohne Lernseiten zeigen ihren noch leeren Inhaltsstand.
+- Weitere konkrete Lernthemen und Zielgruppen sind noch offen.

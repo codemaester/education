@@ -1,0 +1,47 @@
+---
+import Icon from './Icon.astro';
+import CourseImage from './CourseImage.astro';
+import { recentCourses, subjects, type Course } from '../data/catalog';
+import '../styles/carousel.css';
+
+interface Props { courses: readonly Course[]; }
+const entries = recentCourses(Astro.props.courses);
+const baseUrl = import.meta.env.BASE_URL;
+---
+{entries.length > 0 && <section class="featured-carousel" data-featured-courses role="region" aria-roledescription={entries.length > 1 ? 'Karussell' : undefined} aria-label="Neu hinzugefügte Lernseiten">
+  {entries.length > 1 && <div class="carousel-controls" data-carousel-controls hidden>
+    <div class="carousel-toolbar" role="group" aria-label="Vorschau steuern">
+      <button class="carousel-control carousel-rotation" type="button" data-rotation>
+        <span data-pause-icon><Icon name="pause" size={18} /></span>
+        <span data-play-icon hidden><Icon name="play" size={18} /></span>
+        <span data-rotation-label>Pause</span>
+        <span class="visually-hidden"> – automatischer Wechsel</span>
+      </button>
+      <button class="carousel-control carousel-previous" type="button" data-previous><Icon name="arrow" size={18} /><span>Zurück</span></button>
+      <button class="carousel-control carousel-next" type="button" data-next><span>Weiter</span><Icon name="arrow" size={18} /></button>
+      <span class="carousel-counter" data-counter aria-live="off">1 von {entries.length}</span>
+    </div>
+    <div class="carousel-picker" role="group" aria-label="Lernseite auswählen">{entries.map((course, index) => {
+      const subject = subjects.find(subject => subject.slug === course.subject)!;
+      return <button class="carousel-choice" type="button" data-slide-choice={index} aria-disabled={index === 0 ? 'true' : undefined} aria-label={`${subject.name}: ${course.shortTitle}, ${index + 1} von ${entries.length}`}><Icon name={subject.icon} size={20} /><span>{course.shortTitle}</span></button>;
+    })}</div>
+  </div>}
+  <div class="carousel-stage" aria-live="off">{entries.map((course, index) => {
+    const subject = subjects.find(subject => subject.slug === course.subject)!;
+    return <article class="featured-course carousel-slide" data-slide data-title={course.title} data-active={index === 0 ? 'true' : undefined} role="group" aria-roledescription="Lernseite" aria-label={`${index + 1} von ${entries.length}`} aria-hidden={index > 0 ? 'true' : undefined} inert={index > 0}>
+      <div class="featured-art" aria-hidden="true"><div class="featured-visual"><CourseImage kind={course.cover} priority={index === 0} /></div><span class="art-caption"><Icon name={subject.icon} size={18} />{course.artCaption}</span></div>
+      <div class="featured-copy">
+        <div class="course-meta-line"><span><Icon name={subject.icon} size={18} />{subject.name}</span><span>{course.level}</span></div>
+        <h2><a href={`${baseUrl}${course.href}`}>{course.title}</a></h2>
+        <p>{course.description}</p>
+        <ul class="course-features" aria-label="Inhalte der Lernseite"><li><Icon name="book" size={16} />{course.chapters} {course.chapterLabel ?? 'Kapitel'}</li>{course.highlights.map(highlight => <li><Icon name={highlight.icon} size={16} />{highlight.label}</li>)}</ul>
+        <a class="button" href={`${baseUrl}${course.href}`}>Lernseite entdecken <Icon name="arrow" size={19} /></a>
+      </div>
+    </article>;
+  })}</div>
+  <p class="visually-hidden" data-carousel-announcement role="status" aria-atomic="true"></p>
+</section>}
+<script>
+  import { initFeaturedCourses } from '../scripts/featured-courses';
+  document.querySelectorAll<HTMLElement>('[data-featured-courses]').forEach(initFeaturedCourses);
+</script>

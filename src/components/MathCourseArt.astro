@@ -1,0 +1,14 @@
+---
+interface Props { alt?: string; }
+const { alt = '' } = Astro.props;
+---
+<svg class="math-course-illustration" viewBox="0 0 600 400" width="600" height="400" role={alt ? 'img' : undefined} aria-label={alt || undefined} aria-hidden={alt ? undefined : 'true'}>
+  <rect width="600" height="400" fill="#eee7d8" />
+  <rect x="205" y="84" width="210" height="210" fill="#cbd4c3" stroke="#263d35" stroke-width="2" />
+  <path d="m205 84 210 210" fill="none" stroke="#b75b42" stroke-width="2" stroke-dasharray="7 6" />
+  <path d="M205 310v12m210-12v12m-210-6h210" fill="none" stroke="#263d35" stroke-width="1.5" />
+  <text x="310" y="209" text-anchor="middle" fill="#263d35" font-family="var(--font-display)" font-size="78">2</text>
+  <text x="310" y="363" text-anchor="middle" fill="#263d35" font-family="var(--font-display)" font-size="38">√2</text>
+  <circle cx="140" cy="155" r="17" fill="#b75b42" />
+  <path d="M95 210h62m-31-31v62" stroke="#263d35" stroke-width="1.5" />
+</svg>

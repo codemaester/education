@@ -1,0 +1,234 @@
+<div id="start" class="math-lesson-content" tabindex="-1">
+    <section class="section container" id="grundidee" aria-labelledby="basis-title">
+      <h2 id="basis-title">Was bedeutet eigentlich „rational“?</h2>
+      <p class="section-lead">Bevor wir etwas beweisen, klären wir das Ziel. In der Mathematik gibt es Zahlen, die sich als Bruch schreiben lassen – und Zahlen, bei denen das unmöglich ist.</p>
+      <div class="basics-grid">
+        <article class="card def-card">
+          <div class="card-icon icon-purple" aria-hidden="true">a/b</div>
+          <h3>Rationale Zahlen</h3>
+          <p>Eine Zahl heißt <strong>rational</strong>, wenn man sie als Bruch <strong>a / b</strong> schreiben kann. Dabei müssen <strong>a und b ganze Zahlen</strong> sein und <strong>b darf nicht 0</strong> sein.</p>
+          <div class="math-sample" aria-label="Beispiele: 0,5 gleich ein Halb und 0,75 gleich drei Viertel"><span>0,5 = <span class="frac"><span class="num">1</span><span class="den">2</span></span></span><span>0,75 = <span class="frac"><span class="num">3</span><span class="den">4</span></span></span></div>
+        </article>
+        <article class="card def-card">
+          <div class="card-icon icon-mint" aria-hidden="true">√</div>
+          <h3>Irrationale Zahlen</h3>
+          <p>Eine Zahl heißt <strong>irrational</strong>, wenn sie sich <strong>nicht</strong> als solcher Bruch darstellen lässt – egal welche ganzen Zahlen man für Zähler und Nenner auswählt.</p>
+          <div class="math-sample mint"><span>√2 = 1,41421356…</span><span style="font-size: 13px; font-weight: 700;">Kein Bruch trifft sie exakt.</span></div>
+        </article>
+      </div>
+      <div class="explain-band">
+        <div class="explain-symbol" aria-hidden="true">!</div>
+        <div><strong>Das ist unser Ziel:</strong><p>Wir beweisen nicht einfach, dass √2 <em>schwer</em> als Bruch zu finden ist. Wir zeigen: <strong>Es kann überhaupt keinen passenden Bruch geben.</strong></p></div>
+      </div>
+      <div class="card example-lab">
+        <div>
+          <span class="tag">Ausprobieren</span>
+          <h3>Fast richtig ist noch nicht genau richtig.</h3>
+          <p>√2 ist die <strong>positive Zahl, deren Quadrat 2 ergibt</strong>. Probiere Näherungswerte aus: Durch mehr Nachkommastellen landest du immer näher an 2. Aber ist das schon ein Beweis?</p>
+          <div class="approx-controls" role="group" aria-label="Näherungswerte für Wurzel 2 ausprobieren">
+            <button type="button" class="approx-button" data-approx="0" aria-pressed="false" disabled data-requires-js>1,4</button>
+            <button type="button" class="approx-button" data-approx="1" aria-pressed="false" disabled data-requires-js>1,41</button>
+            <button type="button" class="approx-button" data-approx="2" aria-pressed="true" disabled data-requires-js>1,414</button>
+            <button type="button" class="approx-button" data-approx="3" aria-pressed="false" disabled data-requires-js>1,4142</button>
+          </div>
+        </div>
+        <div class="approx-display" aria-live="polite" aria-atomic="true">
+          <span class="tiny-label">Wir rechnen die Zahl mal sich selbst</span>
+          <span class="approx-equation" id="approx-equation">1,414² = 1,999396</span>
+          <span class="approx-exact" id="approx-description">Das liegt sehr nahe bei 2 – ist aber nicht 2.</span>
+          <div class="gap-head"><span>Abstand zum Zielwert 2</span><strong id="approx-diff">0,000604</strong></div>
+          <div class="gap-meter" role="img" aria-label="Je kleiner der farbige Balken, desto näher ist das Quadrat bei 2"><div class="gap-fill" id="approx-bar" style="width: 4%"></div></div>
+          <p class="lab-note">Merke: Noch so gute Näherungen beweisen nicht, dass eine Zahl rational oder irrational ist.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="werkzeuge" aria-labelledby="werkzeuge-title">
+      <h2 id="werkzeuge-title">Alles, was wir für den Beweis brauchen.</h2>
+      <p class="section-lead">Du musst dafür keine neue Rechenart lernen. Zwei Dinge aus dem Schulstoff reichen: Brüche kürzen und gerade von ungeraden Zahlen unterscheiden.</p>
+      <div class="tools-grid">
+        <article class="card tool-card">
+          <span class="tool-count">WERKZEUG 1</span>
+          <h3>Ein vollständig gekürzter Bruch</h3>
+          <p>Bei einem Bruch kann man Zähler und Nenner oft durch dieselbe Zahl teilen. <strong>Dadurch ändert sich der Wert nicht.</strong></p>
+          <div class="reduce-visual" aria-label="Sechs Achtel gekürzt durch zwei ergibt drei Viertel"><span class="frac"><span class="num">6</span><span class="den">8</span></span><span class="reduce-arrow">: 2 →</span><span class="frac"><span class="num">3</span><span class="den">4</span></span></div>
+          <p>Den Bruch <strong>3/4</strong> kann man nicht weiter kürzen. Er ist <strong>vollständig gekürzt</strong>.</p>
+          <div class="mini-tip"><strong>✓</strong><span>In einem vollständig gekürzten Bruch können Zähler und Nenner <strong>nicht beide gerade</strong> sein. Sonst ließen sich beide durch 2 teilen.</span></div>
+          <details><summary>Warum dürfen wir später von einem gekürzten Bruch ausgehen?</summary><div class="details-content"><p>Falls √2 irgendein Bruch wäre, könnten wir diesen Bruch so lange kürzen, bis es nicht mehr geht. Der Zahlenwert bliebe dabei gleich.</p><p>Darum dürfen wir im Beweis direkt einen <strong>vollständig gekürzten</strong> Bruch annehmen.</p></div></details>
+        </article>
+        <article class="card tool-card">
+          <span class="tool-count">WERKZEUG 2</span>
+          <h3>Gerade Zahlen und ihre Quadrate</h3>
+          <p>Gerade Zahlen sind durch 2 teilbar (2, 4, 6, …). Ungerade Zahlen sind es nicht (1, 3, 5, …). <strong>Quadrat</strong> heißt: eine Zahl mit sich selbst multiplizieren.</p>
+          <div class="number-controls" role="group" aria-label="Zahl auswählen und Quadrat untersuchen">
+            <button type="button" class="number-button" data-number="2" aria-pressed="false" disabled data-requires-js>2</button>
+            <button type="button" class="number-button" data-number="3" aria-pressed="false" disabled data-requires-js>3</button>
+            <button type="button" class="number-button" data-number="4" aria-pressed="false" disabled data-requires-js>4</button>
+            <button type="button" class="number-button" data-number="5" aria-pressed="true" disabled data-requires-js>5</button>
+            <button type="button" class="number-button" data-number="6" aria-pressed="false" disabled data-requires-js>6</button>
+            <button type="button" class="number-button" data-number="7" aria-pressed="false" disabled data-requires-js>7</button>
+          </div>
+          <div class="parity-panel" aria-live="polite" aria-atomic="true">
+            <div><span class="tiny-label">Dein Quadrat</span><div class="parity-result" id="parity-equation">5 × 5 = 25</div><span class="parity-word odd" id="parity-tag">ungerade → ungerade</span></div>
+            <div class="square-grid" id="square-grid" style="--n:5" aria-hidden="true"></div>
+          </div>
+          <p class="parity-interpret" id="parity-text">5 ist ungerade. Auch 5² = 25 ist ungerade.</p>
+          <div class="lemma">Die entscheidende Regel: <strong>Wenn das Quadrat einer ganzen Zahl gerade ist, muss auch die Zahl selbst gerade sein.</strong></div>
+          <details><summary>Warum gilt diese Regel wirklich? (Zusatz-Erklärung)</summary><div class="details-content">
+            <p>Eine ungerade ganze Zahl lässt sich immer als <strong>2k + 1</strong> schreiben, zum Beispiel 7 = 2 · 3 + 1. Dabei ist k eine ganze Zahl.</p>
+            <p>Wenn wir diese ungerade Zahl quadrieren und die Klammer ausmultiplizieren, erhalten wir:</p>
+            <span class="details-formula">(2k + 1)² = 4k² + 4k + 1 = 2 · (2k² + 2k) + 1</span>
+            <p>Das ist <strong>eine gerade Zahl plus 1</strong>, also ungerade. Darum kann eine ungerade Zahl niemals ein gerades Quadrat haben. Anders gesagt: <strong>Ist das Quadrat gerade, war die Zahl gerade.</strong></p>
+            <p>Die Formel musst du für den restlichen Beweis nicht auswendig können – wichtig ist die Aussage.</p>
+          </div></details>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container" id="beweis" aria-labelledby="beweis-title">
+      <h2 id="beweis-title">Sieben kleine Schritte. Eine große Erkenntnis.</h2>
+      <p class="section-lead">Jetzt bauen wir die Argumentation wie eine Kette auf. Lies die Schritte der Reihe nach: Jeder einzelne nutzt nur das, was wir vorher gelernt haben.</p>
+      <div class="proof-intro"><div class="big-icon" aria-hidden="true">↯</div><p><strong>Unser Trick heißt „Widerspruchsbeweis“.</strong> Wir tun zuerst so, als wäre √2 ein Bruch. Wenn diese Annahme zu etwas Unmöglichem führt, wissen wir: Die Annahme war falsch.</p></div>
+      <div class="proof-layout">
+        <div class="proof-steps">
+          <article class="proof-step is-current" id="schritt-1" data-step="1" aria-labelledby="schritt1-titel">
+            <div class="step-top"><span class="step-num">01</span><span class="step-label">Wir beginnen mit einer Annahme</span></div>
+            <h3 id="schritt1-titel">Stell dir vor, √2 wäre rational.</h3>
+            <p>Dann müsste es zwei <strong>ganze Zahlen a und b</strong> geben, sodass √2 genau der Bruch a/b ist. Wir nehmen den Bruch gleich <strong>vollständig gekürzt</strong> an. Dabei ist b ≠ 0.</p>
+            <div class="equation"><span>√2 =</span><span class="frac" aria-label="a durch b"><span class="num">a</span><span class="den">b</span></span></div>
+            <div class="step-why"><strong>Wichtig:</strong> Wenn a/b gekürzt ist, dürfen a und b nicht beide durch 2 teilbar sein.</div>
+          </article>
+          <article class="proof-step" id="schritt-2" data-step="2" aria-labelledby="schritt2-titel">
+            <div class="step-top"><span class="step-num">02</span><span class="step-label">Auf beiden Seiten quadrieren</span></div>
+            <h3 id="schritt2-titel">Wir entfernen das Wurzelzeichen.</h3>
+            <p>Wir nehmen beide Seiten <strong>zum Quadrat</strong>. Denn (√2)² ist einfach 2. Dann multiplizieren wir beide Seiten mit b², damit der Bruch verschwindet.</p>
+            <div class="equation"><span>2 =</span><span class="frac" aria-label="a Quadrat durch b Quadrat"><span class="num">a²</span><span class="den">b²</span></span><span>⟹</span><span>2b² = a²</span></div>
+            <div class="step-why"><strong>So kommt es dazu:</strong> Aus 2 = a²/b² wird durch „mal b²“ die Gleichung 2 · b² = a². Das ist wie bei einer normalen Gleichung: Auf beiden Seiten dasselbe tun.</div>
+          </article>
+          <article class="proof-step" id="schritt-3" data-step="3" aria-labelledby="schritt3-titel">
+            <div class="step-top"><span class="step-num">03</span><span class="step-label">Eine wichtige Entdeckung</span></div>
+            <h3 id="schritt3-titel">a muss gerade sein.</h3>
+            <p>Die Zahl <strong>2b² ist gerade</strong>, weil sie „2 mal eine ganze Zahl“ ist. Also muss auch a² gerade sein. Und wir wissen: Wenn a² gerade ist, ist auch a gerade.</p>
+            <div class="equation mint"><span>a² = 2b²</span><span>⟹</span><span>a ist gerade</span></div>
+            <div class="step-why mint-accent"><strong>Erinnerung:</strong> Eine ungerade Zahl kann kein gerades Quadrat haben. Beispiele: 3² = 9 und 5² = 25 sind beide ungerade.</div>
+          </article>
+          <article class="proof-step" id="schritt-4" data-step="4" aria-labelledby="schritt4-titel">
+            <div class="step-top"><span class="step-num">04</span><span class="step-label">Gerade als Formel schreiben</span></div>
+            <h3 id="schritt4-titel">Wir ersetzen a durch „2 mal etwas“.</h3>
+            <p>Jede gerade ganze Zahl lässt sich als <strong>2 · k</strong> schreiben, wobei k wieder eine ganze Zahl ist. Zum Beispiel 8 = 2 · 4 oder 14 = 2 · 7.</p>
+            <div class="equation"><span>a = 2k</span></div>
+            <div class="step-why"><strong>Das ist nur eine Umformulierung:</strong> Wir nutzen die Information „a ist gerade“ als Formel, um mit ihr weiterrechnen zu können.</div>
+          </article>
+          <article class="proof-step" id="schritt-5" data-step="5" aria-labelledby="schritt5-titel">
+            <div class="step-top"><span class="step-num">05</span><span class="step-label">Einsetzen und vereinfachen</span></div>
+            <h3 id="schritt5-titel">Jetzt verrät uns die Gleichung etwas über b.</h3>
+            <p>Wir setzen <strong>a = 2k</strong> in die Gleichung aus Schritt 2 ein. Dann quadrieren wir 2k. Anschließend teilen wir <strong>beide Seiten durch 2</strong>.</p>
+            <div class="equation"><span>2b² = (2k)²</span><span> = 4k²</span></div>
+            <div class="equation mint"><span>b² = 2k²</span></div>
+            <div class="step-why"><strong>Zwischenschritt:</strong> Aus 2b² = 4k² folgt 2b² : 2 = 4k² : 2. Also b² = 2k².</div>
+          </article>
+          <article class="proof-step" id="schritt-6" data-step="6" aria-labelledby="schritt6-titel">
+            <div class="step-top"><span class="step-num">06</span><span class="step-label">Die gleiche Regel noch einmal</span></div>
+            <h3 id="schritt6-titel">Auch b muss gerade sein!</h3>
+            <p>In b² = 2k² steht rechts wieder „2 mal eine ganze Zahl“. Deshalb ist <strong>b² gerade</strong>. Mit derselben Regel aus Schritt 3 folgt: <strong>b ist gerade</strong>.</p>
+            <div class="equation mint"><span>b² = 2k²</span><span>⟹</span><span>b ist gerade</span></div>
+            <div class="step-why mint-accent"><strong>Bis hierhin:</strong> Wir haben bewiesen, dass <strong>a gerade</strong> ist und dass <strong>b gerade</strong> ist.</div>
+          </article>
+          <article class="proof-step" id="schritt-7" data-step="7" aria-labelledby="schritt7-titel">
+            <div class="step-top"><span class="step-num">07</span><span class="step-label">Der Widerspruch!</span></div>
+            <h3 id="schritt7-titel">Das kann nicht sein.</h3>
+            <p>Am Anfang haben wir festgelegt: <strong>a/b ist vollständig gekürzt.</strong> Jetzt zeigen die Rechnungen: <strong>a und b sind beide gerade.</strong> Dann könnte man Zähler und Nenner aber durch 2 teilen!</p>
+            <div class="equation amber"><span>„vollständig gekürzt“</span><span>≠</span><span>„beide durch 2 teilbar“</span></div>
+            <div class="step-why"><strong>Das ist ein Widerspruch:</strong> Ein vollständig gekürzter Bruch kann nicht gleichzeitig noch durch 2 kürzbar sein. Unsere anfängliche Annahme muss also falsch gewesen sein.</div>
+          </article>
+        </div>
+        <aside class="proof-side" aria-label="Beweisnavigation">
+          <div class="navigator">
+            <h3>Dein Beweis-Navigator</h3><p>Springe zu einem Schritt oder klicke dich durch die Rechnung.</p>
+            <ol class="step-nav-list">
+              <li><button type="button" data-go="1" aria-current="step" disabled data-requires-js><span class="step-nav-number">1</span><span class="nav-words">Annahme</span></button></li>
+              <li><button type="button" data-go="2" disabled data-requires-js><span class="step-nav-number">2</span><span class="nav-words">Quadrieren</span></button></li>
+              <li><button type="button" data-go="3" disabled data-requires-js><span class="step-nav-number">3</span><span class="nav-words">a ist gerade</span></button></li>
+              <li><button type="button" data-go="4" disabled data-requires-js><span class="step-nav-number">4</span><span class="nav-words">a = 2k</span></button></li>
+              <li><button type="button" data-go="5" disabled data-requires-js><span class="step-nav-number">5</span><span class="nav-words">Einsetzen</span></button></li>
+              <li><button type="button" data-go="6" disabled data-requires-js><span class="step-nav-number">6</span><span class="nav-words">b ist gerade</span></button></li>
+              <li><button type="button" data-go="7" disabled data-requires-js><span class="step-nav-number">7</span><span class="nav-words">Widerspruch</span></button></li>
+            </ol>
+            <div class="navigator-actions"><button type="button" id="prev-step" disabled data-requires-js>← Zurück</button><button type="button" id="next-step" disabled data-requires-js>Weiter →</button></div>
+          </div>
+          <div class="sticky-hint"><strong>Das Geheimnis des Beweises</strong>Wir beweisen nicht, dass √2 „ungefähr 1,414“ ist. Wir zeigen, dass <em>jeder</em> angeblich passende Bruch zu einem Widerspruch führen würde.</div>
+        </aside>
+      </div>
+      <div class="contradiction">
+        <div class="contradiction-top">Das ganze Argument in einem Bild</div>
+        <h3>Aus einer Annahme entsteht etwas Unmögliches.</h3>
+        <div class="contradiction-flow">
+          <div class="contradiction-box"><small>UNSERE ANNAHME</small><strong>√2 = a/b</strong><small>Bruch vollständig gekürzt</small></div>
+          <div class="contradiction-arrow" aria-hidden="true">→</div>
+          <div class="contradiction-box"><small>UNSERE RECHNUNG</small><strong>a und b gerade</strong><small>Also beide durch 2 teilbar</small></div>
+          <div class="contradiction-arrow" aria-hidden="true">→</div>
+          <div class="contradiction-box"><small>UNMÖGLICH!</small><strong>Widerspruch</strong><small>Der Bruch wäre doch kürzbar</small></div>
+        </div>
+        <div class="conclusion"><span class="check" aria-hidden="true">✓</span><p><strong>Damit ist bewiesen:</strong> √2 kann nicht als Bruch aus zwei ganzen Zahlen geschrieben werden. Also ist <strong>√2 irrational.</strong> ∎</p></div>
+      </div>
+    </section>
+
+    <section class="section container" id="uebungen" aria-labelledby="quiz-title">
+      <h2 id="quiz-title">Hast du den Knackpunkt verstanden?</h2>
+      <p class="section-lead">Drei kurze Fragen – ohne Notendruck. Wähle jeweils eine Antwort und prüfe danach deine Lösungen.</p>
+      <div class="card quiz-container">
+        <div class="quiz-top"><h3>Der 3-Minuten-Check</h3><span class="quiz-label">3 Fragen</span></div>
+        <form id="quiz-form">
+          <fieldset class="question" data-correct="b">
+            <legend><span class="question-number">FRAGE 01</span> Was ist an 6/8 noch nicht vollständig gekürzt?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="q1" value="a" disabled data-requires-js><span>6 und 8 sind beide ungerade.</span></label>
+              <label class="choice"><input type="radio" name="q1" value="b" disabled data-requires-js><span>Man kann beide durch 2 teilen.</span></label>
+            </div>
+            <div class="answer-feedback" aria-live="polite"></div>
+          </fieldset>
+          <fieldset class="question" data-correct="a">
+            <legend><span class="question-number">FRAGE 02</span> Eine ganze Zahl n hat ein gerades Quadrat n². Was folgt daraus?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="q2" value="a" disabled data-requires-js><span>n ist gerade.</span></label>
+              <label class="choice"><input type="radio" name="q2" value="b" disabled data-requires-js><span>n könnte auch ungerade sein.</span></label>
+            </div>
+            <div class="answer-feedback" aria-live="polite"></div>
+          </fieldset>
+          <fieldset class="question" data-correct="b">
+            <legend><span class="question-number">FRAGE 03</span> Warum endet unser √2-Beweis mit einem Widerspruch?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="q3" value="a" disabled data-requires-js><span>Weil √2 ungefähr 1,414 ist.</span></label>
+              <label class="choice"><input type="radio" name="q3" value="b" disabled data-requires-js><span>Weil a und b beide gerade wären, obwohl der Bruch gekürzt sein soll.</span></label>
+            </div>
+            <div class="answer-feedback" aria-live="polite"></div>
+          </fieldset>
+          <div class="quiz-actions"><button type="submit" class="btn btn-purple" disabled data-requires-js>Antworten prüfen <span aria-hidden="true">✓</span></button><button type="button" class="btn btn-light" id="quiz-reset" disabled data-requires-js>Neu versuchen ↺</button><span class="quiz-result" id="quiz-result" role="status" aria-live="polite"></span></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="section container" id="mitnehmen" aria-labelledby="mitnehmen-title">
+      <h2 id="mitnehmen-title">Das Wichtigste auf einen Blick.</h2>
+      <p class="section-lead">Wenn du den Beweis später in der Schule erklären sollst, reichen diese Gedanken als roter Faden.</p>
+      <div class="recap">
+        <article class="card">
+          <h3>Dein Merkzettel</h3>
+          <ol class="recap-list">
+            <li><span class="list-dot">1</span><span>Angenommen, √2 wäre ein <strong>vollständig gekürzter Bruch a/b</strong>.</span></li>
+            <li><span class="list-dot">2</span><span>Quadrieren liefert <strong>a² = 2b²</strong>. Also ist a gerade.</span></li>
+            <li><span class="list-dot">3</span><span>Schreibe <strong>a = 2k</strong> und setze ein. Dann gilt <strong>b² = 2k²</strong>.</span></li>
+            <li><span class="list-dot">4</span><span>Somit ist auch b gerade. a und b könnten also beide durch 2 geteilt werden – <strong>Widerspruch!</strong></span></li>
+            <li><span class="list-dot">5</span><span>Die Annahme war falsch. <strong>√2 ist irrational.</strong></span></li>
+          </ol>
+        </article>
+        <article class="card faq">
+          <h3>Typische Fragen</h3>
+          <details><summary>Muss ich wissen, was „irrational“ heißt?</summary><div class="details-content"><p>Ja, aber es ist einfach: „Irrational“ heißt hier nur, dass die Zahl <strong>nicht als Quotient zweier ganzer Zahlen</strong> geschrieben werden kann.</p></div></details>
+          <details><summary>Wieso reicht „1,414…“ nicht als Beweis?</summary><div class="details-content"><p>Weil man aus ein paar Nachkommastellen nicht schließen kann, dass es <strong>keinen</strong> exakten Bruch gibt. Der Beweis muss alle möglichen Brüche auf einmal ausschließen – und genau das tut unser Widerspruchsbeweis.</p></div></details>
+          <details><summary>Was ist das Wichtigste am Widerspruch?</summary><div class="details-content"><p>Der angenommene Bruch sollte <strong>nicht mehr kürzbar</strong> sein. Unsere Rechnung erzwingt aber, dass Zähler und Nenner <strong>beide gerade</strong> sind und damit doch noch durch 2 geteilt werden könnten. Beides gleichzeitig geht nicht.</p></div></details>
+          <details><summary>Welche Formel muss ich mir merken?</summary><div class="details-content"><p>Diese beiden Gleichungen sind der Kern: <strong>a² = 2b²</strong> und nach Einsetzen von a = 2k <strong>b² = 2k²</strong>. Aus beiden folgt jeweils, dass die betreffende Zahl gerade ist.</p></div></details>
+        </article>
+      </div>
+    </section>
+  </div>

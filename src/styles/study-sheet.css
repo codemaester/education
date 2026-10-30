@@ -1,0 +1,19 @@
+.study-sheet-page { --brand: var(--color-forest); --text: var(--color-forest); --muted: var(--color-muted); --line: var(--color-rule); --soft: var(--color-sage-light); }
+.study-sheet-page .print-tools { max-width: var(--page-width); width: calc(100% - 2 * var(--page-gutter)); padding: 0; margin: 2rem auto; }
+.study-sheet-page .btn { border-radius: var(--radius-small); font-size: .8rem; font-weight: 600; font-family: var(--font-body); }
+.study-sheet-page .btn-primary { background: var(--color-forest); border-color: var(--color-forest); color: var(--color-paper); }
+.study-sheet-page .btn-primary:hover { background: var(--color-forest-deep); }
+.study-sheet-page .sheet { font-family: var(--font-body); }
+.study-sheet-page h1, .study-sheet-page .page-title, .study-sheet-page h2 { font-family: var(--font-display); font-weight: 550; }
+.study-sheet-page h2 { font-size: 14pt; }
+.study-sheet-page .object { stroke: var(--color-terracotta-dark); }
+.study-sheet-page .sketch text { font-family: var(--font-body); }
+@media screen and (max-width: 720px) {
+  .study-sheet-page th { width: 38%; font-size: .9em; }
+}
+@media print {
+  .print-page .site-header, .print-page .site-footer { display: none !important; }
+  .study-sheet-page .sheet { font-size: 9.5pt; line-height: 1.32; }
+  .study-sheet-page .print-tools { display: none; }
+  .study-sheet-page h2 { font-size: 13pt; }
+}

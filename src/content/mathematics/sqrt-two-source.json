@@ -1,0 +1,15 @@
+{
+  "originalFile": "index 2.html",
+  "sha256": "8823e5ad3f2564f9fde15832552c0d82bc4eaf8f3b20f2f6d406ba29babafcf2",
+  "sections": [
+    "grundidee",
+    "werkzeuge",
+    "beweis",
+    "uebungen",
+    "mitnehmen"
+  ],
+  "proofSteps": 7,
+  "questions": 3,
+  "approximationVariants": 4,
+  "parityVariants": 6
+}

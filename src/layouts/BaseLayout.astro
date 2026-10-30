@@ -1,16 +1,22 @@
 ---
 import '../styles/global.css';
+import Icon from '../components/Icon.astro';
 
 interface Props {
   title: string;
   description?: string;
+  pageClass?: string;
+  skipTo?: string;
 }
 
 const {
   title,
   description = 'Education – eine Sammlung verschiedener Lernseiten.',
+  pageClass,
+  skipTo = 'inhalt',
 } = Astro.props;
 const baseUrl = import.meta.env.BASE_URL;
+const courseUrl = `${baseUrl}physik/optik/`;
 ---
 
 <!doctype html>
@@ -23,18 +29,28 @@ const baseUrl = import.meta.env.BASE_URL;
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <title>{title} | Education</title>
   </head>
-  <body>
-    <a class="skip-link" href="#inhalt">Zum Inhalt</a>
+  <body class={pageClass}>
+    <a class="skip-link" href={`#${skipTo}`}>Zum Inhalt</a>
     <header class="site-header">
-      <a class="site-name" href={baseUrl}>Education</a>
-      <span>Lernen beginnt mit Neugier.</span>
+      <div class="page-shell header-inner">
+        <a class="brand" href={baseUrl} aria-label="Education – Startseite">
+          <svg class="brand-mark" viewBox="0 0 40 44" fill="none" aria-hidden="true"><path d="M20 3C3 9 3 35 20 41c17-6 17-32 0-38Z" stroke="currentColor" stroke-width="1.4"/><path d="M2 22h36M8 9l24 26M8 35 32 9" stroke="currentColor" stroke-width="1.1"/><circle cx="20" cy="22" r="3" fill="var(--color-terracotta)"/></svg>
+          <span class="brand-name">Education<span aria-hidden="true">.</span></span>
+        </a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href={`${baseUrl}#faecher`}>Fächer entdecken</a>
+          <a class="nav-lesson" href={courseUrl} aria-current={Astro.url.pathname === courseUrl ? 'page' : undefined}>Optik lernen <Icon name="arrow" size={17} /></a>
+        </nav>
+      </div>
     </header>
-    <main id="inhalt">
+    <main id="inhalt" tabindex="-1">
       <slot />
     </main>
     <footer class="site-footer">
-      <span>Eine Sammlung von Lernseiten.</span>
-      <a href="https://github.com/codemaester/education">Quellcode auf GitHub</a>
+      <div class="page-shell footer-inner">
+        <p>Education. <span>Für die Freude am Verstehen.</span></p>
+        <div class="footer-links"><a href={`${baseUrl}#faecher`}>Alle Fächer</a><a href="https://github.com/codemaester/education">Quellcode auf GitHub</a></div>
+      </div>
     </footer>
   </body>
 </html>

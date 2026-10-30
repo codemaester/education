@@ -1,0 +1,66 @@
+/* Imported layout and interaction states from physik-optik. Theme overrides live in the shared learning styles. */
+
+.study-sheet-page *{box-sizing:border-box}
+.study-sheet-page a{color:var(--brand);text-underline-offset:.2em}
+.study-sheet-page ::selection{background:var(--brand);color:#fff}
+.study-sheet-page :where(a,button):focus-visible{outline:3px solid var(--brand);outline-offset:3px}
+.study-sheet-page .skip-link{position:absolute;left:12px;top:12px;padding:10px;background:white;clip-path:inset(50%)}
+.study-sheet-page .skip-link:focus{clip-path:none;z-index:2}
+.study-sheet-page .print-tools{max-width:210mm;margin:22px auto;padding:0 16px}
+.study-sheet-page .print-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.study-sheet-page .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:white;color:var(--text);font:inherit;font-weight:750;text-decoration:none;cursor:pointer}
+.study-sheet-page .btn:hover{border-color:var(--brand);background:var(--soft)}
+.study-sheet-page .btn-primary{background:var(--brand);border-color:var(--brand);color:white}
+.study-sheet-page .btn-primary:hover{background:#2547b5;color:white}
+.study-sheet-page .btn svg{width:19px;height:19px}
+.study-sheet-page .print-tools p{margin:12px 0 0;color:var(--muted);font-size:.9rem}
+.study-sheet-page [hidden]{display:none!important}
+.study-sheet-page .sheet{display:flex;flex-direction:column;width:210mm;min-height:297mm;max-width:calc(100% - 24px);margin:0 auto 28px;padding:10mm;background:white;border:1px solid var(--line);font-size:10pt;line-height:1.32}
+.study-sheet-page .sheet-header{padding-bottom:3mm;border-bottom:1.5pt solid var(--brand);margin-bottom:3mm}
+.study-sheet-page h1,.study-sheet-page .page-title{color:var(--text);font-size:23pt;line-height:1.12;letter-spacing:-.025em;margin:0 0 1.5mm}
+.study-sheet-page .page-title{font-size:20pt}
+.study-sheet-page .sheet-header p{margin:0;color:var(--muted);font-size:10pt}
+.study-sheet-page .topics{display:flex;flex:1;flex-direction:column;justify-content:space-between;gap:3mm}
+.study-sheet-page .topic{break-inside:avoid}
+.study-sheet-page .topic-copy{display:flow-root;min-width:0}
+.study-sheet-page .topic-copy>:last-child{margin-bottom:0}
+.study-sheet-page h2{margin:0 0 2mm;font-size:12.5pt;line-height:1.22;letter-spacing:-.015em;color:var(--brand)}
+.study-sheet-page p{margin:1mm 0}
+.study-sheet-page ul,.study-sheet-page ol{margin:1.5mm 0;padding-left:5mm}
+.study-sheet-page li+li{margin-top:1mm}
+.study-sheet-page .rule{font-weight:750}
+.study-sheet-page .formula{font-size:12pt;font-weight:750}
+.study-sheet-page table{width:100%;border-collapse:collapse;font-size:inherit;margin:2mm 0}
+.study-sheet-page th,.study-sheet-page td{text-align:left;vertical-align:top;padding:1mm 0;border-bottom:1px solid var(--line)}
+.study-sheet-page th{font-weight:750;width:22%;padding-right:3mm}
+.study-sheet-page .sketch{display:block;float:right;width:58mm;height:auto;margin:0 0 3mm 3mm;color:var(--text);overflow:visible}
+.study-sheet-page .sketch text{fill:currentColor;stroke:none;font:14px Arial,sans-serif}
+.study-sheet-page .sketch .label{font-weight:bold}
+.study-sheet-page .surface{stroke:#505b6c;stroke-width:2;fill:none}
+.study-sheet-page .ray{stroke:#172033;stroke-width:1.8;fill:none;marker-end:url(#arrow)}
+.study-sheet-page .normal,.study-sheet-page .extension{stroke:#505b6c;stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.study-sheet-page .object{stroke:#3157d5;stroke-width:3;fill:none}
+.study-sheet-page .shade{fill:#e4e7ec}
+.study-sheet-page .dark-shade{fill:#a6aeb9}
+.study-sheet-page .check{display:block;padding-top:3mm;border-top:1px solid var(--line)}
+.study-sheet-page .sheet-footer{display:flex;justify-content:space-between;gap:5mm;border-top:1px solid var(--line);padding-top:2mm;margin-top:3mm;color:var(--muted);font-size:8pt}
+.study-sheet-page .page-number{white-space:nowrap;font-variant-numeric:tabular-nums}
+.study-sheet-page .svg-defs{position:absolute;width:0;height:0;overflow:hidden}
+@media screen and (max-width:720px){
+ .study-sheet-page .print-tools{margin:16px auto;padding:0 12px}
+ .study-sheet-page .sheet{min-height:0;padding:22px 18px;font-size:11pt;line-height:1.5}
+ .study-sheet-page .topics{gap:24px}
+ .study-sheet-page .topic{display:block}
+ .study-sheet-page h1{font-size:26pt}.study-sheet-page h2{font-size:14pt}.study-sheet-page .page-title{font-size:22pt}
+ .study-sheet-page th{width:30%;overflow-wrap:anywhere}
+ .study-sheet-page .sketch{float:none;width:100%;max-width:420px;margin:12px auto}
+}
+@page{size:A4 portrait;margin:10mm}
+@media print{
+ .study-sheet-page .print-tools,.study-sheet-page .skip-link{display:none!important}
+ .study-sheet-page .sheet{width:auto;min-height:276mm;max-width:none;margin:0;padding:0;border:0}
+ .study-sheet-page .sheet+.sheet{break-before:page;page-break-before:always}
+ .study-sheet-page .topic{break-inside:avoid;page-break-inside:avoid}
+ .study-sheet-page h2{break-after:avoid}
+ .study-sheet-page .sketch{max-width:none}
+}

@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "check": "astro check",
+    "test:unit": "node --test tests/*.test.cjs tests/*.test.mjs",
+    "test:browser": "node tests/browser.mjs",
     "build": "astro check && astro build",
     "preview": "astro preview"
   },
@@ -13,10 +15,13 @@
     "node": ">=24 <25"
   },
   "dependencies": {
+    "@fontsource-variable/manrope": "5.3.0",
+    "@fontsource-variable/newsreader": "5.3.0",
     "astro": "7.4.4"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
+    "playwright": "1.64.1",
     "typescript": "6.0.3"
   }
 }

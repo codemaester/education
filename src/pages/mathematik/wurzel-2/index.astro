@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import hero from '../../../content/mathematics/sqrt-two-hero.html?raw';
+import lesson from '../../../content/mathematics/sqrt-two.html?raw';
+import '../../../styles/imported/sqrt-two.css';
+import '../../../styles/mathematics.css';
+const baseUrl = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Warum √2 irrational ist" description="Verstehe Schritt für Schritt, warum √2 kein Bruch sein kann: mit interaktiven Beispielen, einem Beweis-Navigator, Wissenstest und Merkzettel.">
+  <div class="sqrt2-page">
+    <div class="page-shell"><nav class="breadcrumb" aria-label="Brotkrumennavigation"><a href={baseUrl}>Startseite</a><Icon name="chevron" size={12}/><a href={`${baseUrl}faecher/mathematik/`}>Mathematik</a><Icon name="chevron" size={12}/><span aria-current="page">Wurzel aus 2</span></nav><noscript><p class="math-noscript">Erklärungen, Beweis und Merkzettel bleiben ohne JavaScript lesbar. Für Experimente, Beweis-Navigator und automatische Quiz-Auswertung aktiviere JavaScript. Drucken kannst du über die Druckfunktion deines Browsers.</p></noscript></div>
+    <Fragment set:html={hero}/>
+    <nav class="math-course-nav" aria-label="Abschnitte der Lernseite"><div class="page-shell math-nav-inner"><a href="#grundidee">Grundidee</a><a href="#werkzeuge">Vorwissen</a><a href="#beweis">Der Beweis</a><a href="#uebungen">Wissenstest</a><a href="#mitnehmen">Merkzettel</a><button class="button" type="button" id="print-button" disabled data-requires-js><Icon name="print" size={17}/>Drucken / PDF</button></div></nav>
+    <Fragment set:html={lesson}/>
+    <div class="page-shell math-back"><a class="text-link" href={`${baseUrl}faecher/mathematik/`}><span>Zurück zu Mathematik</span><Icon name="arrow" size={18}/></a><a class="text-link" href="#oben"><span>Zum Anfang</span></a></div>
+  </div>
+</BaseLayout>
+<script>import '../../../scripts/sqrt-two.js';</script>

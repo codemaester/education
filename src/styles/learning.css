@@ -1,0 +1,136 @@
+/* Reusable lesson styling, with a scoped adapter for the imported Optik content. */
+.optics-page, .study-sheet-page {
+  --bg: var(--color-paper); --panel: var(--color-surface); --text: var(--color-forest);
+  --muted: var(--color-muted); --line: var(--color-rule); --brand: var(--color-forest);
+  --brand2: var(--color-terracotta); --on-brand: var(--color-paper);
+  --good: var(--color-correct); --bad: var(--color-incorrect); --warn: #8e6430;
+  --soft: var(--color-sage-light); --soft2: #eee4d8;
+  --shadow: none;
+}
+.optics-page .container { width: min(var(--page-width), calc(100% - 2 * var(--page-gutter))); }
+.optics-page .icon { width: var(--icon-size, 22px); height: var(--icon-size, 22px); display: inline-block; }
+.optics-page .button { color: var(--color-paper); }
+.optics-page .button-secondary { color: var(--color-forest); }
+.optics-page h1, .optics-page h2 { font-family: var(--font-display); font-weight: 450; letter-spacing: -0.025em; }
+.optics-page .course-hero { display: grid; grid-template-columns: 1.12fr 1fr; gap: 2rem; align-items: center; padding-block: 1.5rem 2.5rem; }
+.optics-page .course-hero h1 { font-size: clamp(3rem, 5.5vw, 5.25rem); line-height: 1.02; margin: 0 0 1.5rem; }
+.optics-page em { color: var(--color-terracotta-dark); font-weight: inherit; }
+.optics-page .course-meta { color: var(--color-muted); font-size: 0.75rem; margin: 0 0 1rem; }
+.optics-page .course-lead { max-width: 50ch; color: var(--color-muted); font-size: 0.95rem; }
+.course-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; margin-top: 1.5rem; }
+.course-art { overflow: hidden; border-radius: var(--radius-panel); }
+.course-art img { width: 100%; aspect-ratio: 1.25; object-fit: cover; }
+.optics-page .course-guide { max-width: 70ch; padding-bottom: 2rem; font-size: 0.85rem; color: var(--color-muted); }
+.course-guide summary { font-weight: 650; min-height: 44px; align-content: center; color: var(--color-forest); }
+.course-guide ol { padding-left: 1.25rem; }
+.optics-page .toolbar { background: var(--color-paper); }
+.optics-page .toolbar-inner { min-height: 70px; padding-block: 0.65rem; }
+.optics-page .btn { font-size: 0.75rem; font-weight: 600; border-radius: var(--radius-small); background: transparent; min-height: 44px; }
+.optics-page .chapter-menu summary { border-radius: var(--radius-small); background: var(--color-surface); border-color: var(--color-rule); font-size: 0.8rem; }
+.optics-page .chapter-picker { border-radius: var(--radius-panel); box-shadow: 0 12px 28px rgba(38, 61, 53, 0.1); }
+.optics-page .study-sheet-link { margin-left: auto; color: var(--color-forest); background: var(--color-sage-light); }
+.optics-page .layout { grid-template-columns: 210px minmax(0, 1fr); gap: 3rem; padding-top: 2.5rem; }
+.optics-page nav.side { top: 92px; padding: 0; background: none; border: 0; border-radius: 0; font-size: 0.8rem; }
+.optics-page nav.side a { display: flex; align-items: baseline; gap: 0.75rem; padding: 0.8rem 0.5rem; border-radius: var(--radius-small); font-size: 0.75rem; line-height: 1.5; }
+.optics-page nav.side a > span { font-variant-numeric: tabular-nums; color: var(--color-muted); font-size: 0.65rem; }
+.optics-page nav.side a[aria-current] { background: var(--color-sage-light); color: var(--color-forest); }
+.lesson-content { min-width: 0; }
+.optics-page .chapter { padding: clamp(1.5rem, 3vw, 3rem); margin-bottom: 2.5rem; border: 1px solid var(--color-rule); border-radius: var(--radius-panel); background: var(--color-surface); }
+.optics-page .chapter-head { gap: 1rem; margin-bottom: 1.5rem; }
+.optics-page .chapter-head .num { background: var(--color-sand); color: var(--color-forest); font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; border-radius: var(--radius-small); }
+.optics-page .chapter h2 { font-size: clamp(2rem, 3.2vw, 2.8rem); line-height: 1.12; }
+.optics-page .chapter h3 { font-family: var(--font-display); font-weight: 550; font-size: 1.65rem; line-height: 1.2; margin-top: 2rem; }
+.optics-page p, .optics-page li { font-size: 0.9rem; line-height: 1.8; }
+.optics-page .chapter-head p { margin-top: 0.6rem; }
+.optics-page .card { border: 0; border-radius: 0; background: none; padding: 0.5rem 0; }
+.optics-page .card h3 { margin-top: 0.5rem; }
+.optics-page .grid2 { gap: 0.75rem 2rem; }
+.optics-page .note { border: 0; border-radius: var(--radius-small); padding: 1.1rem 1.25rem; background: var(--color-sage-light); }
+.optics-page .note.good { background: #e9ede3; }
+.optics-page .note.warn { background: #f2e8d9; }
+.optics-page .table { font-size: 0.8rem; }
+.optics-page .table th { font-weight: 650; }
+.optics-page .live-sim, .optics-page .css-sim { background: var(--color-sage-light); border: 1px solid var(--color-rule); border-radius: var(--radius-panel); box-shadow: none; }
+.optics-page .live-top { background: none; border: 0; padding-top: 1.5rem; }
+.optics-page .live-title { font-family: var(--font-display); font-size: 1.8rem; font-weight: 500; }
+.optics-page .live-subtitle, .optics-page .live-badge { color: var(--color-muted); font-size: 0.75rem; }
+.optics-page .live-badge { background: var(--color-surface); border-color: var(--color-rule); }
+.optics-page .live-stage { background: var(--color-surface); border-color: var(--color-rule); border-radius: var(--radius-small); }
+.optics-page .control-card { background: transparent; border: 0; padding: 0.25rem 0 0.75rem; }
+.optics-page .control-card label { font-size: 0.75rem; font-weight: 650; }
+.optics-page .control-card select { background: var(--color-surface); border-color: var(--color-rule); border-radius: var(--radius-small); }
+.optics-page .control-card input { accent-color: var(--color-forest); }
+.optics-page .metric { background: var(--color-surface); border: 0; border-radius: var(--radius-small); }
+.optics-page .metric strong { font-size: 0.9rem; }
+.optics-page .live-explain { background: var(--color-sand); border: 0; border-radius: var(--radius-small); font-size: 0.8rem; font-weight: 500; }
+.optics-page .live-reset, .optics-page .critical-jump { border-radius: var(--radius-small); font-size: 0.75rem; }
+.optics-page .live-ray-in, .optics-page .ray-in { stroke: var(--color-terracotta); }
+.optics-page .live-ray-ref, .optics-page .ray-ref { stroke: #53765e; }
+.optics-page .live-ray-out, .optics-page .ray-out { stroke: #7c7054; }
+.optics-page .live-mirror, .optics-page .mirror { stroke: #53765e; }
+.optics-page .live-ray-faint { stroke: #53765e; }
+.optics-page .live-object { stroke: var(--color-terracotta); }
+.optics-page .live-glow { fill: var(--color-terracotta); }
+@container (max-width: 480px) {
+  .optics-page .live-stage text { paint-order: stroke; stroke: var(--color-surface); stroke-width: 3px; stroke-linejoin: round; }
+}
+.optics-page .video-modern { border-radius: var(--radius-panel); box-shadow: none; border-color: var(--color-rule); background: var(--color-paper); }
+.optics-page .video-visual { background: var(--color-forest); }
+.optics-page .video-modern[data-chapter] .video-visual { background: var(--color-forest); }
+.optics-page .video-art { background: var(--color-forest); }
+.optics-page .video-info h4 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 500; line-height: 1.2; }
+.optics-page .video-hosted .video-embed, .optics-page .video-primary { border-radius: var(--radius-small); }
+.optics-page .video-art-cta { border-radius: var(--radius-small); background: rgba(26,48,40,.9); font-weight: 600; }
+.optics-page .quiz { border-top: 1px solid var(--color-rule); }
+.optics-page .quiz-intro { border: 0; border-radius: var(--radius-small); background: var(--color-sage-light); }
+.optics-page .quiz-count { border: 0; border-radius: var(--radius-small); font-size: 0.75rem; }
+.optics-page .quiz-section, .optics-page .css-mcq { border-radius: var(--radius-small); border-color: var(--color-rule); background: var(--color-surface); }
+.optics-page .quiz-section > summary { background: var(--color-sage-light); font-size: 0.9rem; font-weight: 600; }
+.optics-page .quiz-section-label { border-radius: var(--radius-small); font-weight: 500; }
+.optics-page .quiz-option label { background: var(--color-surface); border-radius: var(--radius-small); font-size: 0.85rem; }
+.optics-page .option-feedback { font-size: 0.8rem; font-weight: 600; }
+.optics-page .written, .optics-page details.solution { border-color: var(--color-rule); border-radius: var(--radius-small); }
+.optics-page textarea, .transfer-task textarea { width: 100%; min-height: 120px; background: var(--color-paper); color: var(--color-forest); border: 1px solid var(--color-rule); border-radius: var(--radius-small); padding: 0.85rem; resize: vertical; line-height: 1.7; }
+.optics-page .chapter-footer { border-top-color: var(--color-rule); }
+.optics-page .chapter-footer a { border-radius: var(--radius-small); font-size: 0.7rem; }
+.optics-page .course-note { font-size: 0.75rem; color: var(--color-muted); padding-bottom: 1rem; }
+.assessment-heading { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.assessment-heading > .icon { color: var(--color-terracotta-dark); }
+.assessment-heading h2 { margin: 0; }
+.assessment-intro { max-width: 65ch; }
+.assessment-question { margin: 2rem 0; padding: 1.25rem; border: 1px solid var(--color-rule); border-radius: var(--radius-small); min-width: 0; }
+.assessment-question legend { font-size: 0.9rem; font-weight: 650; max-width: 100%; padding-inline: 0.5rem; }
+.assessment-question legend > span { color: var(--color-terracotta-dark); }
+.assessment-option { display: flex; align-items: baseline; gap: 0.75rem; cursor: pointer; padding: 0.75rem 0.5rem; font-size: 0.85rem; }
+.assessment-option input { flex: 0 0 auto; }
+.assessment-option:has(input:checked) { background: var(--color-sage-light); border-radius: var(--radius-small); }
+.assessment-feedback { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-rule); }
+.assessment-feedback p { font-size: 0.8rem; }
+.assessment-feedback a { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; }
+.answer-status { font-weight: 700; }
+[data-correct='true'] .answer-status { color: var(--color-correct); }
+[data-correct='false'] .answer-status { color: var(--color-incorrect); }
+.assessment-actions { display: flex; flex-wrap: wrap; gap: 1rem; }
+.assessment-submit:disabled { opacity: .55; cursor: not-allowed; }
+.assessment-result { margin-top: 1.5rem; padding: 1.25rem; background: var(--color-sage-light); border-radius: var(--radius-small); font-weight: 650; }
+.assessment-result:focus { outline: 2px solid var(--color-forest); outline-offset: 4px; }
+.transfer-task { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--color-rule); }
+.transfer-task > label { font-size: 0.9rem; }
+@media (max-width: 1100px) { .optics-page .layout { grid-template-columns: 1fr; } .optics-page nav.side { display: none; } }
+@media (max-width: 740px) {
+  .optics-page .course-hero { grid-template-columns: 1fr; gap: 1.5rem; padding-top: 1rem; }
+  .optics-page .course-hero h1 { font-size: clamp(2.9rem, 10vw, 4rem); }
+  .course-art img { aspect-ratio: 16 / 8; }
+  .optics-page .toolbar-inner { gap: .5rem; }
+  .optics-page .chapter { padding: 1.5rem 1.1rem; }
+  .optics-page .chapter h2 { font-size: 2rem; }
+  .optics-page .chapter h3 { font-size: 1.5rem; }
+  .optics-page .live-title { font-size: 1.5rem; }
+  .optics-page .course-hero-actions { gap: 1rem; }
+}
+@media (max-width: 440px) { .optics-page .toolbar-shortcuts { display: none; } .assessment-question { padding: 1rem .6rem; } }
+@media print {
+  .course-hero, .course-guide, .course-note, .optics-page .toolbar, .optics-page nav.side { display: none !important; }
+  .optics-page .layout { display: block; width: 100%; padding: 0; }
+  .optics-page .chapter { border: 0; padding: 0; margin-bottom: 1cm; }
+}
