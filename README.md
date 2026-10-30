@@ -18,7 +18,7 @@ npm run dev
 ```
 
 `nvm` ist optional; eine anderweitig installierte Node-24-Version genügt.
-Die Seite ist unter <http://localhost:4321/education/> erreichbar.
+Die Seite ist unter <http://localhost:4321/> erreichbar.
 
 | Befehl | Zweck |
 | --- | --- |
@@ -45,7 +45,7 @@ PRODUCT.md                    Bestätigter Projektumfang
 ## Weitere Lernseiten hinzufügen
 
 Astro bildet die Dateien unter `src/pages/` auf URLs ab. Beispielsweise wird
-`src/pages/mathematik/index.astro` unter `/education/mathematik/` erreichbar:
+`src/pages/mathematik/index.astro` unter `/mathematik/` erreichbar:
 
 ```astro
 ---
@@ -74,9 +74,13 @@ Assets, die aus `src/` importiert werden, verarbeitet Astro selbst.
 
 1. Im Repository **Settings → Pages → Build and deployment → Source** auf
    **GitHub Actions** setzen.
-2. Die Projektdateien einschließlich `package-lock.json` committen und auf
+2. Unter **Custom domain** die Domain `edu.promptworks.eu` eintragen. Beim
+   DNS-Anbieter einen CNAME für `edu` mit dem Ziel `codemaester.github.io.`
+   (einschließlich abschließendem Punkt) setzen. Nach erfolgreicher DNS-Prüfung
+   und Zertifikatsbereitstellung **Enforce HTTPS** aktivieren.
+3. Die Projektdateien einschließlich `package-lock.json` committen und auf
    `main` pushen.
-3. Unter **Actions → Deploy to GitHub Pages** den Workflow verfolgen.
+4. Unter **Actions → Deploy to GitHub Pages** den Workflow verfolgen.
 
 Bei jedem Push auf `main` installiert der Build-Job die Abhängigkeiten mit
 `npm ci`, führt `npm run build` aus und lädt `dist/` als Pages-Artefakt hoch.
@@ -87,12 +91,15 @@ nicht erforderlich. Eventuelle Freigaberegeln des Environments gelten weiterhin.
 Der Workflow kann auch manuell über **Run workflow** gestartet werden.
 Veröffentlicht wird ausschließlich der Branch `main`.
 
-Erwartete Adresse nach dem ersten erfolgreichen Deployment:
-<https://codemaester.github.io/education/>.
+Adresse nach erfolgreichem Deployment:
+<https://edu.promptworks.eu/>.
 
-`astro.config.mjs` setzt dazu `site: 'https://codemaester.github.io'` und
-`base: '/education'`. Bei einem anderen Repository-Namen oder einer eigenen
-Domain müssen diese Werte und die dokumentierte Adresse angepasst werden.
+`astro.config.mjs` setzt dazu `site: 'https://edu.promptworks.eu'`. Ohne eigenen
+`base`-Wert liegt die Website direkt unter `/`. Bei einem Domainwechsel müssen
+`site`, die Pages-Einstellungen und die dokumentierte Adresse angepasst werden.
+Da über GitHub Actions veröffentlicht wird, ist keine `CNAME`-Datei im
+Repository erforderlich; die Custom Domain wird in den Pages-Einstellungen
+verwaltet.
 
 ## Veröffentlichung prüfen
 
@@ -102,7 +109,7 @@ npm run build
 npm run preview
 ```
 
-Unter <http://localhost:4321/education/> prüfen:
+Unter <http://localhost:4321/> prüfen:
 
 - „Hello World!“ und die Styles werden angezeigt.
 - Favicon, CSS und das JavaScript-Modul laden ohne 404-Fehler.

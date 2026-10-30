@@ -124,7 +124,7 @@
       "name": "Shared header",
       "kind": "nav",
       "description": "Wrapping header with the Education home link and supporting text.",
-      "html": "<header class=\"ds-header\"><a class=\"ds-home\" href=\"/education/\">Education</a><span>Lernen beginnt mit Neugier.</span></header>",
+      "html": "<header class=\"ds-header\"><a class=\"ds-home\" href=\"/\">Education</a><span>Lernen beginnt mit Neugier.</span></header>",
       "css": ".ds-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.5rem 2rem; padding: 1.75rem 0; border-bottom: 1px solid var(--rule, #cbd2c8); color: var(--muted, #53665c); font: 0.9rem/1.65 system-ui, sans-serif; } .ds-home { color: var(--accent, #235c42); font-size: 1.15rem; font-weight: 700; text-decoration: none; text-underline-offset: 0.25em; } .ds-home:hover { color: var(--accent-hover, #17442f); } .ds-home:focus-visible { outline: 3px solid var(--accent, #235c42); outline-offset: 5px; }"
     }
   ],

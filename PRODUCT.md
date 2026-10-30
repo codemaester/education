@@ -20,6 +20,6 @@ ermöglicht zusätzlich den Funktionstest des ausgelieferten JavaScripts.
 ## Capabilities and Constraints
 
 - Ein gemeinsames Astro-Projekt mit erweiterbaren Unterseiten.
-- Hosting unter `https://codemaester.github.io/education/`.
+- Hosting unter `https://edu.promptworks.eu/` über GitHub Pages.
 - Responsive Startseite, gemeinsames Layout und gemeinsame Styles.
 - Konkrete Zielgruppen, Lernthemen und weiterführende Funktionen sind noch offen.
