@@ -1,0 +1,40 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Education – eine Sammlung verschiedener Lernseiten.',
+} = Astro.props;
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <title>{title} | Education</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#inhalt">Zum Inhalt</a>
+    <header class="site-header">
+      <a class="site-name" href={baseUrl}>Education</a>
+      <span>Lernen beginnt mit Neugier.</span>
+    </header>
+    <main id="inhalt">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <span>Eine Sammlung von Lernseiten.</span>
+      <a href="https://github.com/codemaester/education">Quellcode auf GitHub</a>
+    </footer>
+  </body>
+</html>

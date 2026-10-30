@@ -1,0 +1,15 @@
+# Dependencies and generated output
+node_modules/
+dist/
+.astro/
+
+# Local configuration and tooling
+.env
+.env.*
+!.env.example
+.aws/
+.codex/
+.agents/
+.impeccable/review/
+*.log
+.DS_Store
