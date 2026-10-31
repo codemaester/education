@@ -1,0 +1,7 @@
+{
+  "asset": "src/assets/hotel-guest-painted.png",
+  "tool": "built-in image_gen.imagegen",
+  "useCase": "illustration-story",
+  "transparentBackground": true,
+  "prompt": "Use case: illustration-story. Asset type: a reusable tiny transparent character cutout for an educational interactive diagram, shown at roughly 32 by 44 CSS pixels. Primary request: one single friendly adult hotel guest, full body, standing in a slight walking pose facing three-quarter right. Painterly Modern Classic editorial illustration, hand-painted gouache and watercolor with subtle natural paper grain INSIDE the painted silhouette, clean readable contours, compact broad coat silhouette and simple clear face, warm cream shirt, deep forest green coat (#263d35), sand trousers, dark shoes, small restrained terracotta detail (#99452e). Warm natural skin. Sophisticated human editorial style, neither a stick figure nor an emoji nor a 3D mascot. Portrait composition, tightly frame the entire figure with minimal transparent margins, keep all head and shoes visible. Rich opaque paint on the figure for contrast on both warm sand and dark forest surfaces. Background MUST be truly transparent alpha, including between arms and body and between legs; no paper rectangle, no white or colored background, no ground patch, no drop shadow, no scenery, no lettering, no numbering, no additional people or objects. Paper texture only in the coat and painted person, never outside the silhouette."
+}

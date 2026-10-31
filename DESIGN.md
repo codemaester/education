@@ -220,14 +220,18 @@ Small controls, notes, answer fields, and labels use the small radius; chapter p
 
 ## Components
 
-The infinite hotel uses small numbered SVG people for both existing and new
-guests. Forest doors and travelers identify existing guests; terracotta identifies
+The infinite hotel uses small numbered gouache-painted people with paper grain
+inside their transparent silhouettes for both existing and new guests. Forest doors and travelers identify existing guests; terracotta identifies
 new arrivals. Two labelled rule blocks have a 2rem gap and stack below 740px;
 an underline marks the active rule. Both one-guest and bus scenarios use the same
-1.6s relocation, 0.4s vacant-room hold and 1.2s arrival sequence. Travelers leave
+9.7s narrated sequence: 1.2s preparation, 0.7s exit, 0.9s aisle hold, 2.2s
+relocation, 1.6s empty-room hold, 1.1s arrival explanation and 2s entry. Travelers leave
 their actual doors, follow measured aisle paths across the responsive room rows,
 and enter the assigned doors. A labelled continuation represents destinations
-beyond the eight visible rooms. A waiting area shows the incoming guest or the
+beyond the eight visible rooms; departing guests walk straight off the right
+edge of their own aisle without a background tile or an early fade. A short
+caption above the scene explains each transition, and Pause/Continue controls
+both motion and explanatory holds. A waiting area shows the incoming guest or the
 first four of infinitely many bus guests. Reset and mode changes cancel the
 sequence; replay starts it again. Reduced motion, hidden or offscreen stages,
 and size changes settle to the correct final occupancy without leftover figures.

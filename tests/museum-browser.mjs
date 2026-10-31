@@ -262,6 +262,25 @@ export async function testMuseum(browser, origin, screenshots) {
         await button.focus();
         await hotelPage.keyboard.press('Enter');
       } else await button.click();
+      await phase('preparing');
+      assert.equal(await hotelPage.locator('[data-hotel-mover]').count(), 0);
+      const explanation = hotelPage.locator('[data-hotel-status]');
+      const captionBox = await explanation.boundingBox();
+      const stageBox = await hotelPage.locator('[data-hotel-stage]').boundingBox();
+      assert.ok(captionBox.y + captionBox.height <= stageBox.y);
+      if (width === 1440 && mode === 'one') {
+        await hotelPage.locator('[data-hotel-pause]').click();
+        await hotelPage.waitForTimeout(1400);
+        assert.equal(await hotel.getAttribute('data-hotel-phase'), 'preparing');
+        assert.equal(await hotelPage.locator('[data-hotel-pause]').textContent(), 'Weiter');
+        await hotelPage.locator('[data-hotel-pause]').click();
+      }
+      await phase('departed');
+      assert.match(await explanation.textContent(), /im Flur/);
+      const waitingPosition = await hotelPage.locator('[data-hotel-mover="1"]').boundingBox();
+      await hotelPage.waitForTimeout(200);
+      const stillWaiting = await hotelPage.locator('[data-hotel-mover="1"]').boundingBox();
+      assert.ok(Math.hypot(stillWaiting.x - waitingPosition.x, stillWaiting.y - waitingPosition.y) < 1);
       await phase('moving');
       assert.ok(await button.isDisabled());
       assert.match(await hotelPage.locator('[data-hotel-waiting-title]').textContent(), /wart/);
@@ -274,14 +293,50 @@ export async function testMuseum(browser, origin, screenshots) {
       assert.ok(Math.hypot(traveling.x - origin.x, traveling.y - origin.y) > 5);
       const targets = await hotelPage.locator('[data-hotel-mover]').evaluateAll(nodes => nodes.map(el => Number(el.dataset.hotelTarget)));
       assert.deepEqual(targets, mode === 'one' ? [2,3,4,5,6,7,8,9] : [2,4,6,8,10,12,14,16]);
-      if ([1440, 320].includes(width)) await hotel.screenshot({ path: `${capture}/hotel-${mode}-moving-${width}.png` });
+      const offscreen = await hotelPage.locator('[data-hotel-mover]').evaluateAll(nodes => nodes.filter(el => Number(el.dataset.hotelTarget) > 8).map(el => {
+        const frames = el.getAnimations().at(-1).effect.getKeyframes();
+        const start = frames[0].transform.match(/translate\(([-\d.]+)px, ([-\d.]+)px\)/);
+        const end = frames.at(-1).transform.match(/translate\(([-\d.]+)px, ([-\d.]+)px\)/);
+        return { x1: Number(start[1]), y1: Number(start[2]), x2: Number(end[1]), y2: Number(end[2]), opacity: frames.at(-1).opacity, background: getComputedStyle(el).backgroundColor };
+      }));
+      for (const route of offscreen) {
+        assert.ok(route.x2 > stageBox.width, 'offscreen guests leave at the right edge');
+        assert.equal(route.y2, route.y1, 'offscreen guests keep their aisle instead of heading down to the text');
+        assert.equal(Number(route.opacity), 1, 'guests walk out without fading in the middle');
+        assert.equal(route.background, 'rgba(0, 0, 0, 0)');
+      }
+      if (width === 1440 && mode === 'one') {
+        await hotelPage.locator('[data-hotel-pause]').click();
+        await traveler.evaluate(async el => { await Promise.all(el.getAnimations().map(animation => animation.ready)); });
+        const frozen = await traveler.boundingBox();
+        await hotelPage.waitForTimeout(350);
+        const stillFrozen = await traveler.boundingBox();
+        assert.ok(Math.hypot(stillFrozen.x - frozen.x, stillFrozen.y - frozen.y) < 1);
+        await hotelPage.locator('[data-hotel-pause]').click();
+        const alpha = await hotelPage.locator('.hotel-resident .hotel-person-icon').first().evaluate(async img => {
+          await img.decode();
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+          const context = canvas.getContext('2d');
+          context.drawImage(img, 0, 0);
+          return [[0,0],[canvas.width - 1,0],[0,canvas.height - 1],[canvas.width - 1,canvas.height - 1]].map(([x,y]) => context.getImageData(x,y,1,1).data[3]);
+        });
+        assert.deepEqual(alpha, [0,0,0,0], 'painted character has a transparent image background');
+      }
+      if ([1440, 320].includes(width)) await hotel.locator('[data-hotel-stage]').screenshot({ path: `${capture}/hotel-${mode}-moving-${width}.png` });
       await phase('vacant');
       const intermediate = await hotelPage.locator('[data-hotel-guest]').allTextContents();
       assert.deepEqual(intermediate, mode === 'one' ? ['—','1','2','3','4','5','6','7'] : ['—','1','—','2','—','3','—','4']);
+      await hotelPage.waitForTimeout(350);
+      assert.equal(await hotel.getAttribute('data-hotel-phase'), 'vacant', 'leave time to understand the empty rooms');
+      assert.match(await explanation.textContent(), /frei/);
+      await phase('welcoming');
+      assert.equal(await hotelPage.locator('[data-hotel-mover]').count(), 0);
+      assert.match(await explanation.textContent(), /Jetzt/);
       await phase('arriving');
       assert.equal(await hotelPage.locator('[data-hotel-mover]').count(), mode === 'one' ? 1 : 4);
       assert.ok(await hotelPage.locator('[data-hotel-rule="new"]').evaluate(el => el.hasAttribute('data-active')));
-      if ([1440, 320].includes(width)) await hotel.screenshot({ path: `${capture}/hotel-${mode}-arriving-${width}.png` });
+      if ([1440, 320].includes(width)) await hotel.locator('[data-hotel-stage]').screenshot({ path: `${capture}/hotel-${mode}-arriving-${width}.png` });
       await phase('complete');
       assert.deepEqual(await hotelPage.locator('[data-hotel-guest]').allTextContents(), mode === 'one' ? ['Neu','1','2','3','4','5','6','7'] : ['B1','1','B2','2','B3','3','B4','4']);
       assert.equal(await hotelPage.locator('[data-hotel-mover]').count(), 0);
@@ -289,7 +344,7 @@ export async function testMuseum(browser, origin, screenshots) {
     }
     // Replay is a fresh initial arrangement; resetting cancels its pending work.
     await button.click();
-    await phase('moving');
+    await phase('preparing');
     await hotelPage.locator('[data-hotel-reset]').click();
     await phase('ready');
     assert.deepEqual(await hotelPage.locator('[data-hotel-guest]').allTextContents(), ['1','2','3','4','5','6','7','8']);
@@ -305,7 +360,7 @@ export async function testMuseum(browser, origin, screenshots) {
       await hotelPage.locator('[data-hotel-reset]').click();
       await phase('ready');
       await button.click();
-      await phase('arriving');
+      await phase('welcoming');
       await hotelPage.locator('[data-hotel-mode="bus"]').click();
       await phase('ready');
       await button.click();
@@ -314,7 +369,7 @@ export async function testMuseum(browser, origin, screenshots) {
       await phase('complete');
       await hotelPage.emulateMedia({ reducedMotion: 'no-preference' });
       await button.click();
-      await phase('moving');
+      await phase('leaving');
       await hotelPage.evaluate(() => {
         Object.defineProperty(document, 'hidden', { configurable: true, value: true });
         document.dispatchEvent(new Event('visibilitychange'));
@@ -322,11 +377,11 @@ export async function testMuseum(browser, origin, screenshots) {
       await phase('complete');
       await hotelPage.evaluate(() => { delete document.hidden; });
       await button.click();
-      await phase('moving');
+      await phase('departed');
       await hotelPage.setViewportSize({ width: 1024, height: 1100 });
       await phase('complete');
       await button.click();
-      await phase('moving');
+      await phase('preparing');
       await hotelPage.evaluate(() => window.scrollTo(0, 0));
       await phase('complete');
     }

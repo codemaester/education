@@ -98,6 +98,7 @@ const base = import.meta.env.BASE_URL;
           <div class="exhibit-heading"><h3>Hilberts Unendlichkeitshotel</h3><span>Ein Gedankenexperiment</span></div>
           <div class="hotel-modes" role="group" aria-label="Hotelsituation wählen"><button type="button" data-hotel-mode="one" aria-pressed="true" disabled data-museum-js>Ein neuer Gast</button><button type="button" data-hotel-mode="bus" aria-pressed="false" disabled data-museum-js>Ein unendlicher Bus</button></div>
           <p class="hotel-task" data-hotel-task>Alle Zimmer sind belegt. Vor der Tür wartet noch ein Gast. Öffne die Türen mit einer einzigen Regel.</p>
+          <p class="hotel-explanation" data-hotel-status role="status">Alles ist belegt. Starte den Umzug und beobachte, welche Zimmer frei werden.</p>
           <div class="hotel-stage" data-hotel-stage>
             <div class="hotel-corridor" aria-label="Die ersten acht Zimmer als Ausschnitt des unendlichen Hotels">{Array.from({length:8}, (_, i) => <div class="hotel-door"><span>Zimmer {i + 1}</span><div class="door-frame"><div class="hotel-resident"><HotelGuest/><span data-hotel-guest>{i + 1}</span></div><span class="door-knob" aria-hidden="true"></span></div><small data-guest-label>Bisheriger Gast</small></div>)}</div>
             <p class="hotel-continuation" data-hotel-exit>Weiter zu Zimmer 9, … Die Zimmer gehen ohne letztes Zimmer weiter.</p>
@@ -114,8 +115,7 @@ const base = import.meta.env.BASE_URL;
               <div class="hotel-rule hotel-rule-new" data-hotel-rule="new"><h4 data-rule-title>Neuer Gast</h4><strong data-rule-formula>Neuer Gast → <span>Zimmer 1</span></strong><p data-rule-example>Erst umziehen, dann den neuen Gast aufnehmen.</p></div>
             </div>
           </div>
-          <div class="museum-actions"><button class="button" type="button" data-hotel-run disabled data-museum-js>Gäste umziehen lassen</button><button class="button button-secondary" type="button" data-hotel-reset disabled data-museum-js>Zurücksetzen</button></div>
-          <p class="exhibit-status" data-hotel-status role="status">Überlege: Was passiert mit dem Gast im letzten sichtbaren Zimmer?</p>
+          <div class="museum-actions"><button class="button" type="button" data-hotel-run disabled data-museum-js>Gäste umziehen lassen</button><button class="button button-secondary" type="button" data-hotel-pause aria-pressed="false" hidden>Pause</button><button class="button button-secondary" type="button" data-hotel-reset disabled data-museum-js>Zurücksetzen</button></div>
           <p class="exhibit-footnote">Die acht Türen sind ein Ausschnitt. Es gibt kein letztes Zimmer. Die Regel beschreibt die Zuordnung für alle Gäste, nicht einen real ausführbaren Umzug.</p>
         </div>
         <div class="room-reading"><div><h3>Unendlich plus eins passt hinein.</h3><p>Wenn jeder Gast aus Zimmer n in Zimmer n + 1 zieht, wird Zimmer 1 frei. Kommen unendlich viele neue Gäste mit den Nummern 1, 2, 3, … an, ziehen die bisherigen Gäste von n nach 2n. Die neuen Gäste erhalten die ungeraden Zimmer 1, 3, 5, …</p></div><aside class="museum-insight"><h3>Abzählbar heißt: Jeder kommt dran.</h3><p>Eine Menge ist abzählbar unendlich, wenn ihre Elemente den Zimmernummern 1, 2, 3, … zugeordnet werden können: jedes Element genau einmal.</p><p>Natürliche Zahlen, ganze Zahlen und Brüche haben in diesem Sinn dieselbe Größe.</p></aside></div>

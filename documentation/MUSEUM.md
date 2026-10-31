@@ -43,16 +43,27 @@ Die drei vom Nutzer gewählten Museumsräume übernehmen das Modern-Classic-Them
   Acht Zimmer und sechs Dezimalstellen sind ausdrücklich nur Ausschnitte. Die
   Ersetzungsregel 1 → 2, sonst → 1 vermeidet Mehrdeutigkeit durch 9er-Perioden.
   Einzelgast und Bus nutzen denselben automatischen Ablauf: Die bisherigen
-  Gäste verlassen als nummerierte Figuren ihre Zimmer und beziehen nach
-  n → n+1 beziehungsweise n → 2n ihre neuen Zimmer (1,6 s). Nach einer kurzen
-  Ansicht der freien Zimmer (0,4 s) ziehen die neuen Gäste aus der Wartezone ein
-  (1,2 s). Der Bus bringt ausdrücklich unendlich viele Gäste mit den Nummern
-  1, 2, 3, …; die neuen Gäste erhalten nach k → 2k−1 die ungeraden Zimmer.
+  Gäste verlassen als nummerierte Figuren ihre Zimmer (0,7 s) und beziehen nach
+  n → n+1 beziehungsweise n → 2n ihre neuen Zimmer (2,2 s). Kurze Erklärungen
+  direkt über der Szene begleiten die Vorbereitung (1,2 s), den Halt im Flur
+  (0,9 s), die freien Zimmer (1,6 s) und die Ankündigung der neuen Gäste (1,1 s).
+  Anschließend dauert der Einzug 2 s, insgesamt etwa 9,7 s. „Pause/Weiter“ hält
+  sowohl Bewegungen als auch die Erklärpausen an und setzt sie fort.
+  Der Bus bringt ausdrücklich unendlich viele Gäste mit den Nummern 1, 2, 3, …;
+  die neuen Gäste erhalten nach k → 2k−1 die ungeraden Zimmer. Gäste mit einem
+  Ziel außerhalb des Ausschnitts verlassen ihre jeweilige Reihe gerade nach
+  rechts, ohne zum Beschreibungstext zu laufen oder mitten im Bild zu verblassen.
   Beide Regeln stehen getrennt und beschriftet mit mindestens 2 rem Abstand;
   die jeweils ausgeführte Regel wird unterstrichen. Die ersten acht Zimmer,
-  vier Busgäste und beschriftete Wege zu nicht sichtbaren Zimmern zeigen nur
+  vier Busgäste und beschriftete Fortsetzungen zu nicht sichtbaren Zimmern zeigen nur
   einen endlichen Ausschnitt. Die Wege berücksichtigen beide Zimmerreihen auf
   kleinen Bildschirmen. Waldgrün und Terrakotta unterscheiden beide Gruppen.
+  Die Figuren sind gemalte transparente Ausschnitte mit Papierstruktur nur
+  innerhalb der Person; auch der bewegliche Träger hat keinen Hintergrund.
+  Das Original `src/assets/hotel-guest-painted.png` wurde mit dem eingebauten
+  image_gen-Werkzeug erzeugt. Prompt und Herkunft stehen in
+  `documentation/visual-directions/hotel-guest-painted.json`. Astro erzeugt
+  kleine responsive WebP-Dateien für die Darstellung.
   Bewegungsziele und Zimmerbelegung teilen dieselbe Zuordnungsberechnung.
   Wiederholen startet denselben Ablauf neu. Zurücksetzen und Situationswechsel
   verwerfen alle laufenden Animationen und verzögerten Fortsetzungen. Ein
@@ -96,5 +107,6 @@ Die Zoomprüfung umfasst außerdem normale und reduzierte Bewegung, Vorwärts-/
 Rückwärtsschritte, unterbrochene Animationen, Reglersprünge, Zurücksetzen,
 tiefe Zoomstufen und die Ortsmarke für Ausschnitte unter einem Pixel.
 Die Hotelprüfung kontrolliert die eindeutigen Zuordnungen, bewegliche Figuren,
-freie Zwischenzustände, Einzug, Wiederholung und Abbruch in beiden Phasen sowie
+Erklärpausen, Pause/Weiter, transparente Figuren, rechte Ausgänge, freie
+Zwischenzustände, Einzug, Wiederholung und Abbruch in den Phasen sowie
 reduzierte Bewegung, Tab-/Größenwechsel und das Verlassen des Sichtbereichs.

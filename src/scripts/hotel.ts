@@ -1,7 +1,7 @@
 import { hotelAssignment } from '../data/museum-math';
 
 type Mode = 'one' | 'bus';
-type Phase = 'ready' | 'moving' | 'vacant' | 'arriving' | 'complete';
+type Phase = 'ready' | 'preparing' | 'leaving' | 'departed' | 'moving' | 'vacant' | 'welcoming' | 'arriving' | 'complete';
 type Point = { x: number; y: number };
 
 export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
@@ -10,6 +10,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
   const stage = get('[data-hotel-stage]');
   const layer = get('[data-hotel-motion]');
   const run = get<HTMLButtonElement>('[data-hotel-run]');
+  const pause = get<HTMLButtonElement>('[data-hotel-pause]');
   const status = get('[data-hotel-status]');
   const frames = all('.door-frame');
   const residents = all('.hotel-resident');
@@ -18,13 +19,16 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
   const waiting = all('[data-waiting-person]');
   const existingRule = get('[data-hotel-rule="existing"]');
   const newRule = get('[data-hotel-rule="new"]');
-  const personSVG = residents[0].querySelector('svg')!.outerHTML;
+  const personImage = residents[0].querySelector('.hotel-person-icon')!.outerHTML;
   let mode: Mode = 'one';
   let phase: Phase = 'ready';
   let generation = 0;
   let animations: Animation[] = [];
   let timer = 0;
   let resolveWait: (() => void) | undefined;
+  let remaining = 0;
+  let waitStarted = 0;
+  let paused = false;
 
   function cancel() {
     generation++;
@@ -33,6 +37,10 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     clearTimeout(timer);
     resolveWait?.();
     resolveWait = undefined;
+    paused = false;
+    pause.textContent = 'Pause';
+    pause.setAttribute('aria-pressed', 'false');
+    delete hotel.dataset.hotelPaused;
     layer.replaceChildren();
     residents.forEach(resident => resident.removeAttribute('data-traveling'));
     waiting.forEach(person => person.removeAttribute('data-traveling'));
@@ -42,11 +50,12 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
   function setPhase(next: Phase) {
     phase = next;
     hotel.dataset.hotelPhase = next;
-    const busy = next === 'moving' || next === 'vacant' || next === 'arriving';
+    const busy = next !== 'ready' && next !== 'complete';
     run.disabled = busy;
+    pause.hidden = !busy;
     run.textContent = busy ? 'Umzug läuft …' : next === 'complete' ? 'Noch einmal abspielen' : 'Gäste umziehen lassen';
-    existingRule.toggleAttribute('data-active', next === 'moving');
-    newRule.toggleAttribute('data-active', next === 'arriving');
+    existingRule.toggleAttribute('data-active', ['preparing', 'leaving', 'departed', 'moving', 'vacant'].includes(next));
+    newRule.toggleAttribute('data-active', next === 'welcoming' || next === 'arriving');
   }
 
   function occupants(moved: boolean, includeNew: boolean) {
@@ -103,35 +112,38 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     rules();
     occupants(false, false);
     setPhase('ready');
-    status.textContent = 'Überlege: Was passiert mit dem Gast im letzten sichtbaren Zimmer?';
+    status.textContent = 'Alles ist belegt. Starte den Umzug und beobachte, welche Zimmer frei werden.';
   }
 
   function complete() {
     cancel();
     occupants(true, true);
     setPhase('complete');
-    status.textContent = mode === 'one' ? 'Zimmer 1 nimmt den neuen Gast auf. Gast 8 wohnt jetzt in Zimmer 9, außerhalb unseres Ausschnitts. Jeder bisherige Gast n hat sein Zimmer n + 1.'
-      : 'Die bisherigen Gäste wohnen in den geraden Zimmern. Die Busgäste B1, B2, … belegen alle ungeraden Zimmer. Niemand geht verloren.';
+    status.textContent = mode === 'one' ? 'Alle haben Platz: der neue Gast in Zimmer 1, die bisherigen Gäste je ein Zimmer weiter.'
+      : 'Alle haben Platz: bisherige Gäste in geraden Zimmern, Busgäste in ungeraden Zimmern.';
   }
 
   function point(element: Element): Point {
     const rect = element.getBoundingClientRect();
     const base = stage.getBoundingClientRect();
-    return { x: rect.left - base.left + rect.width / 2 - 18, y: rect.top - base.top + rect.height / 2 - 30 };
+    return { x: rect.left - base.left + rect.width / 2 - 20, y: rect.top - base.top + rect.height / 2 - 38 };
   }
   function lane(room: number) {
     return frames[room - 1].getBoundingClientRect().bottom - stage.getBoundingClientRect().top + 32;
   }
-  async function fly(guest: string, room: number, points: Point[], duration: number, fresh: boolean) {
+  function makeTraveler(guest: string, room: number, fresh: boolean) {
     const traveler = document.createElement('div');
     traveler.className = `hotel-traveler${fresh ? ' hotel-traveler-new' : ''}`;
     traveler.dataset.hotelMover = guest;
     traveler.dataset.hotelTarget = String(room);
-    traveler.innerHTML = personSVG;
+    traveler.innerHTML = personImage;
     const badge = document.createElement('span');
     badge.textContent = guest;
     traveler.append(badge);
     layer.append(traveler);
+    return traveler;
+  }
+  async function fly(traveler: HTMLElement, points: Point[], duration: number, fade = true) {
     let distance = 0;
     const lengths = points.map((p, i) => {
       if (i) distance += Math.hypot(p.x - points[i - 1].x, p.y - points[i - 1].y);
@@ -140,15 +152,25 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     const animation = traveler.animate(points.map((p, i) => ({
       transform: `translate(${p.x}px, ${p.y}px)`,
       offset: distance ? lengths[i] / distance : i / (points.length - 1),
-      opacity: i === points.length - 1 ? 0 : i === 0 ? .6 : 1,
+      opacity: fade && i === points.length - 1 ? 0 : 1,
     })), { duration, easing: 'cubic-bezier(.25,.1,.25,1)', fill: 'both' });
     animations.push(animation);
     await animation.finished.catch(() => undefined);
   }
-  function wait() {
+  function scheduleWait() {
+    waitStarted = performance.now();
+    timer = window.setTimeout(() => {
+      timer = 0;
+      const resolve = resolveWait;
+      resolveWait = undefined;
+      resolve?.();
+    }, remaining);
+  }
+  function wait(milliseconds: number) {
     return new Promise<void>(resolve => {
       resolveWait = resolve;
-      timer = window.setTimeout(() => { resolveWait = undefined; resolve(); }, 400);
+      remaining = milliseconds;
+      scheduleWait();
     });
   }
 
@@ -158,33 +180,57 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     const token = generation;
     const assignment = hotelAssignment(mode);
     size = { width: stage.clientWidth, height: stage.clientHeight };
-    const rail = stage.getBoundingClientRect().width - 2;
-    setPhase('moving');
-    status.textContent = 'Zuerst ziehen die bisherigen Gäste um. Ihre Gastnummer bleibt dieselbe; nur die Zimmernummer ändert sich.';
+    const rail = stage.getBoundingClientRect().width - 6;
+    setPhase('preparing');
+    status.textContent = mode === 'one' ? 'Jeder bisherige Gast zieht ein Zimmer weiter: 1 → 2, 2 → 3, …'
+      : 'Zuerst ziehen die bisherigen Gäste in die geraden Zimmer: 1 → 2, 2 → 4, …';
+    await wait(1200);
+    if (token !== generation) return;
+    setPhase('leaving');
+    status.textContent = 'Die Gäste verlassen ihre bisherigen Zimmer. Ihre Gastnummer bleibt gleich.';
     const trips = assignment.moves.map((move, i) => {
       const origin = point(residents[i]);
       const startLane = lane(i + 1);
-      const target = move.room <= 8 ? point(residents[move.room - 1]) : point(get('[data-hotel-exit]'));
-      const points = [origin, { x: origin.x, y: startLane }];
-      const endLane = move.room <= 8 ? lane(move.room) : target.y;
+      const outside = { x: origin.x, y: startLane };
+      const target = move.room <= 8 ? point(residents[move.room - 1])
+        : { x: layer.getBoundingClientRect().width + 40, y: startLane };
+      const endLane = move.room <= 8 ? lane(move.room) : startLane;
+      const points = [outside];
       if (Math.abs(startLane - endLane) > 1) points.push({ x: rail, y: startLane }, { x: rail, y: endLane });
-      points.push({ x: target.x, y: endLane }, target);
+      points.push({ x: target.x, y: endLane });
+      if (move.room <= 8) points.push(target);
       residents[i].setAttribute('data-traveling', '');
       frames[i].setAttribute('data-open', '');
-      return fly(move.guest, move.room, points, 1600, false);
+      const traveler = makeTraveler(move.guest, move.room, false);
+      return { traveler, points, offscreen: move.room > 8, departure: fly(traveler, [origin, outside], 700, false) };
     });
-    await Promise.all(trips);
+    await Promise.all(trips.map(trip => trip.departure));
+    if (token !== generation) return;
+    setPhase('departed');
+    status.textContent = 'Alle bisherigen Gäste sind im Flur. Jetzt wechseln sie ihre Zimmer.';
+    await wait(900);
+    if (token !== generation) return;
+    setPhase('moving');
+    status.textContent = mode === 'one' ? 'Alle rücken ein Zimmer weiter. Gast 8 geht rechts weiter zu Zimmer 9.'
+      : 'Alle ziehen in gerade Zimmer. Gäste ab Nummer 5 gehen rechts zu weiteren Zimmern.';
+    await Promise.all(trips.map(trip => fly(trip.traveler, trip.points, 2200, !trip.offscreen)));
     if (token !== generation) return;
     layer.replaceChildren();
     residents.forEach(resident => resident.removeAttribute('data-traveling'));
     frames.forEach(frame => frame.removeAttribute('data-open'));
     occupants(true, false);
     setPhase('vacant');
-    status.textContent = mode === 'one' ? 'Der Umzug ist geschafft. Zimmer 1 ist frei für den neuen Gast.' : 'Der Umzug ist geschafft. Die ungeraden Zimmer 1, 3, 5, 7, … sind frei für die Busgäste.';
-    await wait();
+    status.textContent = mode === 'one' ? 'Zimmer 1 ist jetzt frei. Alle bisherigen Gäste haben ein neues Zimmer.'
+      : 'Die ungeraden Zimmer 1, 3, 5, 7, … sind jetzt frei. Jeder bisherige Gast hat sein Zimmer.';
+    await wait(1600);
+    if (token !== generation) return;
+    setPhase('welcoming');
+    status.textContent = mode === 'one' ? 'Jetzt ist Platz für den neuen Gast: Er bekommt Zimmer 1.'
+      : 'Jetzt kommen die Busgäste. Gast 1 bekommt Zimmer 1, Gast 2 Zimmer 3, …';
+    await wait(1100);
     if (token !== generation) return;
     setPhase('arriving');
-    status.textContent = mode === 'one' ? 'Jetzt kommt der neue Gast und zieht in Zimmer 1 ein.' : 'Jetzt ziehen die Busgäste ein: Gast 1 in Zimmer 1, Gast 2 in Zimmer 3, Gast 3 in Zimmer 5, …';
+    status.textContent = mode === 'one' ? 'Der neue Gast zieht in Zimmer 1 ein.' : 'Die Busgäste beziehen die freien ungeraden Zimmer: 1, 3, 5, 7, …';
     await Promise.all(assignment.arrivals.map((move, i) => {
       const origin = point(waiting[i]);
       const target = point(residents[move.room - 1]);
@@ -192,7 +238,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
       const points = [origin, { x: rail, y: origin.y }, { x: rail, y: endLane }, { x: target.x, y: endLane }, target];
       waiting[i].setAttribute('data-traveling', '');
       frames[move.room - 1].setAttribute('data-open', '');
-      return fly(move.guest, move.room, points, 1200, true);
+      return fly(makeTraveler(move.guest, move.room, true), points, 2000);
     }));
     if (token === generation) complete();
   }
@@ -204,7 +250,26 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
   }));
   run.addEventListener('click', () => { void start(); });
   get('[data-hotel-reset]').addEventListener('click', reset);
-  const busy = () => phase === 'moving' || phase === 'vacant' || phase === 'arriving';
+  const busy = () => phase !== 'ready' && phase !== 'complete';
+  pause.addEventListener('click', () => {
+    if (!busy()) return;
+    paused = !paused;
+    run.textContent = paused ? 'Umzug pausiert' : 'Umzug läuft …';
+    pause.textContent = paused ? 'Weiter' : 'Pause';
+    pause.setAttribute('aria-pressed', String(paused));
+    hotel.toggleAttribute('data-hotel-paused', paused);
+    if (paused) {
+      animations.filter(animation => animation.playState === 'running').forEach(animation => animation.pause());
+      if (timer) {
+        clearTimeout(timer);
+        timer = 0;
+        remaining = Math.max(0, remaining - (performance.now() - waitStarted));
+      }
+    } else {
+      animations.filter(animation => animation.playState === 'paused').forEach(animation => animation.play());
+      if (resolveWait) scheduleWait();
+    }
+  });
   document.addEventListener('visibilitychange', () => { if (document.hidden && busy()) complete(); });
   motion.addEventListener('change', () => { if (motion.matches && busy()) complete(); });
   new IntersectionObserver(([entry]) => { if (!entry.isIntersecting && busy()) complete(); }).observe(stage);
