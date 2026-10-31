@@ -3,6 +3,7 @@ import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { chromium } from 'playwright';
+import { testMuseum } from './museum-browser.mjs';
 import { testCarousel } from './carousel-browser.mjs';
 
 // Serve the actual Pages build, including nested index.html routes.
@@ -25,6 +26,7 @@ let browser;
 try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_EXECUTABLE_PATH || undefined });
   await testCarousel(browser, origin, screenshots);
+  await testMuseum(browser, origin, screenshots);
   for (const width of [1440, 1024, 768, 390, 320]) {
     const page = await browser.newPage({ viewport: { width, height: 1000 }, colorScheme: 'light' });
     const errors = [];
@@ -150,9 +152,9 @@ try {
     maths.on('pageerror', error => errors.push(error.message));
     maths.on('response', response => { if (response.url().startsWith(origin) && response.status() >= 400) errors.push(response.url()); });
     await maths.goto(origin + '/faecher/mathematik/');
-    assert.equal(await maths.locator('.course-list-entry').count(), 1);
+    assert.equal(await maths.locator('.course-list-entry').count(), 2);
     assert.equal(await maths.locator('img[src*="sqrt-two-editorial"]').count(), 1);
-    await maths.locator('.course-list-entry').click();
+    await maths.locator('.course-list-entry[href="/mathematik/wurzel-2/"]').click();
     await maths.locator('[data-number="2"]').waitFor({ state: 'visible' });
     await maths.waitForFunction(() => !document.querySelector('[data-number="2"]').disabled);
     await maths.evaluate(() => document.fonts.ready);

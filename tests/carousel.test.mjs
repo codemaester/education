@@ -17,7 +17,7 @@ test('recent courses handles empty, single, two, five and larger catalogs withou
 });
 
 test('published metadata identifies real learning pages and the newest lesson', () => {
-  assert.deepEqual(recentCourses(courses).map(course => course.slug), ['wurzel-2', 'optik']);
+  assert.deepEqual(recentCourses(courses).map(course => course.slug), ['museum-der-unendlichkeit', 'wurzel-2', 'optik']);
   assert.equal(new Set(courses.map(course => course.addedOrder)).size, courses.length);
   for (const course of courses) {
     assert.ok(Number.isInteger(course.addedOrder) && course.addedOrder > 0);

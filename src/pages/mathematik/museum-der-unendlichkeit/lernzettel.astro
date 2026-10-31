@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import '../../../styles/museum-guide.css';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Museumsführer · Museum der endlosen Dinge" description="Druckbarer Museumsführer: irrationale Zahlen, rationale und irrationale Kreisbahnen, Hilberts Hotel und Cantors Diagonalargument.">
+  <div class="museum-guide-shell">
+    <nav class="guide-actions" aria-label="Museumsführer"><a href={`${base}mathematik/museum-der-unendlichkeit/`}>Zurück ins Museum</a><button type="button" class="button" id="guide-print" disabled>Drucken / als PDF speichern</button></nav>
+    <noscript><p>Du kannst diesen Museumsführer über die Druckfunktion deines Browsers drucken.</p></noscript>
+    <article class="museum-guide">
+      <section class="guide-page"><header><p>Education · Mathematik · Museumsführer · 1 / 2</p><h1>Museum der<br /><em>endlosen Dinge.</em></h1><p>Drei Experimente über irrationale Zahlen und Unendlichkeit.</p></header>
+        <h2>I · Ein fester Ort, unendlich viele Stellen</h2>
+        <p>Eine <strong>rationale Zahl</strong> lässt sich als Bruch p/q ganzer Zahlen mit q ≠ 0 schreiben. Ihre Dezimaldarstellung endet oder wird irgendwann periodisch. Eine <strong>irrationale Zahl</strong> lässt sich nicht so schreiben; ihre Dezimaldarstellung endet nicht und wird nie periodisch.</p>
+        <p><strong>√2 ist exakt:</strong> die positive Zahl, deren Quadrat 2 ist. Dagegen ist 1,4142 = 14142/10000 eine rationale Näherung.</p>
+        <div class="guide-formula">1,4 &lt; √2 &lt; 1,5<br />1,41 &lt; √2 &lt; 1,42<br />1,414 &lt; √2 &lt; 1,415</div>
+        <p>Jeder Zoomschritt verkleinert das Intervall um den Faktor 10. Nach d Schritten ist es 10<sup>−d</sup> breit. Die Zahl bleibt an ihrem Ort; nur der Maßstab ändert sich. Die Quadrate der Grenzen schließen die 2 ein.</p>
+        <p><strong>Stolperstein:</strong> Viele Nachkommastellen beweisen keine Irrationalität. Auch 1/3 = 0,333… hat unendlich viele Stellen. Ein Symbol kann einen Wert exakt beschreiben, ohne seine gesamte Dezimaldarstellung auszuschreiben.</p>
+        <h2>II · Zwei Wanderer auf dem Kreis</h2>
+        <p>Eine Schrittweite α ist ein Anteil einer ganzen Umdrehung. Die Landeposition nach n Schritten ist der Nachkommateil von n · α. Der Start gehört als Schritt 0 dazu.</p>
+        <div class="guide-comparison"><div><h3>Rational: α = p/q</h3><p>Ist p/q gekürzt, kehrt der Wanderer nach q Schritten erstmals zum Start zurück.</p><p><strong>Beispiel:</strong> 5 · 2/5 = 2 volle Umdrehungen. Die Bahn hat fünf Landepunkte.</p></div><div><h3>Irrational: α = √2 − 1</h3><p>Eine Rückkehr würde n · α = m und damit α = m/n erzwingen. Das wäre rational: Widerspruch.</p><p>Die Bahn kehrt nie exakt zurück und kommt jedem Kreispunkt beliebig nahe.</p></div></div>
+        <p><strong>Dicht ≠ vollständig:</strong> In jedem offenen Kreisbogen liegt irgendwann ein Landepunkt. Trotzdem trifft die Bahn nur abzählbar viele Punkte. Nichtperiodisch bedeutet nicht zufällig. Die Bewegung folgt einer festen Regel.</p>
+      </section>
+      <section class="guide-page"><header><p>Education · Mathematik · Museumsführer · 2 / 2</p><h2>III · Das Unendlichkeitshotel</h2></header>
+        <p>Hilberts Hotel besitzt die Zimmer 1, 2, 3, … ohne letztes Zimmer. Jedes ist belegt. Es ist ein Gedankenexperiment über Zuordnungen, kein Bauplan.</p>
+        <table><thead><tr><th>Neue Gäste</th><th>Zuordnung</th></tr></thead><tbody><tr><td>Ein weiterer Gast</td><td>Bisheriger Gast n → Zimmer n + 1.<br />Der neue Gast erhält Zimmer 1.</td></tr><tr><td>Ein unendlicher Bus</td><td>Bisheriger Gast n → Zimmer 2n.<br />Busgast k → Zimmer 2k − 1.</td></tr><tr><td>Alle rationalen Zahlen</td><td>Beginne mit 0. Ordne positive gekürzte Brüche p/q nach p + q; ergänze jeweils den negativen Bruch. Jeder rationale Wert erhält genau eine Nummer.</td></tr></tbody></table>
+        <p><strong>Abzählbar unendlich:</strong> Eine vollständige Aufzählung mit den Nummern 1, 2, 3, … ist möglich. Sie endet nie, aber jedes einzelne Element kommt nach endlich vielen Schritten dran. Die natürlichen, ganzen und rationalen Zahlen sind abzählbar unendlich.</p>
+        <h3>Warum alle reellen Zahlen nicht hineinpassen</h3>
+        <p>Angenommen, eine Liste enthält alle reellen Zahlen zwischen 0 und 1. Konstruiere eine neue Zahl: Ihre n-te Nachkommastelle ist 2, wenn die n-te Stelle der n-ten Listenzahl 1 ist; sonst ist sie 1.</p>
+        <div class="guide-formula">Neue Stelle b<sub>n</sub> ≠ Stelle a<sub>nn</sub><br />für jede Zeile n = 1, 2, 3, …</div>
+        <p>Die neue Zahl unterscheidet sich von <strong>jeder Zeile n an der Stelle n</strong>. Sie fehlt also in der behaupteten vollständigen Liste. Das ist Cantors Diagonalargument. Da die neue Zahl nur 1 und 2 verwendet, entsteht kein Problem mit zwei Darstellungen wie 0,4999… = 0,5000…</p>
+        <p>Schon die reellen Zahlen zwischen 0 und 1 sind <strong>überabzählbar</strong>. Auch die irrationalen Zahlen sind überabzählbar: Zusammen mit den abzählbaren rationalen Zahlen bilden sie die reellen Zahlen. Zwei abzählbare Mengen wären zusammen wieder abzählbar.</p>
+        <h3>Drei Dinge, die du auseinanderhalten solltest</h3>
+        <ol><li><strong>Unendlich viele Dezimalstellen:</strong> eine Eigenschaft der Darstellung einer einzelnen Zahl.</li><li><strong>Eine unendliche, nichtperiodische Bahn:</strong> eine Folge verschiedener Positionen, die sich nach Schritten aufzählen lassen.</li><li><strong>Überabzählbar viele Zahlen:</strong> Keine Liste erreicht jeden Wert. Das ist eine andere Größe von Unendlichkeit.</li></ol>
+        <p class="guide-source">Fachliche Grundlagen: Wolfram MathWorld, „Irrational Number“ und „Cantor Diagonal Method“; Wolfram Demonstrations, „Three-Distance Theorem“. Quellenlinks und die Experimente: edu.promptworks.eu/mathematik/museum-der-unendlichkeit/</p>
+      </section>
+    </article>
+  </div>
+</BaseLayout>
+<script>const button = document.querySelector<HTMLButtonElement>('#guide-print')!; button.disabled = false; button.addEventListener('click', () => window.print());</script>

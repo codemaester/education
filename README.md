@@ -17,10 +17,17 @@ Die gemeinsame Gestaltung folgt der gewählten Richtung **Modern Classic**:
 Newsreader und Manrope, Papierweiß, Waldgrün, Terrakotta und Salbei.
 
 Auf der Startseite wechseln die fünf zuletzt hinzugefügten Lernseiten alle acht
-Sekunden. Aktuell erscheinen Mathematik und danach Optik. Kleine Punkte unter der
+Sekunden. Aktuell erscheinen das Museum der endlosen Dinge, √2 und danach Optik. Kleine Punkte unter der
 Vorschau erlauben die direkte Auswahl. Fokus, Berührung
 oder eine manuelle Auswahl stoppen den automatischen Wechsel; beim Darüberfahren
 mit der Maus pausiert er vorübergehend. Ohne JavaScript bleibt die neueste Seite sichtbar.
+
+Das [Museum der endlosen Dinge](https://edu.promptworks.eu/mathematik/museum-der-unendlichkeit/)
+öffnet drei interaktive Räume: Zahlenzoom zu √2, rationale und irrationale
+Kreiswanderer und Hilberts Hotel mit Cantors Diagonalargument. Kapitelaufgaben,
+ein Abschlusstest und ein zweiseitiger Museumsführer ergänzen die Experimente.
+Fachliche Grenzen und didaktische Entscheidungen stehen in
+[der Museumsdokumentation](documentation/MUSEUM.md).
 
 Der gemeinsame Standard für neue Lernseiten ist in den
 [Anforderungen an Lernseiten](documentation/LERNSEITEN_ANFORDERUNGEN.md)

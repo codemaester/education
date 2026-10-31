@@ -1,0 +1,15 @@
+---
+import { roomNames, type MuseumQuestion } from '../data/museum';
+interface Props { questions: MuseumQuestion[]; id: string; final?: boolean; }
+const { questions, id, final = false } = Astro.props;
+---
+<form class="museum-quiz" data-museum-quiz id={id}>
+  {questions.map((q, i) => <fieldset data-question data-answer={q.answer}>
+    <legend>{i + 1}. {q.text} <span class="quiz-instruction">Eine Antwort auswählen.</span></legend>
+    {q.options.map((option, index) => <label><input type="radio" name={`${id}-${q.id}`} value={index} /><span>{option}</span></label>)}
+    <p class="quiz-feedback" data-feedback hidden><strong data-verdict></strong> {q.explanation} {final && <a href={`#${q.room}`}>{roomNames[q.room]} wiederholen</a>}</p>
+  </fieldset>)}
+  <div class="museum-actions"><button class="button" type="submit" disabled data-museum-js>Antworten prüfen</button><button class="button button-secondary" type="reset" disabled data-museum-js>Neu versuchen</button></div>
+  <p class="quiz-summary" data-quiz-summary role="status">Noch nicht ausgewertet.</p>
+  <noscript><details><summary>Lösungen zum Vergleichen</summary>{questions.map(q => <p><strong>{q.options[q.answer]}</strong> {q.explanation}</p>)}</details></noscript>
+</form>

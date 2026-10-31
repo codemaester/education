@@ -1,0 +1,107 @@
+import assert from 'node:assert/strict';
+import { mkdir } from 'node:fs/promises';
+const route = '/mathematik/museum-der-unendlichkeit/';
+
+export async function testMuseum(browser, origin, screenshots) {
+  const capture = screenshots || '/tmp/education-museum-review';
+  await mkdir(capture, { recursive: true });
+  for (const width of [1440, 1024, 768, 390, 320]) {
+    const page = await browser.newPage({ viewport: { width, height: 1000 }, reducedMotion: 'reduce' });
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    page.on('response', response => { if (response.url().startsWith(origin) && response.status() >= 400) errors.push(response.url()); });
+    await page.goto(origin + route);
+    await page.evaluate(() => document.fonts.ready);
+    assert.equal(await page.locator('.museum-room').count(), 3);
+    assert.equal(await page.locator('h1').count(), 1);
+    await page.locator('[data-zoom-in]').click();
+    assert.equal(await page.locator('[data-lower]').textContent(), '1,4');
+    await page.locator('#zoom-depth').focus();
+    await page.keyboard.press('End');
+    assert.equal(await page.locator('[data-upper]').textContent(), '1,414213562373095048801689');
+    assert.ok(await page.locator('[data-zoom-in]').isDisabled());
+    await page.locator('[data-zoom-reset]').click();
+    assert.equal(await page.locator('[data-lower]').textContent(), '1');
+    await page.locator('[data-orbit-many]').click();
+    assert.equal(await page.locator('[data-orbit-unique="rational"]').textContent(), '5');
+    assert.equal(await page.locator('[data-orbit-unique="irrational"]').textContent(), '101');
+    await page.locator('#rational-step').selectOption('5/12');
+    assert.equal(await page.locator('[data-orbit-count]').textContent(), '0 Schritte');
+    await page.locator('[data-orbit-many]').click();
+    assert.equal(await page.locator('[data-orbit-unique="rational"]').textContent(), '12');
+    assert.match(await page.locator('.orbit-figure.rational svg').getAttribute('aria-label'), /Zyklus umfasst 12 Landepunkte/);
+    await page.locator('[data-orbit-reset]').click();
+    await page.locator('[data-orbit-play]').click();
+    await page.waitForFunction(() => document.querySelector('[data-orbit-count]').textContent !== '0 Schritte');
+    await page.locator('[data-orbit-play]').click();
+    const stopped = await page.locator('[data-orbit-count]').textContent();
+    await page.waitForTimeout(550);
+    assert.equal(await page.locator('[data-orbit-count]').textContent(), stopped);
+    await page.locator('[data-hotel-run]').click();
+    assert.equal(await page.locator('[data-hotel-guest]').first().textContent(), 'Neu');
+    await page.locator('[data-hotel-mode="bus"]').click();
+    await page.locator('[data-hotel-run]').click();
+    assert.equal(await page.locator('[data-hotel-guest]').nth(2).textContent(), 'B2');
+    assert.equal(await page.locator('[data-hotel-guest]').nth(3).textContent(), '2');
+    await page.locator('[data-hotel-mode="fractions"]').click();
+    await page.locator('[data-hotel-run]').click();
+    assert.equal(await page.locator('[data-hotel-guest]').nth(3).textContent(), '1/2');
+    await page.locator('[data-diagonal-step]').click();
+    assert.equal(await page.locator('[data-changed]').count(), 1);
+    await page.locator('[data-diagonal-all]').click();
+    assert.equal(await page.locator('[data-changed]').count(), 6);
+    const digits = await page.locator('[data-diagonal-result]').textContent();
+    const old = await page.locator('.diagonal-cell').allTextContents();
+    digits.split(' ').forEach((digit, i) => assert.notEqual(digit, old[i]));
+    await page.locator('[data-diagonal-reset]').click();
+    assert.equal(await page.locator('[data-changed]').count(), 0);
+    const quiz = page.locator('#zoom-quiz');
+    await quiz.getByRole('button', { name: 'Antworten prüfen' }).click();
+    assert.match(await quiz.locator('[data-quiz-summary]').textContent(), /0 von 2 beantwortet/);
+    await quiz.locator('fieldset').first().locator('input').nth(1).check();
+    await quiz.locator('fieldset').nth(1).locator('input').nth(1).check();
+    await quiz.getByRole('button', { name: 'Antworten prüfen' }).click();
+    assert.match(await quiz.locator('[data-quiz-summary]').textContent(), /2 richtig/);
+    await quiz.getByRole('button', { name: 'Neu versuchen' }).click();
+    assert.equal(await quiz.locator('input:checked').count(), 0);
+    assert.equal(await page.locator('#museum-final input:checked').count(), 0);
+    const final = page.locator('#museum-final');
+    for (const field of await final.locator('fieldset').all()) await field.locator('input').first().check();
+    await final.getByRole('button', { name: 'Antworten prüfen' }).click();
+    assert.match(await final.locator('[data-quiz-summary]').textContent(), /4 von 4 beantwortet/);
+    await page.locator('[data-zoom-in]').focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await page.locator('[data-lower]').textContent(), '1,4');
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${width}: no overflow`);
+    const clipped = await page.locator('.museum-page button, .museum-page h1, .museum-page h2, .museum-page output, .diagonal-table').evaluateAll(nodes => nodes.filter(node => node.scrollWidth > node.clientWidth + 1).map(node => node.textContent));
+    assert.deepEqual(clipped, [], `${width}: no clipped controls or numbers`);
+    assert.deepEqual(errors, []);
+    if ([1440, 390, 320].includes(width)) {
+      await page.locator('[data-orbit-many]').click();
+      await page.evaluate(() => { document.querySelectorAll('details').forEach(d => d.open = false); window.scrollTo(0, 0); });
+      await page.screenshot({ path: `${capture}/museum-${width}.png`, fullPage: true });
+      await page.locator('[data-orbit-exhibit]').screenshot({ path: `${capture}/orbit-${width}.png` });
+      await page.locator('[data-zoom-exhibit]').screenshot({ path: `${capture}/zoom-${width}.png` });
+      await page.locator('[data-hotel-exhibit]').screenshot({ path: `${capture}/hotel-${width}.png` });
+      await page.locator('[data-diagonal-all]').click();
+      await page.locator('[data-diagonal-exhibit]').screenshot({ path: `${capture}/diagonal-${width}.png` });
+    }
+    await page.goto(origin + route + 'lernzettel/');
+    assert.ok(await page.getByRole('link', { name: 'Zurück ins Museum' }).isVisible());
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${width}: guide fits`);
+    if (width === 1440) {
+      await page.pdf({path: `${capture}/museum-guide.pdf`, preferCSSPageSize: true});
+      await page.emulateMedia({media: 'print'});
+      assert.equal(await page.locator('.guide-actions').isVisible(), false);
+    }
+    await page.close();
+    console.log(`Museum ${width}px: zoom, orbit animation, hotel, diagonal, quizzes, keyboard, layout and guide passed`);
+  }
+  const noJS = await browser.newPage({javaScriptEnabled: false});
+  await noJS.goto(origin + route);
+  assert.ok(await noJS.locator('.museum-note').isVisible());
+  assert.equal(await noJS.locator('.museum-room').count(), 3);
+  await noJS.locator('#zoom-quiz noscript summary').click();
+  assert.ok(await noJS.locator('#zoom-quiz noscript details[open]').isVisible());
+  await noJS.close();
+}

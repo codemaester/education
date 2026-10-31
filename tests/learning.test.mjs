@@ -41,6 +41,6 @@ test('catalog keeps courses attached to real subjects and distinguishes empty su
     assert.ok(!course.href.startsWith('/') && course.href.endsWith('/'));
   }
   assert.equal(coursesForSubject('physik').length, 1);
-  assert.equal(coursesForSubject('mathematik').length, 1);
+  assert.equal(coursesForSubject('mathematik').length, 2);
   assert.equal(coursesForSubject('geschichte').length, 0);
 });

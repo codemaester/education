@@ -1,0 +1,37 @@
+.museum-guide-shell { width: min(900px, calc(100% - 2rem)); margin: 2rem auto; }
+.guide-actions { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.museum-guide { font-size: .95rem; }
+.guide-page { background: var(--color-surface); padding: clamp(1.25rem, 5vw, 3rem); margin-bottom: 2rem; }
+.guide-page header > p:first-child { font-size: .75rem; color: var(--color-muted); }
+.guide-page h1 { font-size: clamp(2.5rem, 6vw, 3.5rem); }
+.guide-page h2 { font-size: 1.85rem; margin-top: 2rem; }
+.guide-page h3 { font: 500 1.3rem/1.2 var(--font-display); margin-top: 1.5rem; }
+.guide-page em { color: var(--color-terracotta-dark); }
+.guide-formula { font: 450 1.5rem/1.6 var(--font-display); padding: 1rem 0; margin: 1rem 0; border-block: 1px solid var(--color-rule); }
+.guide-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.guide-page table { border-collapse: collapse; width: 100%; font-size: .85rem; margin: 1.5rem 0; }
+.guide-page td, .guide-page th { padding: .7rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--color-rule); }
+.guide-page td:first-child { width: 28%; }
+.guide-source { font-size: .7rem; border-top: 1px solid var(--color-rule); padding-top: 1rem; }
+@media (max-width: 600px) { .guide-comparison { grid-template-columns: 1fr; gap: 0; } }
+@page { size: A4; margin: 13mm; }
+@media print {
+  .guide-actions, .museum-guide-shell > noscript { display: none; }
+  .museum-guide-shell { width: 100%; margin: 0; }
+  .museum-guide { font-size: 10pt; line-height: 1.45; color: black; }
+  .guide-page { background: white; padding: 0; margin: 0; }
+  .guide-page + .guide-page { break-before: page; }
+  .guide-page header > p:first-child { color: black; font-size: 8pt; }
+  .guide-page h1 { font-size: 30pt; margin-bottom: 4mm; }
+  .guide-page h2 { font-size: 17pt; margin-top: 6mm; }
+  .guide-page h3 { font-size: 12pt; margin-top: 4mm; }
+  .guide-page p { margin-bottom: 3mm; }
+  .guide-page em { color: black; }
+  .guide-formula { font-size: 14pt; margin: 3mm 0; padding: 2mm 0; border-color: black; }
+  .guide-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .guide-page table { font-size: 9pt; margin: 4mm 0; }
+  .guide-page td, .guide-page th { padding: 2mm; border-color: black; }
+  .guide-page ol { padding-left: 5mm; }
+  .guide-source { font-size: 7pt; margin-top: 3mm; padding-top: 3mm; }
+  h2, h3 { break-after: avoid; }
+}
