@@ -10,24 +10,139 @@ const zoom = $('[data-zoom-exhibit]');
 const depth = $<HTMLInputElement>('#zoom-depth');
 const out = $<HTMLButtonElement>('[data-zoom-out]');
 const into = $<HTMLButtonElement>('[data-zoom-in]');
-function renderZoom() {
-  const d = Number(depth.value);
-  const bracket = sqrtTwoWindow(d);
-  $('[data-known-digits]').textContent = bracket.left;
-  $('.digit-unknown').textContent = d ? '…' : ', …';
-  $('[data-lower]').textContent = bracket.left;
-  $('[data-upper]').textContent = bracket.right;
-  $('[data-zoom-level]').textContent = `Zoomstufe ${d} / 24`;
-  $('[data-zoom-marker]').setAttribute('transform', `translate(${42 + bracket.fraction * 716} 0)`);
-  $('[data-zoom-status]').textContent = d === 0 ? '√2 liegt zwischen 1 und 2. Beide Grenzen sind rationale Zahlen.' : `Das Intervall ist jetzt 10${superscript(-d)} breit. Bei einem Meter für das ursprüngliche Intervall wäre die aktuelle Vergrößerung 10${superscript(d)}-fach. √2 bleibt exakt dieselbe Zahl.`;
-  out.disabled = d === 0;
-  into.disabled = d === 24;
-}
+type ZoomWindow = ReturnType<typeof sqrtTwoWindow>;
+const reference = $<SVGSVGElement>('.zoom-overview', zoom);
+const referenceWindow = $('[data-reference-window]', zoom);
+const referenceNote = $('[data-reference-note]', zoom);
+const referenceLocation = $('[data-reference-location]', zoom);
+const detailWindow = $('[data-detail-window]', zoom);
+const ticks = $('[data-zoom-ticks]', zoom);
+const oldTicks = $('[data-zoom-old-ticks]', zoom);
+const marker = $('[data-zoom-marker]', zoom);
+const plotStart = 42;
+const plotWidth = 716;
+let zoomDepth = 0;
+let zoomFrame = 0;
+let referencePixels = reference.getBoundingClientRect().width * plotWidth / 800;
+
 function superscript(n: number) { const chars: Record<string, string> = {'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'}; return String(n).split('').map(c => chars[c]).join(''); }
-depth.addEventListener('input', renderZoom);
-out.addEventListener('click', () => { depth.value = String(Number(depth.value) - 1); renderZoom(); });
-into.addEventListener('click', () => { depth.value = String(Number(depth.value) + 1); renderZoom(); });
+// Convert only after subtracting exact integers: deep windows must not collapse
+// when their two endpoints would round to the same JavaScript Number.
+function ratio(numerator: bigint, denominator: bigint) {
+  return Number(numerator * 100_000_000n / denominator) / 100_000_000;
+}
+function overviewGeometry(bracket: ZoomWindow) {
+  return { left: ratio(bracket.lower - bracket.scale, bracket.scale), width: 1 / Number(bracket.scale) };
+}
+function drawOverview(left: number, width: number) {
+  const subpixel = width * referencePixels < 1;
+  referenceWindow.toggleAttribute('data-hidden', subpixel);
+  referenceLocation.toggleAttribute('data-hidden', !subpixel);
+  referenceWindow.setAttribute('x', String(plotStart + left * plotWidth));
+  referenceWindow.setAttribute('width', String(width * plotWidth));
+  const note = subpixel
+    ? 'Ausschnitt kleiner als ein Pixel. Die Ortsmarke zeigt die Lage, nicht die Breite.'
+    : width === 1 ? 'Markiert: der gesamte Ausschnitt.' : 'Markiert: der Ausschnitt unter der Lupe.';
+  if (referenceNote.textContent !== note) referenceNote.textContent = note;
+}
+function tickMarkup() {
+  return Array.from({ length: 11 }, (_, i) => `<line x1="${i / 10}" x2="${i / 10}" y1="${i === 0 || i === 10 ? 77 : 87}" y2="104" class="diagram-tick" vector-effect="non-scaling-stroke"/>`).join('');
+}
+ticks.innerHTML = tickMarkup();
+oldTicks.innerHTML = tickMarkup();
+function drawTicks(group: Element, left: number, width: number) {
+  group.setAttribute('transform', `translate(${plotStart + left * plotWidth} 0) scale(${width * plotWidth} 1)`);
+}
+function commitZoom() {
+  const bracket = sqrtTwoWindow(zoomDepth);
+  $('[data-known-digits]', zoom).textContent = bracket.left;
+  $('.digit-unknown', zoom).textContent = zoomDepth ? '…' : ', …';
+  $('[data-lower]', zoom).textContent = bracket.left;
+  $('[data-upper]', zoom).textContent = bracket.right;
+  $('[data-zoom-level]', zoom).textContent = `Zoomstufe ${zoomDepth} / 24`;
+  $('[data-zoom-factor]', zoom).textContent = `Vergrößerung 10${superscript(zoomDepth)}${zoomDepth === 0 ? ' = 1' : ''}-fach`;
+  $('[data-zoom-width]', zoom).textContent = `10${superscript(-zoomDepth)}${zoomDepth === 0 ? ' = 1' : ''}`;
+  $('[data-zoom-status]', zoom).textContent = zoomDepth === 0
+    ? '√2 liegt zwischen 1 und 2. Beide Grenzen sind rationale Zahlen.'
+    : `Das Intervall ist jetzt 10${superscript(-zoomDepth)} breit. Die Lupe vergrößert 10${superscript(zoomDepth)}-fach. Im festen Überblick wird der Ausschnitt kleiner. √2 bleibt exakt dieselbe Zahl.`;
+  $('#zoom-svg-title', zoom).textContent = `√2 liegt zwischen ${bracket.left} und ${bracket.right}. Vergrößerung 10${superscript(zoomDepth)}-fach.`;
+  marker.setAttribute('transform', `translate(${plotStart + bracket.fraction * plotWidth} 0)`);
+  drawTicks(ticks, 0, 1);
+  ticks.setAttribute('opacity', '1');
+  oldTicks.setAttribute('opacity', '0');
+  detailWindow.setAttribute('x', String(plotStart));
+  detailWindow.setAttribute('width', String(plotWidth));
+  const overview = overviewGeometry(bracket);
+  drawOverview(overview.left, overview.width);
+  zoom.dataset.zoomDepth = String(zoomDepth);
+  delete zoom.dataset.zoomAnimating;
+}
+function finishZoom() {
+  cancelAnimationFrame(zoomFrame);
+  zoomFrame = 0;
+  commitZoom();
+}
+function renderZoom(animate = false) {
+  const previousDepth = zoomDepth;
+  const interrupted = zoomFrame !== 0;
+  cancelAnimationFrame(zoomFrame);
+  zoomFrame = 0;
+  zoomDepth = Number(depth.value);
+  out.disabled = zoomDepth === 0;
+  into.disabled = zoomDepth === 24;
+  // Slider jumps and interrupted gestures settle immediately; never queue steps.
+  if (!animate || interrupted || motion.matches || document.hidden || Math.abs(zoomDepth - previousDepth) !== 1) {
+    commitZoom();
+    return;
+  }
+  const previous = sqrtTwoWindow(previousDepth);
+  const target = sqrtTwoWindow(zoomDepth);
+  const commonScale = previous.scale > target.scale ? previous.scale : target.scale;
+  const oldSpan = Number(commonScale / previous.scale);
+  const newSpan = Number(commonScale / target.scale);
+  const oldLower = previous.lower * (commonScale / previous.scale);
+  const newLower = target.lower * (commonScale / target.scale);
+  const newLeft = Number(newLower - oldLower);
+  const markerPosition = newLeft + target.fraction * newSpan;
+  const fromOverview = overviewGeometry(previous);
+  const toOverview = overviewGeometry(target);
+  const zoomingIn = zoomDepth > previousDepth;
+  const selectedLeft = zoomingIn ? newLeft : 0;
+  const selectedSpan = Math.min(oldSpan, newSpan);
+  const started = performance.now();
+  zoom.dataset.zoomAnimating = 'true';
+  function draw(now: number) {
+    // A short hold lets the selected tenth register before it fills the lens.
+    const t = Math.min(1, Math.max(0, (now - started - 100) / 600));
+    const eased = 1 - (1 - t) ** 3;
+    const span = oldSpan * (newSpan / oldSpan) ** eased;
+    const travel = (oldSpan - span) / (oldSpan - newSpan);
+    const left = newLeft * travel;
+    drawTicks(oldTicks, -left / span, oldSpan / span);
+    drawTicks(ticks, (newLeft - left) / span, newSpan / span);
+    oldTicks.setAttribute('opacity', String(1 - eased));
+    ticks.setAttribute('opacity', String(eased));
+    detailWindow.setAttribute('x', String(plotStart + (selectedLeft - left) / span * plotWidth));
+    detailWindow.setAttribute('width', String(selectedSpan / span * plotWidth));
+    marker.setAttribute('transform', `translate(${plotStart + (markerPosition - left) / span * plotWidth} 0)`);
+    drawOverview(fromOverview.left + (toOverview.left - fromOverview.left) * travel,
+      fromOverview.width + (toOverview.width - fromOverview.width) * travel);
+    if (t < 1) zoomFrame = requestAnimationFrame(draw);
+    else { zoomFrame = 0; commitZoom(); }
+  }
+  draw(started);
+}
+depth.addEventListener('input', () => renderZoom(true));
+out.addEventListener('click', () => { depth.value = String(Number(depth.value) - 1); renderZoom(true); });
+into.addEventListener('click', () => { depth.value = String(Number(depth.value) + 1); renderZoom(true); });
 $('[data-zoom-reset]', zoom).addEventListener('click', () => { depth.value = '0'; renderZoom(); });
+motion.addEventListener('change', () => { if (motion.matches) finishZoom(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && zoomFrame) finishZoom(); });
+new ResizeObserver(() => {
+  referencePixels = reference.getBoundingClientRect().width * plotWidth / 800;
+  if (zoomFrame) finishZoom();
+  else { const geometry = overviewGeometry(sqrtTwoWindow(zoomDepth)); drawOverview(geometry.left, geometry.width); }
+}).observe(reference);
 renderZoom();
 
 // Room II: one bounded animation loop, no timers while paused or off screen.

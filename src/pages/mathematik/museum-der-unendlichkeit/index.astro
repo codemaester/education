@@ -26,9 +26,38 @@ const base = import.meta.env.BASE_URL;
         <div class="exhibit" data-zoom-exhibit>
           <div class="exhibit-heading"><h3>Immer näher an √2</h3><span data-zoom-level>Zoomstufe 0 / 24</span></div>
           <div class="zoom-digits" aria-label="Bekannte Dezimalstellen"><span data-known-digits>1</span><span class="digit-unknown">, …</span></div>
-          <p class="zoom-invitation">Vergrößere den Ausschnitt. Jeder Schritt macht das sichtbare Intervall zehnmal kleiner.</p>
-          <svg class="zoom-line" viewBox="0 0 800 150" role="img" aria-labelledby="zoom-svg-title"><title id="zoom-svg-title">√2 liegt zwischen der unteren und oberen Grenze des gewählten Ausschnitts.</title><line x1="42" y1="94" x2="758" y2="94" class="diagram-axis"/>{Array.from({length: 11}, (_, i) => <line x1={42 + i * 71.6} x2={42 + i * 71.6} y1={i === 0 || i === 10 ? 77 : 87} y2="104" class="diagram-tick"/>)}<g data-zoom-marker transform="translate(338.6 0)"><text x="0" y="44" text-anchor="middle">√2</text><path d="M0 58v51" class="zoom-marker-line"/><circle cx="0" cy="94" r="6" class="zoom-marker-dot"/></g></svg>
-          <div class="zoom-bounds"><div><span>Untere Grenze</span><output data-lower>1</output></div><span class="zoom-between" aria-hidden="true">&lt; √2 &lt;</span><div><span>Obere Grenze</span><output data-upper>2</output></div></div>
+          <p class="zoom-invitation">Links bleibt der Überblick. Rechts wird aus einem winzigen Ausschnitt eine ganze Zahlenlinie. Jeder Schritt vergrößert zehnfach.</p>
+          <div class="zoom-pair">
+            <figure class="zoom-reference">
+              <figcaption><strong>Der feste Überblick</strong><span>Referenzintervall [1, 2]</span></figcaption>
+              <svg class="zoom-overview" viewBox="0 0 800 150" role="img" aria-labelledby="zoom-overview-title" aria-describedby="zoom-reference-note">
+                <title id="zoom-overview-title">Das feste Intervall von 1 bis 2. √2 bleibt am selben Ort; der markierte Ausschnitt wird beim Zoomen kleiner.</title>
+                <rect x="42" y="75" width="716" height="38" class="zoom-window" data-reference-window/>
+                <line x1="42" y1="94" x2="758" y2="94" class="diagram-axis"/>
+                <path d="M42 77v27M758 77v27" class="diagram-tick"/>
+                <g transform="translate(338.5769 0)" data-reference-marker><text x="0" y="44" text-anchor="middle">√2</text><path d="M0 58v56" class="zoom-marker-line"/><circle cx="0" cy="94" r="6" class="zoom-marker-dot"/></g>
+                <path d="M338.5769 122l-8 18h16Z" class="zoom-location" data-reference-location data-hidden/>
+              </svg>
+              <div class="zoom-reference-bounds" aria-hidden="true"><span>1</span><span>2</span></div>
+              <p class="zoom-reference-note" id="zoom-reference-note" data-reference-note>Markiert: der gesamte Ausschnitt.</p>
+              <p class="zoom-reference-width">Breite des Ausschnitts <strong data-zoom-width>10⁰ = 1</strong></p>
+            </figure>
+            <figure class="zoom-detail">
+              <figcaption><strong>Unter der Lupe</strong><span data-zoom-factor>Vergrößerung 10⁰ = 1-fach</span></figcaption>
+              <svg class="zoom-line" viewBox="0 0 800 150" role="img" aria-labelledby="zoom-svg-title">
+                <title id="zoom-svg-title">√2 liegt zwischen 1 und 2. Vergrößerung 1-fach.</title>
+                <defs><clipPath id="zoom-plot-clip"><rect x="40" y="0" width="720" height="150"/></clipPath></defs>
+                <g clip-path="url(#zoom-plot-clip)">
+                  <rect x="42" y="75" width="716" height="38" class="zoom-window" data-detail-window/>
+                  <line x1="42" y1="94" x2="758" y2="94" class="diagram-axis"/>
+                  <g data-zoom-ticks>{Array.from({length: 11}, (_, i) => <line x1={42 + i * 71.6} x2={42 + i * 71.6} y1={i === 0 || i === 10 ? 77 : 87} y2="104" class="diagram-tick"/>)}</g>
+                  <g data-zoom-old-ticks aria-hidden="true"/>
+                </g>
+                <g data-zoom-marker transform="translate(338.5769 0)"><text x="0" y="44" text-anchor="middle">√2</text><path d="M0 58v51" class="zoom-marker-line"/><circle cx="0" cy="94" r="6" class="zoom-marker-dot"/></g>
+              </svg>
+              <div class="zoom-bounds"><div><span>Untere Grenze</span><output data-lower>1</output></div><span class="zoom-between" aria-hidden="true">&lt; √2 &lt;</span><div><span>Obere Grenze</span><output data-upper>2</output></div></div>
+            </figure>
+          </div>
           <div class="exhibit-controls"><label class="zoom-slider-label" for="zoom-depth">Nachkommastellen <input id="zoom-depth" type="range" min="0" max="24" value="0" disabled data-museum-js /></label><div class="museum-actions"><button class="button button-secondary" data-zoom-out type="button" disabled>− Weniger</button><button class="button" data-zoom-in type="button" disabled data-museum-js>+ Näher heran</button><button class="button button-secondary" data-zoom-reset type="button" disabled data-museum-js>Zurücksetzen</button></div></div>
           <p class="exhibit-status" data-zoom-status role="status">√2 liegt zwischen 1 und 2. Beide Grenzen sind rationale Zahlen.</p>
           <p class="exhibit-footnote">24 Zoomstufen sind unser sichtbarer Ausschnitt. Mathematisch geht es unbegrenzt weiter. Die Grenzen werden mit ganzen Zahlen exakt berechnet; die Markerposition bleibt eine Bildschirmnäherung.</p>

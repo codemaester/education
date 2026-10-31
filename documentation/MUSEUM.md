@@ -10,6 +10,20 @@ Die drei vom Nutzer gewählten Museumsräume übernehmen das Modern-Classic-Them
   √2 werden mit BigInt und ganzzahliger Quadratwurzel berechnet. 24 Zoomstufen,
   zehnfache Vergrößerung pro Schritt; die Markerposition wird aus acht weiteren
   Dezimalstellen angenähert. Endlich viele Ziffern beweisen keine Irrationalität.
+  Der feste Überblick [1, 2] steht neben einer Lupe mit exakten Grenzen,
+  Intervallbreite 10⁻ⁿ und Vergrößerung 10ⁿ. Unter 740 px stehen beide Ansichten
+  untereinander. Ein Zoomschritt hebt das nächste Zehntel 100 ms hervor und
+  vergrößert es anschließend in 600 ms zur vollständigen Zahlenlinie; beim
+  Herauszoomen läuft der Maßstabswechsel rückwärts. Teilstriche und Marker
+  folgen derselben Kamera. Lokale Abstände werden vor der Bildschirmnäherung
+  mit BigInt berechnet, auch jenseits der Gleitkommagenauigkeit.
+  Im Überblick schrumpft die Markierung maßstabsgetreu. Unter einem tatsächlichen
+  CSS-Pixel ersetzt sie eine ausdrücklich nicht maßstabsgetreue Ortsmarke;
+  Größenänderungen des Fensters aktualisieren diese Grenze. Schnelle Folgeeingaben,
+  Reglersprünge und Zurücksetzen erreichen sofort das neue Ziel ohne Warteschlange.
+  Reduzierte Bewegung zeigt alle Zustände ohne räumliche Animation. Ein Wechsel
+  zu reduzierter Bewegung oder in einen verborgenen Tab beendet den laufenden
+  Schritt. Ohne JavaScript bleibt der Überblick auf Stufe 0 sichtbar.
 - Kreiswanderer: rationale Periodizität mit einer irrationalen, dichten Bahn
   vergleichen. Die Rückkehrzeit ist bei gekürztem p/q genau q. Die Simulation
   zeigt maximal 1.200 Schritte mit Gleitkomma-Arithmetik; das Widerspruchsargument
@@ -48,8 +62,12 @@ führt kein neues Designsystem ein.
 
 ## Prüfung
 
-`tests/museum.test.mjs` prüft Intervallinvarianten bis 24 Dezimalstellen,
+`tests/museum.test.mjs` prüft Intervallinvarianten und verschachtelte Zehntel
+einschließlich lokaler Abstände bis 24 Dezimalstellen,
 Bruchaufzählung, Kreisgeometrie und Periodizität, Diagonalregel und Aufgabenabdeckung.
 `tests/museum-browser.mjs` prüft die drei Experimente, Animation, Quiz-Neustart,
 getrennte Ergebnisse, Tastaturbedienung, fünf Bildschirmbreiten, Quellen-/Asset-
 Fehler, No-JS-Lösungen und Druckansicht im Produktionsbuild.
+Die Zoomprüfung umfasst außerdem normale und reduzierte Bewegung, Vorwärts-/
+Rückwärtsschritte, unterbrochene Animationen, Reglersprünge, Zurücksetzen,
+tiefe Zoomstufen und die Ortsmarke für Ausschnitte unter einem Pixel.

@@ -19,6 +19,23 @@ test('all zoom windows strictly enclose sqrt(2), including beyond Number precisi
   }
 });
 
+test('successive zoom windows select exactly one tenth, without losing deep-window offsets', () => {
+  for (let depth = 0; depth < 24; depth++) {
+    const parent = sqrtTwoWindow(depth);
+    const child = sqrtTwoWindow(depth + 1);
+    assert.equal(child.scale, parent.scale * 10n);
+    assert.ok(child.lower >= parent.lower * 10n);
+    assert.ok(child.upper <= parent.upper * 10n);
+    const offset = child.lower - parent.lower * 10n;
+    assert.ok(offset >= 0n && offset <= 9n);
+    assert.ok(Math.abs(parent.fraction - (Number(offset) + child.fraction) / 10) < 1e-8);
+  }
+  const parent = sqrtTwoWindow(23);
+  const child = sqrtTwoWindow(24);
+  assert.equal(child.lower - parent.lower * 10n, 8n);
+  assert.equal(Number(child.lower) - Number(parent.lower * 10n), 0);
+});
+
 test('rational hotel enumeration is unique and reaches positive, negative and integer guests', () => {
   const guests = rationalGuests(1000);
   assert.equal(new Set(guests).size, guests.length);

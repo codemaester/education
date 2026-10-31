@@ -14,14 +14,31 @@ export async function testMuseum(browser, origin, screenshots) {
     await page.evaluate(() => document.fonts.ready);
     assert.equal(await page.locator('.museum-room').count(), 3);
     assert.equal(await page.locator('h1').count(), 1);
+    const referenceMarker = await page.locator('[data-reference-marker]').getAttribute('transform');
     await page.locator('[data-zoom-in]').click();
     assert.equal(await page.locator('[data-lower]').textContent(), '1,4');
+    assert.match(await page.locator('[data-zoom-factor]').textContent(), /10¹-fach/);
+    assert.equal(await page.locator('[data-zoom-exhibit]').getAttribute('data-zoom-animating'), null);
+    assert.ok(Math.abs(Number(await page.locator('[data-reference-window]').getAttribute('width')) - 71.6) < 1e-8);
+    assert.equal(await page.locator('[data-reference-marker]').getAttribute('transform'), referenceMarker);
     await page.locator('#zoom-depth').focus();
     await page.keyboard.press('End');
     assert.equal(await page.locator('[data-upper]').textContent(), '1,414213562373095048801689');
     assert.ok(await page.locator('[data-zoom-in]').isDisabled());
+    assert.match(await page.locator('[data-reference-note]').textContent(), /kleiner als ein Pixel/);
+    assert.ok(await page.locator('[data-reference-window]').evaluate(el => el.hasAttribute('data-hidden')));
+    assert.ok(await page.locator('[data-reference-location]').isVisible());
+    assert.match(await page.locator('[data-zoom-factor]').textContent(), /10²⁴-fach/);
+    if ([1440, 390, 320].includes(width)) {
+      await page.locator('[data-zoom-exhibit]').screenshot({ path: `${capture}/zoom-deep-${width}.png` });
+    }
     await page.locator('[data-zoom-reset]').click();
     assert.equal(await page.locator('[data-lower]').textContent(), '1');
+    assert.equal(await page.locator('[data-reference-window]').getAttribute('width'), '716');
+    const overviewBox = await page.locator('.zoom-reference').boundingBox();
+    const detailBox = await page.locator('.zoom-detail').boundingBox();
+    if (width < 740) assert.ok(detailBox.y >= overviewBox.y + overviewBox.height);
+    else assert.ok(detailBox.x > overviewBox.x);
     await page.locator('[data-orbit-many]').click();
     assert.equal(await page.locator('[data-orbit-unique="rational"]').textContent(), '5');
     assert.equal(await page.locator('[data-orbit-unique="irrational"]').textContent(), '101');
@@ -97,10 +114,101 @@ export async function testMuseum(browser, origin, screenshots) {
     await page.close();
     console.log(`Museum ${width}px: zoom, orbit animation, hotel, diagonal, quizzes, keyboard, layout and guide passed`);
   }
+  // Exercise the spatial sequence with motion enabled; the main matrix above
+  // deliberately uses reduced motion and must settle synchronously.
+  const moving = await browser.newPage({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'no-preference' });
+  const motionErrors = [];
+  moving.on('pageerror', error => motionErrors.push(error.message));
+  await moving.goto(origin + route);
+  await moving.locator('[data-zoom-in]').scrollIntoViewIfNeeded();
+  await moving.evaluate(() => document.fonts.ready);
+  await moving.waitForTimeout(100); // Let the initial ResizeObserver measurement settle.
+  const exhibit = moving.locator('[data-zoom-exhibit]');
+  async function settled(depth) {
+    await moving.waitForFunction(d => {
+      const el = document.querySelector('[data-zoom-exhibit]');
+      return !el.hasAttribute('data-zoom-animating') && el.dataset.zoomDepth === String(d);
+    }, depth);
+  }
+  await moving.locator('[data-zoom-in]').click();
+  assert.equal(await exhibit.getAttribute('data-zoom-animating'), 'true');
+  assert.ok(Number(await moving.locator('[data-detail-window]').getAttribute('width')) < 716);
+  await moving.waitForTimeout(250);
+  const expanding = Number(await moving.locator('[data-detail-window]').getAttribute('width'));
+  assert.ok(expanding > 71.6 && expanding < 716);
+  const sharedScale = await moving.evaluate(() => {
+    const selection = document.querySelector('[data-detail-window]');
+    const x = Number(selection.getAttribute('x'));
+    const width = Number(selection.getAttribute('width'));
+    const marker = Number(document.querySelector('[data-zoom-marker]').getAttribute('transform').match(/translate\(([^ ]+)/)[1]);
+    return (marker - x) / width;
+  });
+  assert.ok(Math.abs(sharedScale - .14213562) < 1e-7);
+  assert.equal(await moving.locator('[data-lower]').textContent(), '1');
+  await exhibit.screenshot({ path: `${capture}/zoom-in-motion.png` });
+  await settled(1);
+  assert.equal(await moving.locator('[data-lower]').textContent(), '1,4');
+  await moving.locator('[data-zoom-out]').click();
+  assert.equal(await exhibit.getAttribute('data-zoom-animating'), 'true');
+  await settled(0);
+  await moving.locator('[data-zoom-in]').click();
+  await moving.locator('[data-zoom-in]').click();
+  await settled(2);
+  assert.equal(await moving.locator('[data-lower]').textContent(), '1,41');
+  await moving.locator('[data-zoom-in]').click();
+  await moving.locator('[data-zoom-reset]').click();
+  await settled(0);
+  // A range jump cancels an active step, including beyond Number precision.
+  await moving.locator('[data-zoom-in]').click();
+  await moving.locator('#zoom-depth').fill('23');
+  await settled(23);
+  await moving.locator('[data-zoom-in]').click();
+  await settled(24);
+  assert.equal(await moving.locator('[data-upper]').textContent(), '1,414213562373095048801689');
+  const markerX = Number((await moving.locator('[data-zoom-marker]').getAttribute('transform')).match(/translate\(([^ ]+)/)[1]);
+  assert.ok(markerX > 42 && markerX < 758);
+  await moving.locator('[data-zoom-out]').click();
+  await moving.emulateMedia({ reducedMotion: 'reduce' });
+  await settled(23);
+  assert.equal(await moving.locator('[data-zoom-old-ticks]').getAttribute('opacity'), '0');
+  await moving.locator('#zoom-depth').fill('3');
+  assert.ok(await moving.locator('[data-reference-window]').evaluate(el => el.hasAttribute('data-hidden')));
+  // One ten-thousandth is always subpixel; no invented minimum interval width.
+  await moving.locator('#zoom-depth').fill('4');
+  await moving.setViewportSize({ width: 320, height: 1000 });
+  await moving.waitForTimeout(100);
+  assert.match(await moving.locator('[data-reference-note]').textContent(), /nicht die Breite/);
+  await moving.locator('[data-zoom-reset]').click();
+  await moving.emulateMedia({ reducedMotion: 'no-preference' });
+  await moving.locator('[data-zoom-in]').click();
+  assert.equal(await exhibit.getAttribute('data-zoom-animating'), 'true');
+  await settled(1);
+  assert.equal(await moving.locator('[data-lower]').textContent(), '1,4');
+  await moving.locator('#zoom-depth').focus();
+  await moving.keyboard.press('ArrowRight');
+  assert.equal(await exhibit.getAttribute('data-zoom-animating'), 'true');
+  await settled(2);
+  await moving.locator('[data-zoom-in]').click();
+  await moving.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await settled(3);
+  await moving.evaluate(() => {
+    delete document.hidden;
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  assert.equal(await moving.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  assert.deepEqual(motionErrors, []);
+  await moving.close();
   const noJS = await browser.newPage({javaScriptEnabled: false});
   await noJS.goto(origin + route);
   assert.ok(await noJS.locator('.museum-note').isVisible());
   assert.equal(await noJS.locator('.museum-room').count(), 3);
+  assert.ok(await noJS.locator('.zoom-overview').isVisible());
+  assert.match(await noJS.locator('.zoom-reference').textContent(), /Referenzintervall \[1, 2\]/);
+  assert.match(await noJS.locator('[data-zoom-factor]').textContent(), /1-fach/);
+  assert.ok(await noJS.locator('[data-zoom-in]').isDisabled());
   await noJS.locator('#zoom-quiz noscript summary').click();
   assert.ok(await noJS.locator('#zoom-quiz noscript details[open]').isVisible());
   await noJS.close();

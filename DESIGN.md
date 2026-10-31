@@ -201,6 +201,15 @@ The study sheet is a distinct two-page A4 layout with a 10mm print margin, white
 
 ## Elevation & Depth
 
+The museum number zoom pairs a fixed [1, 2] overview with a lens showing the
+current exact interval and its 10ⁿ magnification. A flat terracotta selection
+links both views; below 740px they stack. A 700ms step holds the selected tenth
+for 100ms, then expands it for 600ms with cubic deceleration. Ticks and the √2
+marker share the camera; zooming out reverses the scale change. Subpixel
+selections become a labelled location mark, never an inflated interval. Range
+jumps, reset and interrupted steps settle immediately. Reduced motion removes
+spatial movement while preserving all numerical feedback; initial load is static.
+
 Ordinary surfaces are flat. Paper, surface, sage, sand, borders, and whitespace provide separation. The featured lesson is one contained composition; subject entries remain flat rows. The floating chapter picker uses a restrained forest-tinted shadow (`0 12px 28px rgba(38, 61, 53, 0.1)`). The inherited critical-angle marker retains its small indicator shadow (`0 2px 8px rgba(0,0,0,.18)`). These exceptions are functional rather than a general card style.
 
 **The Flat Surface Rule.** Use spacing, rules, and tonal backgrounds for ordinary content; reserve shadows for floating controls and small functional indicators.
