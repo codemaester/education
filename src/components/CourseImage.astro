@@ -1,8 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import illustration from '../assets/optics-editorial.png';
-import MathCourseArt from './MathCourseArt.astro';
+import mathIllustration from '../assets/sqrt-two-editorial.png';
 interface Props { alt?: string; priority?: boolean; kind?: 'optics' | 'sqrt-two'; }
 const { alt = '', priority = false, kind = 'optics' } = Astro.props;
 ---
-{kind === 'sqrt-two' ? <MathCourseArt alt={alt} /> : <Image src={illustration} alt={alt} widths={[480, 768, 1200, 1536]} sizes="(max-width: 740px) 100vw, 50vw" format="webp" quality={85} loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'} />}
+{<Image src={kind === 'sqrt-two' ? mathIllustration : illustration} alt={alt} widths={[480, 768, 1200, 1536]} sizes="(max-width: 740px) 100vw, 50vw" format="webp" quality={85} loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'} />}

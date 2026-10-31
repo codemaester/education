@@ -6,11 +6,6 @@ export function initFeaturedCourses(root: HTMLElement) {
   if (slides.length < 2) return;
 
   const controls = root.querySelector<HTMLElement>('[data-carousel-controls]')!;
-  const rotation = root.querySelector<HTMLButtonElement>('[data-rotation]')!;
-  const rotationLabel = root.querySelector<HTMLElement>('[data-rotation-label]')!;
-  const pauseIcon = root.querySelector<HTMLElement>('[data-pause-icon]')!;
-  const playIcon = root.querySelector<HTMLElement>('[data-play-icon]')!;
-  const counter = root.querySelector<HTMLElement>('[data-counter]')!;
   const announcement = root.querySelector<HTMLElement>('[data-carousel-announcement]')!;
   const choices = [...root.querySelectorAll<HTMLButtonElement>('[data-slide-choice]')];
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -19,14 +14,10 @@ export function initFeaturedCourses(root: HTMLElement) {
   let hovered = root.matches(':hover');
   let visible = false;
   let timer: ReturnType<typeof setTimeout> | undefined;
-  let pointerRotationIntent: boolean | undefined;
 
   function schedule() {
     clearTimeout(timer);
     timer = undefined;
-    rotationLabel.textContent = enabled ? 'Pause' : 'Start';
-    pauseIcon.hidden = !enabled;
-    playIcon.hidden = enabled;
     if (enabled && !hovered && visible && !document.hidden) {
       timer = setTimeout(() => { show(index + 1, false); schedule(); }, ROTATION_INTERVAL);
     }
@@ -44,25 +35,14 @@ export function initFeaturedCourses(root: HTMLElement) {
       else slide.setAttribute('aria-hidden', 'true');
     });
     choices.forEach((choice, position) => {
-      if (position === index) choice.setAttribute('aria-disabled', 'true');
-      else choice.removeAttribute('aria-disabled');
+      if (position === index) choice.setAttribute('aria-current', 'true');
+      else choice.removeAttribute('aria-current');
     });
-    counter.textContent = `${index + 1} von ${slides.length}`;
-    if (manual) announcement.textContent = `${counter.textContent}: ${slides[index].dataset.title}`;
+    if (manual) announcement.textContent = `${index + 1} von ${slides.length}: ${slides[index].dataset.title}`;
   }
 
-  root.querySelector('[data-previous]')!.addEventListener('click', () => { stop(); show(index - 1, true); });
-  root.querySelector('[data-next]')!.addEventListener('click', () => { stop(); show(index + 1, true); });
   choices.forEach((choice, position) => choice.addEventListener('click', () => { stop(); show(position, true); }));
-  // Remember pointer intent before focusin changes Pause into Start.
-  rotation.addEventListener('pointerdown', () => { pointerRotationIntent = !enabled; });
-  rotation.addEventListener('pointercancel', () => { pointerRotationIntent = undefined; });
-  rotation.addEventListener('click', event => {
-    enabled = event.detail > 0 ? (pointerRotationIntent ?? !enabled) : !enabled;
-    pointerRotationIntent = undefined;
-    schedule();
-  });
-  // focusin and touch stop until an explicit Start, even after focus leaves.
+  // Focus, touch and manual selection stop rotation for the rest of the visit.
   root.addEventListener('focusin', stop);
   root.addEventListener('pointerdown', event => { if (event.pointerType === 'touch') stop(); });
   root.addEventListener('mouseenter', () => { hovered = true; schedule(); });

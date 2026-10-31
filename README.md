@@ -17,8 +17,10 @@ Die gemeinsame Gestaltung folgt der gewählten Richtung **Modern Classic**:
 Newsreader und Manrope, Papierweiß, Waldgrün, Terrakotta und Salbei.
 
 Auf der Startseite wechseln die fünf zuletzt hinzugefügten Lernseiten alle acht
-Sekunden. Aktuell erscheinen Mathematik und danach Optik. Die Vorschau lässt
-sich anhalten und direkt steuern; ohne JavaScript bleibt die neueste Seite sichtbar.
+Sekunden. Aktuell erscheinen Mathematik und danach Optik. Kleine Punkte unter der
+Vorschau erlauben die direkte Auswahl. Fokus, Berührung
+oder eine manuelle Auswahl stoppen den automatischen Wechsel; beim Darüberfahren
+mit der Maus pausiert er vorübergehend. Ohne JavaScript bleibt die neueste Seite sichtbar.
 
 Der gemeinsame Standard für neue Lernseiten ist in den
 [Anforderungen an Lernseiten](documentation/LERNSEITEN_ANFORDERUNGEN.md)
@@ -181,8 +183,8 @@ Navigation, Aufgaben, Simulationen, Video-Player und A4-Druck. Externe Videoaufr
 werden durch Testantworten ersetzt; die tatsächliche Verfügbarkeit der Videos
 wird zusätzlich bei der Inhaltsprüfung kontrolliert.
 
-Die Karussellprüfungen decken automatische und manuelle Wechsel, Neustart,
-Fokus, Berührung, Hover, Tab-Sichtbarkeit, Scrollen aus dem Sichtbereich,
+Die Karussellprüfungen decken automatische und manuelle Wechsel, Fokus, Berührung,
+Hover, Tab-Sichtbarkeit, Scrollen aus dem Sichtbereich,
 reduzierte Bewegung, stabile Höhen und den Betrieb ohne JavaScript ab.
 
 Nach dem Push dieselben Schritte auf der veröffentlichten Website

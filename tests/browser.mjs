@@ -151,7 +151,7 @@ try {
     maths.on('response', response => { if (response.url().startsWith(origin) && response.status() >= 400) errors.push(response.url()); });
     await maths.goto(origin + '/faecher/mathematik/');
     assert.equal(await maths.locator('.course-list-entry').count(), 1);
-    assert.equal(await maths.locator('.math-course-illustration').count(), 1);
+    assert.equal(await maths.locator('img[src*="sqrt-two-editorial"]').count(), 1);
     await maths.locator('.course-list-entry').click();
     await maths.locator('[data-number="2"]').waitFor({ state: 'visible' });
     await maths.waitForFunction(() => !document.querySelector('[data-number="2"]').disabled);
