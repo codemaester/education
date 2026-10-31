@@ -60,11 +60,17 @@ einen eigenen Lernbereich nach dem Hotel.
   Die Figuren bleiben beim Einzug durchgehend sichtbar: Bewegte Bilder werden
   vor dem Ausblenden der wartenden Person dekodiert, behalten volle Deckkraft
   und gehen ohne Zwischenbild in die gleich große Zimmerdarstellung über.
+  Die bewegte Gastnummer wechselt beim Eintritt in den dunklen Zimmerbereich
+  sofort zu Weiß und beim Verlassen zurück zur Flurfarbe. Weg, Farbwechsel und
+  das Ausblenden des Leerstrichs folgen derselben Animation: Sobald die Figur
+  ein freies Zimmer betritt, verschwindet dessen Leerstrich. Pause, Abbruch und
+  Zurücksetzen gelten auch für diese Darstellungswechsel.
   Beide Regeln stehen getrennt und beschriftet mit mindestens 2 rem Abstand;
   die jeweils ausgeführte Regel wird unterstrichen. Die ersten acht Zimmer,
   vier Busgäste und sieben zunehmend schmale, eng stehende, verblassende
   Türsilhouetten zeigen nur einen endlichen Ausschnitt. Die schmaleren aktiven
-  Türen haben keinen Türknopf. Ein Unendlichkeitssymbol steht über der
+  Türen haben keinen Türknopf. Drei Fortsetzungspunkte stehen vor dem
+  Unendlichkeitssymbol über der
   verblassenden Türreihe. Ein zusätzlicher Fortsetzungstext entfällt.
   Auf kleinen Bildschirmen folgt die verblassende Reihe unter den aktiven Zimmern.
   Die Wege berücksichtigen beide Zimmerreihen auf
@@ -141,7 +147,8 @@ tiefe Zoomstufen und die Ortsmarke für Ausschnitte unter einem Pixel.
 Die Hotelprüfung kontrolliert die eindeutigen Zuordnungen, bewegliche Figuren,
 Erklärpausen, Pause/Weiter, transparente Figuren, lückenlosen Einzug, schmaler
 werdende verblassende Türen mit Unendlichkeitssymbol, rechte Ausgänge mit
-allmählichem Verblassen erst am rechten Rand, freie
+allmählichem Verblassen erst am rechten Rand, Fortsetzungspunkte, synchronen
+Farbwechsel an der Zimmergrenze und verschwindende Leerstriche beim Einzug, freie
 Zwischenzustände, Einzug, Wiederholung und Abbruch in den Phasen sowie
 reduzierte Bewegung, Tab-/Größenwechsel und das Verlassen des Sichtbereichs.
 

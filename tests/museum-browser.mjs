@@ -2,6 +2,55 @@ import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 const route = '/mathematik/museum-der-unendlichkeit/';
 
+async function auditHotelEntry(page, phase) {
+  return page.evaluate(expectedPhase => new Promise(resolve => {
+    const exhibit = document.querySelector('[data-hotel-exhibit]');
+    const frames = [...exhibit.querySelectorAll('.door-frame')];
+    const guest = exhibit.querySelector('[data-hotel-mode="bus"]').getAttribute('aria-pressed') === 'true' ? 'B1' : 'Neu';
+    const resident = exhibit.querySelector('.hotel-resident');
+    const result = { samples: 0, gaps: 0, inside: 0, outside: 0, badColor: 0, emptyEntry: 0, visibleDash: 0 };
+    function visible(node) {
+      if (!node) return false;
+      const image = node.querySelector('img');
+      return image.complete && image.naturalWidth > 0 && getComputedStyle(image).visibility === 'visible'
+        && getComputedStyle(node).visibility === 'visible' && Number(getComputedStyle(node).opacity) > .99;
+    }
+    function sample() {
+      result.samples++;
+      const movers = [...exhibit.querySelectorAll('[data-hotel-mover]')];
+      for (const mover of movers) {
+        const frame = frames[Number(mover.dataset.hotelTarget) - 1];
+        if (!frame) continue;
+        const room = frame.getBoundingClientRect();
+        const badge = mover.querySelector('span');
+        const label = badge.getBoundingClientRect();
+        const image = mover.querySelector('img').getBoundingClientRect();
+        const centerX = (label.left + label.right) / 2;
+        if (centerX <= room.left || centerX >= room.right) continue;
+        if (label.top > room.top && label.top < room.bottom - 1) {
+          result.inside++;
+          if (getComputedStyle(badge).color !== getComputedStyle(frame).color) result.badColor++;
+        } else if (label.top > room.bottom + 1) {
+          result.outside++;
+          if (getComputedStyle(badge).color !== getComputedStyle(mover).color) result.badColor++;
+        }
+        const placeholder = frame.querySelector('[data-hotel-guest]');
+        if (placeholder.textContent === '—' && image.top < room.bottom - 1 && image.bottom > room.top) {
+          result.emptyEntry++;
+          if (getComputedStyle(placeholder).visibility !== 'hidden') result.visibleDash++;
+        }
+      }
+      if (expectedPhase === 'arriving') {
+        const mover = movers.find(el => el.dataset.hotelMover === guest);
+        if (!visible(mover) && !(resident.querySelector('[data-hotel-guest]').textContent === guest && visible(resident))) result.gaps++;
+      }
+      if (exhibit.dataset.hotelPhase !== expectedPhase) resolve(result);
+      else requestAnimationFrame(sample);
+    }
+    sample();
+  }), phase);
+}
+
 export async function testMuseum(browser, origin, screenshots) {
   const capture = screenshots || '/tmp/education-museum-review';
   await mkdir(capture, { recursive: true });
@@ -91,6 +140,9 @@ export async function testMuseum(browser, origin, screenshots) {
     assert.equal(await page.locator('.door-knob, [data-hotel-exit], .hotel-continuation').count(), 0);
     assert.equal(await page.locator('.hotel-rooms .door-frame').count(), 8);
     const infinity = await page.locator('.hotel-infinity-symbol').boundingBox();
+    const continuationDots = await page.locator('.hotel-continuation-dots').boundingBox();
+    assert.equal(await page.locator('.hotel-continuation-dots').textContent(), '…');
+    assert.ok(continuationDots.x + continuationDots.width < infinity.x, `${width}: dots precede the infinity symbol`);
     const continuation = await page.locator('.hotel-infinity-doors').boundingBox();
     assert.ok(infinity && infinity.y + infinity.height <= continuation.y, `${width}: infinity symbol sits above the continuing doors`);
     assert.ok(infinity.x >= continuation.x && infinity.x + infinity.width <= continuation.x + continuation.width, `${width}: infinity symbol stays over the continuing doors`);
@@ -392,6 +444,9 @@ export async function testMuseum(browser, origin, screenshots) {
         assert.deepEqual(alpha, [0,0,0,0], 'painted character has a transparent image background');
       }
       if ([1440, 320].includes(width)) await hotel.locator('[data-hotel-stage]').screenshot({ path: `${capture}/hotel-${mode}-moving-${width}.png` });
+      const movingEntry = await auditHotelEntry(hotelPage, 'moving');
+      assert.ok(movingEntry.inside > 0, 'observe existing guests entering their target rooms');
+      assert.equal(movingEntry.badColor, 0, 'existing guest numbers switch color at the room boundary');
       await phase('vacant');
       const intermediate = await hotelPage.locator('[data-hotel-guest]').allTextContents();
       assert.deepEqual(intermediate, mode === 'one' ? ['—','1','2','3','4','5','6','7'] : ['—','1','—','2','—','3','—','4']);
@@ -406,29 +461,13 @@ export async function testMuseum(browser, origin, screenshots) {
       assert.ok(await hotelPage.locator('[data-hotel-mover]').evaluateAll(nodes => nodes.every(el => el.querySelector('img').complete && el.querySelector('img').naturalWidth > 0)), 'incoming images are ready before the waiting guests are hidden');
       assert.ok(await hotelPage.locator('[data-hotel-rule="new"]').evaluate(el => el.hasAttribute('data-active')));
       if ([1440, 320].includes(width)) await hotel.locator('[data-hotel-stage]').screenshot({ path: `${capture}/hotel-${mode}-arriving-${width}.png` });
-      const continuity = await hotelPage.evaluate(() => new Promise(resolve => {
-        const exhibit = document.querySelector('[data-hotel-exhibit]');
-        const guest = document.querySelector('[data-hotel-mode="bus"]').getAttribute('aria-pressed') === 'true' ? 'B1' : 'Neu';
-        const resident = exhibit.querySelector('.hotel-resident');
-        let samples = 0;
-        let gaps = 0;
-        function visible(node) {
-          if (!node) return false;
-          const image = node.querySelector('img');
-          return image.complete && image.naturalWidth > 0 && getComputedStyle(image).visibility === 'visible'
-            && getComputedStyle(node).visibility === 'visible' && Number(getComputedStyle(node).opacity) > .99;
-        }
-        function sample() {
-          samples++;
-          const mover = [...exhibit.querySelectorAll('[data-hotel-mover]')].find(el => el.dataset.hotelMover === guest);
-          if (!visible(mover) && !(resident.querySelector('[data-hotel-guest]').textContent === guest && visible(resident))) gaps++;
-          if (exhibit.dataset.hotelPhase === 'complete') resolve({ samples, gaps });
-          else requestAnimationFrame(sample);
-        }
-        sample();
-      }));
+      const continuity = await auditHotelEntry(hotelPage, 'arriving');
       assert.ok(continuity.samples > 5, 'observe several frames before and after arrival');
       assert.equal(continuity.gaps, 0, 'incoming guest stays visible through the handoff into the room');
+      assert.ok(continuity.inside > 0 && continuity.outside > 0, 'observe labels both outside and inside the rooms');
+      assert.equal(continuity.badColor, 0, 'incoming guest numbers switch instantly to white upon entry');
+      assert.ok(continuity.emptyEntry > 0, 'observe figures entering previously empty rooms');
+      assert.equal(continuity.visibleDash, 0, 'the vacancy dash disappears as the figure enters');
       await phase('complete');
       assert.deepEqual(await hotelPage.locator('[data-hotel-guest]').allTextContents(), mode === 'one' ? ['Neu','1','2','3','4','5','6','7'] : ['B1','1','B2','2','B3','3','B4','4']);
       assert.equal(await hotelPage.locator('[data-hotel-mover]').count(), 0);

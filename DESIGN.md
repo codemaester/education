@@ -243,8 +243,12 @@ relocation, 1.6s empty-room hold, 1.1s arrival explanation and 2s entry. Travele
 their actual doors, follow measured aisle paths across the responsive room rows,
 and enter the assigned doors without fading. Each incoming image is decoded
 before replacing the waiting figure, and the room receives it at matching size.
+Guest labels switch instantly to paper white as they enter the door and back to
+the aisle color on exit. The vacancy dash disappears when the figure first enters;
+these changes share the movement timeline, including pause and cancellation.
 Narrower, knob-free active doors leave room for seven progressively compressed,
-fading door silhouettes with an infinity symbol above them representing the infinite continuation. On narrow screens
+fading door silhouettes with continuation dots followed by an infinity symbol
+above them representing the infinite continuation. On narrow screens
 this continuation follows below the two active room rows. It replaces the former
 continuation sentence. Departing guests walk straight off the right
 edge of their own aisle without a background tile. They fade only through the

@@ -143,19 +143,48 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     await traveler.querySelector<HTMLImageElement>('img')!.decode().catch(() => undefined);
     return traveler;
   }
-  async function fly(traveler: HTMLElement, points: Point[], duration: number) {
+  async function fly(traveler: HTMLElement, points: Point[], duration: number, door?: { room: number; entering: boolean }) {
     if (!traveler.isConnected) layer.append(traveler);
     let distance = 0;
     const lengths = points.map((p, i) => {
       if (i) distance += Math.hypot(p.x - points[i - 1].x, p.y - points[i - 1].y);
       return distance;
     });
+    const timing: KeyframeAnimationOptions = { duration, easing: 'cubic-bezier(.25,.1,.25,1)', fill: 'both' };
     const animation = traveler.animate(points.map((p, i) => ({
       transform: `translate(${p.x}px, ${p.y}px)`,
       offset: distance ? lengths[i] / distance : i / (points.length - 1),
       opacity: p.opacity ?? 1,
-    })), { duration, easing: 'cubic-bezier(.25,.1,.25,1)', fill: 'both' });
+    })), timing);
     animations.push(animation);
+    if (door) {
+      const frame = frames[door.room - 1];
+      const edge = frame.getBoundingClientRect().bottom - stage.getBoundingClientRect().top;
+      const segment = door.entering ? points.length - 1 : 1;
+      const from = points[segment - 1];
+      const to = points[segment];
+      // Geometry and color share the same eased, distance-based timeline.
+      const crossing = (offsetY: number) => {
+        const fraction = Math.max(0, Math.min(1, (edge - offsetY - from.y) / (to.y - from.y)));
+        return (lengths[segment - 1] + (lengths[segment] - lengths[segment - 1]) * fraction) / distance;
+      };
+      const badge = traveler.querySelector('span')!;
+      const inside = getComputedStyle(frame).color;
+      const outside = getComputedStyle(traveler).color;
+      const labelCrossing = crossing(badge.offsetTop + (door.entering ? 0 : badge.offsetHeight));
+      animations.push(badge.animate([
+        { color: door.entering ? outside : inside, offset: 0, easing: 'steps(1, end)' },
+        { color: door.entering ? inside : outside, offset: labelCrossing },
+        { color: door.entering ? inside : outside, offset: 1 },
+      ], timing));
+      if (door.entering && residents[door.room - 1].hasAttribute('data-empty')) {
+        animations.push(numbers[door.room - 1].animate([
+          { visibility: 'visible', offset: 0, easing: 'steps(1, end)' },
+          { visibility: 'hidden', offset: crossing(0) },
+          { visibility: 'hidden', offset: 1 },
+        ], timing));
+      }
+    }
     await animation.finished.catch(() => undefined);
   }
   function scheduleWait() {
@@ -216,7 +245,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
       residents[i].setAttribute('data-traveling', '');
       frames[i].setAttribute('data-open', '');
       const traveler = departing[i];
-      return { traveler, points, departure: fly(traveler, [origin, outside], 700) };
+      return { traveler, points, room: move.room, departure: fly(traveler, [origin, outside], 700, { room: i + 1, entering: false }) };
     });
     await Promise.all(trips.map(trip => trip.departure));
     if (token !== generation) return;
@@ -227,7 +256,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     setPhase('moving');
     status.textContent = mode === 'one' ? 'Alle rücken ein Zimmer weiter. Gast 8 geht rechts weiter zu Zimmer 9.'
       : 'Alle ziehen in gerade Zimmer. Gäste ab Nummer 5 gehen rechts zu weiteren Zimmern.';
-    await Promise.all(trips.map(trip => fly(trip.traveler, trip.points, 2200)));
+    await Promise.all(trips.map(trip => fly(trip.traveler, trip.points, 2200, trip.room <= 8 ? { room: trip.room, entering: true } : undefined)));
     if (token !== generation) return;
     layer.replaceChildren();
     residents.forEach(resident => resident.removeAttribute('data-traveling'));
@@ -255,7 +284,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
       const points = [origin, { x: rail, y: origin.y }, { x: rail, y: endLane }, { x: target.x, y: endLane }, target];
       waiting[i].setAttribute('data-traveling', '');
       frames[move.room - 1].setAttribute('data-open', '');
-      return fly(arriving[i], points, 2000);
+      return fly(arriving[i], points, 2000, { room: move.room, entering: true });
     }));
     if (token === generation) complete();
   }
