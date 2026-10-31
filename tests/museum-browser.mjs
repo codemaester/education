@@ -48,9 +48,39 @@ export async function testMuseum(browser, origin, screenshots) {
     assert.equal(await page.locator('[data-orbit-unique="rational"]').textContent(), '12');
     assert.match(await page.locator('.orbit-figure.rational svg').getAttribute('aria-label'), /Zyklus umfasst 12 Landepunkte/);
     await page.locator('[data-orbit-reset]').click();
+    for (const kind of ['rational', 'irrational']) {
+      const circle = await page.locator(`.orbit-figure.${kind} svg`).boundingBox();
+      const step = await page.locator(`#${kind}-step`).boundingBox();
+      assert.ok(step.y >= circle.y + circle.height, `${width}: step below ${kind} circle`);
+      assert.ok(Math.abs(step.x + step.width / 2 - circle.x - circle.width / 2) < 1, `${width}: centered ${kind} step`);
+    }
+    const speed = page.locator('#orbit-speed');
+    assert.equal(await speed.getAttribute('type'), 'range');
+    assert.equal(await speed.inputValue(), '2');
+    await speed.focus();
+    await page.keyboard.press('Home');
+    assert.equal(await speed.getAttribute('aria-valuetext'), '1 Schritt pro Sekunde');
+    assert.equal(await page.locator('[data-orbit-speed]').textContent(), '1 Schritt/s');
+    await page.keyboard.press('End');
+    assert.equal(await speed.inputValue(), '60');
+    await page.keyboard.press('ArrowLeft');
+    assert.equal(await speed.inputValue(), '59');
+    assert.equal(await page.locator('[data-orbit-speed]').textContent(), '59 Schritte/s');
+    await speed.fill('60');
+    if (width >= 1024) {
+      const actions = await page.locator('.orbit-controls .museum-actions').boundingBox();
+      const tempo = await page.locator('.orbit-tempo').boundingBox();
+      assert.ok(Math.abs(actions.y + actions.height / 2 - tempo.y - tempo.height / 2) < 1, `${width}: tempo beside actions`);
+    }
     await page.locator('[data-orbit-play]').click();
-    await page.waitForFunction(() => document.querySelector('[data-orbit-count]').textContent !== '0 Schritte');
+    assert.equal(await page.locator('[data-orbit-play]').textContent(), 'Stopp');
+    await page.waitForFunction(() => parseInt(document.querySelector('[data-orbit-count]').textContent) >= 6);
+    const beforeSpeedChange = parseInt(await page.locator('[data-orbit-count]').textContent());
+    await speed.fill('1');
+    assert.equal(await page.locator('[data-orbit-play]').getAttribute('aria-pressed'), 'true');
+    assert.ok(parseInt(await page.locator('[data-orbit-count]').textContent()) >= beforeSpeedChange);
     await page.locator('[data-orbit-play]').click();
+    assert.equal(await page.locator('[data-orbit-play]').textContent(), 'Start');
     const stopped = await page.locator('[data-orbit-count]').textContent();
     await page.waitForTimeout(550);
     assert.equal(await page.locator('[data-orbit-count]').textContent(), stopped);
@@ -209,6 +239,8 @@ export async function testMuseum(browser, origin, screenshots) {
   assert.match(await noJS.locator('.zoom-reference').textContent(), /Referenzintervall \[1, 2\]/);
   assert.match(await noJS.locator('[data-zoom-factor]').textContent(), /1-fach/);
   assert.ok(await noJS.locator('[data-zoom-in]').isDisabled());
+  assert.ok(await noJS.locator('#orbit-speed').isDisabled());
+  assert.equal(await noJS.locator('[data-orbit-speed]').textContent(), '2 Schritte/s');
   await noJS.locator('#zoom-quiz noscript summary').click();
   assert.ok(await noJS.locator('#zoom-quiz noscript details[open]').isVisible());
   await noJS.close();

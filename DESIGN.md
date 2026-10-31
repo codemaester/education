@@ -220,6 +220,12 @@ Small controls, notes, answer fields, and labels use the small radius; chapter p
 
 ## Components
 
+The museum circle walkers keep each step-size select centered below its own
+circle. Their shared 1–60 steps/s tempo slider (default 2) displays the current
+value alongside Start/Stop and the manual actions in one wrapping control row.
+Changing tempo preserves the running experiment; narrow screens wrap controls
+and stack the two circles using the existing museum breakpoints.
+
 - **Buttons:** forest on paper for primary actions, transparent with a rule border for secondary actions; both use the small radius, 48px minimum height, and arrow icons where appropriate. Primary hover deepens the forest; secondary hover adds light sage. Shared keyboard focus is a 3px terracotta outline with a 4px offset. Scoped imported learning controls retain their forest focus treatment.
 - **Navigation:** the lens and serif Education wordmark lead home; Manrope links guide to subjects and Optik. Current lesson navigation uses dark terracotta, with selected chapter links on light sage. The skip link becomes visible on focus. The compact chapter picker is a native disclosure.
 - **Subject directory:** circular line-icon symbols, serif names, muted descriptions, truthful availability, and a trailing arrow. Hover adds a light sage surface. Avoid presenting unavailable lessons as working course links.

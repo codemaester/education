@@ -31,6 +31,12 @@ Die drei vom Nutzer gewählten Museumsräume übernehmen das Modern-Classic-Them
   jeder Punkt getroffen wird. Verbindungen zeigen Landereihenfolge, keine Wege
   durch das Kreisinnere. Ein Animationsrahmen läuft nur während des Versuchs;
   er pausiert außerhalb des Sichtbereichs und bei verborgenem Tab.
+  Die Schrittweite steht jeweils mittig unter dem zugehörigen Kreis. Beide
+  Wanderer teilen ein Tempo von 1 bis 60 Schritten pro Sekunde (anfangs 2),
+  einstellbar über einen beschrifteten Schieberegler mit aktueller Wertanzeige.
+  Tempo, Start/Stopp und die weiteren Aktionen stehen bei ausreichender Breite
+  in einer Zeile und umbrechen auf kleinen Bildschirmen. Tempoänderungen wirken
+  während des Laufs, ohne die bisherigen Schritte zurückzusetzen.
 - Unendlichkeitshotel: n → n+1 und n → 2n, diagonal geordnete gekürzte Brüche
   einschließlich Vorzeichen und 0, anschließend Cantors Diagonalargument.
   Acht Zimmer und sechs Dezimalstellen sind ausdrücklich nur Ausschnitte. Die

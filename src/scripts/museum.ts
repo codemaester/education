@@ -150,7 +150,7 @@ const orbit = $('[data-orbit-exhibit]');
 const play = $<HTMLButtonElement>('[data-orbit-play]');
 const rational = $<HTMLSelectElement>('#rational-step');
 const irrational = $<HTMLSelectElement>('#irrational-step');
-const speed = $<HTMLSelectElement>('#orbit-speed');
+const speed = $<HTMLInputElement>('#orbit-speed');
 let steps = 0;
 let running = false;
 let frame = 0;
@@ -195,7 +195,7 @@ function orbitMessage() {
 }
 function pauseOrbit(announce = false) {
   running = false; cancelAnimationFrame(frame); progress = 0;
-  play.textContent = 'Wanderer starten'; play.setAttribute('aria-pressed', 'false');
+  play.textContent = 'Start'; play.setAttribute('aria-pressed', 'false');
   updateWalkers(); if (announce) orbitMessage();
 }
 function tick(time: number) {
@@ -213,7 +213,7 @@ play.addEventListener('click', () => {
   if (running) { pauseOrbit(true); return; }
   if (steps === cap) steps = 0;
   running = true; previous = 0; progress = 0; renderOrbit();
-  play.textContent = 'Wanderer anhalten'; play.setAttribute('aria-pressed', 'true');
+  play.textContent = 'Stopp'; play.setAttribute('aria-pressed', 'true');
   $('[data-orbit-status]').textContent = 'Beide Wanderer sind unterwegs. Du kannst die Bewegung jederzeit anhalten.';
   frame = requestAnimationFrame(tick);
 });
@@ -222,6 +222,13 @@ $('[data-orbit-step]').addEventListener('click', () => manualSteps(1));
 $('[data-orbit-many]').addEventListener('click', () => manualSteps(100));
 function resetOrbit() { pauseOrbit(); steps = 0; renderOrbit(); orbitMessage(); }
 $('[data-orbit-reset]').addEventListener('click', resetOrbit);
+function updateOrbitSpeed() {
+  const value = Number(speed.value);
+  $('[data-orbit-speed]', orbit).textContent = `${value} ${value === 1 ? 'Schritt' : 'Schritte'}/s`;
+  speed.setAttribute('aria-valuetext', `${value} ${value === 1 ? 'Schritt' : 'Schritte'} pro Sekunde`);
+}
+speed.addEventListener('input', updateOrbitSpeed);
+updateOrbitSpeed();
 rational.addEventListener('change', resetOrbit); irrational.addEventListener('change', resetOrbit);
 document.addEventListener('visibilitychange', () => { if (document.hidden && running) pauseOrbit(true); });
 motion.addEventListener('change', () => { if (motion.matches && running) pauseOrbit(true); });

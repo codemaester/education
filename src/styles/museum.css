@@ -91,9 +91,14 @@
 .orbit-figure text { fill: var(--color-paper); font: 400 40px var(--font-display); font-variant-numeric: tabular-nums; }
 .orbit-figure .orbit-center-label { font: 400 12px var(--font-body); }
 .orbit-figure .orbit-start { font: 400 12px var(--font-body); }
-.orbit-settings { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 1rem; }
-.orbit-settings label { font-size: .75rem; }
-.orbit-settings select { display: block; width: 100%; margin-top: .5rem; min-height: 44px; color: var(--color-forest); background: var(--color-paper); border: 1px solid var(--color-sage); border-radius: var(--radius-small); padding: .5rem; font-size: .8rem; }
+.orbit-step { display: block; max-width: 22rem; margin: .5rem auto 0; text-align: center; font-size: .75rem; }
+.orbit-step select { display: block; width: 100%; margin-top: .5rem; min-height: 44px; color: var(--color-forest); background: var(--color-paper); border: 1px solid var(--color-sage); border-radius: var(--radius-small); padding: .5rem; font-size: .8rem; }
+.orbit-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 2rem; }
+.orbit-controls .museum-actions { margin: 0; }
+.orbit-tempo { flex: 1 1 14rem; max-width: 22rem; min-width: 0; }
+.orbit-tempo > div { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .25rem 1rem; font-size: .75rem; }
+.orbit-tempo output { color: var(--color-sand); font-variant-numeric: tabular-nums; }
+.orbit-tempo input { display: block; width: 100%; min-height: 44px; margin: 0; accent-color: var(--color-sand); }
 .orbit-exhibit .button { color: var(--color-forest); background: var(--color-paper); }
 .orbit-exhibit .button:hover { background: var(--color-sage); }
 .orbit-exhibit .button-secondary { background: transparent; color: var(--color-paper); border-color: var(--color-sage); }
@@ -150,8 +155,6 @@
 @media (max-width: 1000px) {
   .museum-hero { gap: 2rem; }
   .museum-hero h1 { font-size: clamp(2.7rem, 5.7vw, 4rem); }
-  .orbit-settings { grid-template-columns: 1fr 1fr; }
-  .orbit-settings label:last-child { grid-column: 1 / -1; }
   .museum-takeaway { align-items: flex-start; flex-direction: column; }
 }
 @media (max-width: 740px) {
@@ -186,8 +189,6 @@
   .orbit-figure figcaption { font-size: .8rem; min-height: 5.5em; }
   .orbit-figure figcaption span { font-size: .7rem; }
   .orbit-figure svg { min-height: 160px; }
-  .orbit-settings { grid-template-columns: 1fr; }
-  .orbit-settings label:last-child { grid-column: auto; }
   .orbit-figure .orbit-center-label, .orbit-figure .orbit-start { font-size: 19px; }
   .museum-room { scroll-margin-top: 1rem; }
   .exhibit-status { min-height: 0; }
@@ -201,7 +202,7 @@
   .diagonal-table th, .diagonal-table td { padding-block: .5rem; }
 }
 @media print {
-  .museum-nav, .exhibit-controls, .museum-actions, .orbit-settings, .hotel-modes, .museum-quiz { display: none; }
+  .museum-nav, .exhibit-controls, .museum-actions, .orbit-controls, .orbit-step, .hotel-modes, .museum-quiz { display: none; }
   .museum-room { break-before: page; }
   .museum-hero, .room-reading { display: block; }
   .museum-cover { display: none; }
