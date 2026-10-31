@@ -1,6 +1,6 @@
-import { hotelAssignment, rationalGuests } from '../data/museum-math';
+import { hotelAssignment } from '../data/museum-math';
 
-type Mode = 'one' | 'bus' | 'fractions';
+type Mode = 'one' | 'bus';
 type Phase = 'ready' | 'moving' | 'vacant' | 'arriving' | 'complete';
 type Point = { x: number; y: number };
 
@@ -44,26 +44,25 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     hotel.dataset.hotelPhase = next;
     const busy = next === 'moving' || next === 'vacant' || next === 'arriving';
     run.disabled = busy;
-    run.textContent = busy ? 'Umzug läuft …' : next === 'complete' ? 'Noch einmal abspielen' : mode === 'fractions' ? 'Brüche einchecken' : 'Gäste umziehen lassen';
+    run.textContent = busy ? 'Umzug läuft …' : next === 'complete' ? 'Noch einmal abspielen' : 'Gäste umziehen lassen';
     existingRule.toggleAttribute('data-active', next === 'moving');
     newRule.toggleAttribute('data-active', next === 'arriving');
   }
 
   function occupants(moved: boolean, includeNew: boolean) {
-    const assignment = mode === 'fractions' ? undefined : hotelAssignment(mode);
-    const fractions = mode === 'fractions' && moved ? rationalGuests(8) : [];
+    const assignment = hotelAssignment(mode);
     numbers.forEach((number, i) => {
-      const old = assignment?.moves.find(move => move.room === i + 1);
-      const arrival = includeNew ? assignment?.arrivals.find(move => move.room === i + 1) : undefined;
-      const value = !moved ? String(i + 1) : mode === 'fractions' ? fractions[i] : arrival?.guest ?? old?.guest ?? '—';
+      const old = assignment.moves.find(move => move.room === i + 1);
+      const arrival = includeNew ? assignment.arrivals.find(move => move.room === i + 1) : undefined;
+      const value = !moved ? String(i + 1) : arrival?.guest ?? old?.guest ?? '—';
       number.textContent = value;
       number.closest('.hotel-door')!.toggleAttribute('data-new', !!arrival);
       residents[i].toggleAttribute('data-empty', value === '—');
-      labels[i].textContent = !moved ? 'Bisheriger Gast' : mode === 'fractions' ? 'Rationale Zahl' : arrival ? 'Neuer Gast' : old ? 'Bisheriger Gast' : 'Frei';
+      labels[i].textContent = !moved ? 'Bisheriger Gast' : arrival ? 'Neuer Gast' : old ? 'Bisheriger Gast' : 'Frei';
     });
     waiting.forEach(person => person.toggleAttribute('data-arrived', includeNew));
     get('[data-waiting-more]').toggleAttribute('data-arrived', includeNew);
-    if (includeNew && mode !== 'fractions') {
+    if (includeNew) {
       get('[data-hotel-waiting-title]').textContent = 'Die neuen Gäste sind eingezogen';
       get('[data-hotel-waiting-note]').textContent = 'Die Wartezone ist leer. Jeder Gast hat sein Zimmer.';
     }
@@ -83,17 +82,13 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
   function rules() {
     get('[data-hotel-task]').textContent = mode === 'one'
       ? 'Alle Zimmer sind belegt. Vor der Tür wartet noch ein Gast. Zuerst ziehen die bisherigen Gäste um, dann zieht der neue Gast ein.'
-      : mode === 'bus' ? 'Ein Bus mit unendlich vielen Gästen kommt an. Sie sind nummeriert: 1, 2, 3, … Wie finden alle Platz, ohne einen bisherigen Gast auszuquartieren?'
-        : 'Ein Gast für jede rationale Zahl: 0, positive und negative Brüche. Wir vergeben Zimmer in einer Reihenfolge, die jeden erreicht.';
-    existingRule.querySelector('h4')!.textContent = mode === 'fractions' ? 'Alle rationalen Gäste' : 'Bisherige Gäste';
-    formula(existingRule, mode === 'one' ? 'Zimmer n → Zimmer n + 1' : mode === 'bus' ? 'Zimmer n → Zimmer 2n' : '0, dann Brüche diagonal');
-    existingRule.querySelector('[data-rule-example]')!.textContent = mode === 'one' ? '1 → 2, 2 → 3, 3 → 4, …' : mode === 'bus' ? '1 → 2, 2 → 4, 3 → 6, …' : 'Gekürzte positive Brüche nach p + q ordnen und jeweils den negativen Bruch ergänzen.';
-    newRule.hidden = mode === 'fractions';
+      : 'Ein Bus mit unendlich vielen Gästen kommt an. Sie sind nummeriert: 1, 2, 3, … Wie finden alle Platz, ohne einen bisherigen Gast auszuquartieren?';
+    formula(existingRule, mode === 'one' ? 'Zimmer n → Zimmer n + 1' : 'Zimmer n → Zimmer 2n');
+    existingRule.querySelector('[data-rule-example]')!.textContent = mode === 'one' ? '1 → 2, 2 → 3, 3 → 4, …' : '1 → 2, 2 → 4, 3 → 6, …';
     newRule.querySelector('[data-rule-title]')!.textContent = mode === 'bus' ? 'Neue Busgäste' : 'Neuer Gast';
     formula(newRule, mode === 'bus' ? 'Busgast k → Zimmer 2k − 1' : 'Neuer Gast → Zimmer 1');
     newRule.querySelector('[data-rule-example]')!.textContent = mode === 'bus' ? 'Gast 1 → Zimmer 1, Gast 2 → Zimmer 3, Gast 3 → Zimmer 5, …' : 'Erst umziehen, dann den neuen Gast aufnehmen.';
     get('[data-hotel-exit]').textContent = mode === 'bus' ? 'Weiter zu Zimmer 10, 12, 14, 16, … Die Zimmer gehen ohne letztes Zimmer weiter.' : 'Weiter zu Zimmer 9, … Die Zimmer gehen ohne letztes Zimmer weiter.';
-    get('[data-hotel-waiting]').hidden = mode === 'fractions';
     get('[data-hotel-waiting-title]').textContent = mode === 'bus' ? 'Unendlich viele Busgäste warten' : 'Ein neuer Gast wartet';
     get('[data-hotel-waiting-note]').textContent = mode === 'bus' ? 'Gast 1, 2, 3, 4, … — hier die ersten vier.' : 'Er zieht nach dem Umzug in Zimmer 1.';
     get('[data-waiting-more]').hidden = mode !== 'bus';
@@ -116,8 +111,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     occupants(true, true);
     setPhase('complete');
     status.textContent = mode === 'one' ? 'Zimmer 1 nimmt den neuen Gast auf. Gast 8 wohnt jetzt in Zimmer 9, außerhalb unseres Ausschnitts. Jeder bisherige Gast n hat sein Zimmer n + 1.'
-      : mode === 'bus' ? 'Die bisherigen Gäste wohnen in den geraden Zimmern. Die Busgäste B1, B2, … belegen alle ungeraden Zimmer. Niemand geht verloren.'
-        : 'Jeder gekürzte positive Bruch p/q erscheint bei seiner endlichen Summe p + q. Dazu kommt sein negatives Gegenstück. So erreichen wir jeden rationalen Gast genau einmal.';
+      : 'Die bisherigen Gäste wohnen in den geraden Zimmern. Die Busgäste B1, B2, … belegen alle ungeraden Zimmer. Niemand geht verloren.';
   }
 
   function point(element: Element): Point {
@@ -160,7 +154,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
 
   async function start() {
     reset();
-    if (mode === 'fractions' || motion.matches || document.hidden) { complete(); return; }
+    if (motion.matches || document.hidden) { complete(); return; }
     const token = generation;
     const assignment = hotelAssignment(mode);
     size = { width: stage.clientWidth, height: stage.clientHeight };

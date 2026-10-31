@@ -95,7 +95,7 @@
 .orbit-step select { display: block; width: 100%; margin-top: .5rem; min-height: 44px; color: var(--color-forest); background: var(--color-paper); border: 1px solid var(--color-sage); border-radius: var(--radius-small); padding: .5rem; font-size: .8rem; }
 .orbit-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 2rem; }
 .orbit-controls .museum-actions { margin: 0; }
-.orbit-tempo { flex: 1 1 14rem; max-width: 22rem; min-width: 0; }
+.orbit-tempo { flex: 1 1 14rem; min-width: 0; }
 .orbit-tempo > div { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .25rem 1rem; font-size: .75rem; }
 .orbit-tempo output { color: var(--color-sand); font-variant-numeric: tabular-nums; }
 .orbit-tempo input { display: block; width: 100%; min-height: 44px; margin: 0; accent-color: var(--color-sand); }

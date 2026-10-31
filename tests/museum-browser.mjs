@@ -67,6 +67,9 @@ export async function testMuseum(browser, origin, screenshots) {
     assert.equal(await speed.inputValue(), '59');
     assert.equal(await page.locator('[data-orbit-speed]').textContent(), '59 Schritte/s');
     await speed.fill('60');
+    const tempoBounds = await page.locator('.orbit-tempo').boundingBox();
+    const rowBounds = await page.locator('.orbit-controls').boundingBox();
+    assert.ok(Math.abs(tempoBounds.x + tempoBounds.width - rowBounds.x - rowBounds.width) < 1, `${width}: tempo reaches right edge`);
     if (width >= 1024) {
       const actions = await page.locator('.orbit-controls .museum-actions').boundingBox();
       const tempo = await page.locator('.orbit-tempo').boundingBox();
@@ -84,6 +87,7 @@ export async function testMuseum(browser, origin, screenshots) {
     const stopped = await page.locator('[data-orbit-count]').textContent();
     await page.waitForTimeout(550);
     assert.equal(await page.locator('[data-orbit-count]').textContent(), stopped);
+    assert.deepEqual(await page.locator('[data-hotel-mode]').evaluateAll(nodes => nodes.map(el => el.dataset.hotelMode)), ['one', 'bus']);
     await page.locator('[data-hotel-run]').click();
     assert.equal(await page.locator('[data-hotel-guest]').first().textContent(), 'Neu');
     await page.locator('[data-hotel-mode="bus"]').click();
@@ -100,9 +104,6 @@ export async function testMuseum(browser, origin, screenshots) {
     assert.match(await page.locator('[data-hotel-waiting-note]').textContent(), /Wartezone ist leer/);
     assert.equal(await page.locator('[data-hotel-mover]').count(), 0);
     if ([1440, 390, 320].includes(width)) await page.locator('[data-hotel-exhibit]').screenshot({ path: `${capture}/hotel-bus-${width}.png` });
-    await page.locator('[data-hotel-mode="fractions"]').click();
-    await page.locator('[data-hotel-run]').click();
-    assert.equal(await page.locator('[data-hotel-guest]').nth(3).textContent(), '1/2');
     await page.locator('[data-diagonal-step]').click();
     assert.equal(await page.locator('[data-changed]').count(), 1);
     await page.locator('[data-diagonal-all]').click();
@@ -296,12 +297,9 @@ export async function testMuseum(browser, origin, screenshots) {
     if (width === 1440) {
       await button.click();
       await phase('moving');
-      await hotelPage.locator('[data-hotel-mode="fractions"]').click();
-      await phase('ready');
-      await button.click();
-      await phase('complete');
-      assert.equal(await hotelPage.locator('[data-hotel-guest]').nth(3).textContent(), '1/2');
       await hotelPage.locator('[data-hotel-mode="one"]').click();
+      await phase('ready');
+      assert.deepEqual(await hotelPage.locator('[data-hotel-guest]').allTextContents(), ['1','2','3','4','5','6','7','8']);
       await button.click();
       await phase('arriving');
       await hotelPage.locator('[data-hotel-reset]').click();

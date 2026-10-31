@@ -35,10 +35,11 @@ Die drei vom Nutzer gewählten Museumsräume übernehmen das Modern-Classic-Them
   Wanderer teilen ein Tempo von 1 bis 60 Schritten pro Sekunde (anfangs 2),
   einstellbar über einen beschrifteten Schieberegler mit aktueller Wertanzeige.
   Tempo, Start/Stopp und die weiteren Aktionen stehen bei ausreichender Breite
-  in einer Zeile und umbrechen auf kleinen Bildschirmen. Tempoänderungen wirken
+  in einer Zeile; der Regler nutzt den restlichen Platz bis zum rechten Rand.
+  Auf kleinen Bildschirmen umbrechen die Aktionen und der Regler füllt seine Zeile. Tempoänderungen wirken
   während des Laufs, ohne die bisherigen Schritte zurückzusetzen.
-- Unendlichkeitshotel: n → n+1 und n → 2n, diagonal geordnete gekürzte Brüche
-  einschließlich Vorzeichen und 0, anschließend Cantors Diagonalargument.
+- Unendlichkeitshotel: ein neuer Gast mit n → n+1 und unendlich viele Busgäste
+  mit n → 2n, anschließend Cantors Diagonalargument.
   Acht Zimmer und sechs Dezimalstellen sind ausdrücklich nur Ausschnitte. Die
   Ersetzungsregel 1 → 2, sonst → 1 vermeidet Mehrdeutigkeit durch 9er-Perioden.
   Einzelgast und Bus nutzen denselben automatischen Ablauf: Die bisherigen
@@ -57,7 +58,7 @@ Die drei vom Nutzer gewählten Museumsräume übernehmen das Modern-Classic-Them
   verwerfen alle laufenden Animationen und verzögerten Fortsetzungen. Ein
   verborgener Tab, eine nicht sichtbare Bühne, Größenänderungen oder der Wechsel
   zu reduzierter Bewegung führen zum korrekten Endzustand. Bei bereits reduzierter
-  Bewegung erscheint er sofort. Die Bruchaufzählung bleibt ohne Umzugsanimation.
+  Bewegung erscheint er sofort.
 
 ## Didaktischer Aufbau
 
@@ -87,7 +88,7 @@ führt kein neues Designsystem ein.
 
 `tests/museum.test.mjs` prüft Intervallinvarianten und verschachtelte Zehntel
 einschließlich lokaler Abstände bis 24 Dezimalstellen,
-Bruchaufzählung, Kreisgeometrie und Periodizität, Diagonalregel und Aufgabenabdeckung.
+Hotelzuordnungen, Kreisgeometrie und Periodizität, Diagonalregel und Aufgabenabdeckung.
 `tests/museum-browser.mjs` prüft die drei Experimente, Animation, Quiz-Neustart,
 getrennte Ergebnisse, Tastaturbedienung, fünf Bildschirmbreiten, Quellen-/Asset-
 Fehler, No-JS-Lösungen und Druckansicht im Produktionsbuild.

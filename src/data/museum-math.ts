@@ -23,28 +23,12 @@ export function sqrtTwoWindow(digits: number) {
   return { lower, upper: lower + 1n, scale, left: decimal(lower, digits), right: decimal(lower + 1n, digits), fraction: Number(fine % 100_000_000n) / 100_000_000 };
 }
 
-export function gcd(a: number, b: number): number { return b ? gcd(b, a % b) : a; }
-
 /** One source of truth for the visible hotel occupants and their animated trips. */
 export function hotelAssignment(mode: 'one' | 'bus', rooms = 8) {
   return {
     moves: Array.from({ length: rooms }, (_, i) => ({ guest: String(i + 1), room: mode === 'one' ? i + 2 : (i + 1) * 2 })),
     arrivals: Array.from({ length: mode === 'one' ? 1 : Math.ceil(rooms / 2) }, (_, i) => ({ guest: mode === 'one' ? 'Neu' : `B${i + 1}`, room: mode === 'one' ? 1 : i * 2 + 1 })),
   };
-}
-
-/** Diagonal enumeration: every positive reduced fraction appears once. */
-export function rationalGuests(count: number): string[] {
-  const guests = ['0'];
-  for (let sum = 2; guests.length < count; sum++) {
-    for (let numerator = 1; numerator < sum && guests.length < count; numerator++) {
-      const denominator = sum - numerator;
-      if (gcd(numerator, denominator) !== 1) continue;
-      const value = denominator === 1 ? `${numerator}` : `${numerator}/${denominator}`;
-      guests.push(value, `−${value}`);
-    }
-  }
-  return guests.slice(0, count);
 }
 
 export function rotationPoint(step: number, turn: number) {

@@ -235,6 +235,8 @@ and size changes settle to the correct final occupancy without leftover figures.
 The museum circle walkers keep each step-size select centered below its own
 circle. Their shared 1–60 steps/s tempo slider (default 2) displays the current
 value alongside Start/Stop and the manual actions in one wrapping control row.
+The slider fills the remaining row width through the right content edge and
+occupies the full line when the controls wrap.
 Changing tempo preserves the running experiment; narrow screens wrap controls
 and stack the two circles using the existing museum breakpoints.
 
