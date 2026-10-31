@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { integerSqrt, sqrtTwoWindow, rationalGuests, rotationPoint, diagonalDigit } from '../src/data/museum-math.ts';
+import { integerSqrt, sqrtTwoWindow, rationalGuests, hotelAssignment, rotationPoint, diagonalDigit } from '../src/data/museum-math.ts';
 import { roomQuestions, finalQuestions } from '../src/data/museum.ts';
 
 test('all zoom windows strictly enclose sqrt(2), including beyond Number precision', () => {
@@ -41,6 +41,20 @@ test('rational hotel enumeration is unique and reaches positive, negative and in
   assert.equal(new Set(guests).size, guests.length);
   for (const guest of ['0', '1', '−1', '1/2', '−1/2', '2/3', '3/2', '7']) assert.ok(guests.includes(guest));
   assert.deepEqual(rationalGuests(8), ['0', '1', '−1', '1/2', '−1/2', '2', '−2', '1/3']);
+});
+
+test('hotel guests retain their identity and leave exactly the right rooms for arrivals', () => {
+  for (const mode of ['one', 'bus']) {
+    const { moves, arrivals } = hotelAssignment(mode);
+    assert.deepEqual(moves.map(move => move.guest), ['1', '2', '3', '4', '5', '6', '7', '8']);
+    assert.equal(new Set(moves.map(move => move.room)).size, 8);
+    assert.ok(moves.every(move => move.room === (mode === 'one' ? Number(move.guest) + 1 : Number(move.guest) * 2)));
+    const visible = [...moves, ...arrivals].filter(move => move.room <= 8);
+    assert.deepEqual(visible.map(move => move.room).sort((a, b) => a - b), [1, 2, 3, 4, 5, 6, 7, 8]);
+    assert.equal(new Set(visible.map(move => move.guest)).size, 8);
+    assert.deepEqual(arrivals.map(move => move.room), mode === 'one' ? [1] : [1, 3, 5, 7]);
+    assert.deepEqual(moves.filter(move => move.room > 8).map(move => move.room), mode === 'one' ? [9] : [10, 12, 14, 16]);
+  }
 });
 
 test('rational rotation returns after denominator steps and all computed points lie on the circle', () => {

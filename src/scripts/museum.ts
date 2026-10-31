@@ -1,4 +1,5 @@
-import { sqrtTwoWindow, rationalGuests, rotationPoint, diagonalDigit } from '../data/museum-math';
+import { initializeHotel } from './hotel';
+import { sqrtTwoWindow, rotationPoint, diagonalDigit } from '../data/museum-math';
 
 const $ = <T extends Element = HTMLElement>(selector: string, root: ParentNode = document) => root.querySelector<T>(selector)!;
 const $$ = <T extends Element = HTMLElement>(selector: string, root: ParentNode = document) => [...root.querySelectorAll<T>(selector)];
@@ -236,35 +237,7 @@ new IntersectionObserver(([entry]) => { orbitVisible = entry.isIntersecting; if 
 renderOrbit();
 
 // Room III: the rule is infinite; the eight room slots are a finite preview.
-let hotelMode = 'one';
-const hotel = $('[data-hotel-exhibit]');
-const hotelRun = $<HTMLButtonElement>('[data-hotel-run]');
-const doors = $$('[data-hotel-guest]');
-function renderHotel(moved = false) {
-  $('[data-hotel-rule]').textContent = hotelMode === 'one' ? 'n → n + 1' : hotelMode === 'bus' ? 'n → 2n · Busgast k → 2k − 1' : '0, dann positive und negative Brüche diagonal';
-  $('[data-hotel-task]').textContent = hotelMode === 'one' ? 'Alle Zimmer sind belegt. Vor der Tür wartet noch ein Gast. Öffne die Türen mit einer einzigen Regel.' : hotelMode === 'bus' ? 'Ein Bus mit den Gästen 1, 2, 3, … kommt an. Wie finden alle Platz, ohne einen bisherigen Gast auszuquartieren?' : 'Ein Gast für jede rationale Zahl: 0, positive und negative Brüche. Wir vergeben Zimmer in einer Reihenfolge, die jeden erreicht.';
-  const guests = rationalGuests(8);
-  doors.forEach((door, i) => {
-    const room = i + 1;
-    const fresh = moved && hotelMode !== 'fractions' && (hotelMode === 'one' ? i === 0 : room % 2 === 1);
-    door.closest('.hotel-door')!.toggleAttribute('data-new', fresh);
-    door.textContent = !moved ? String(room) : hotelMode === 'fractions' ? guests[i] : fresh ? (hotelMode === 'one' ? 'Neu' : `B${(room + 1) / 2}`) : String(hotelMode === 'one' ? room - 1 : room / 2);
-    door.parentElement!.nextElementSibling!.textContent = !moved ? 'Bisheriger Gast' : hotelMode === 'fractions' ? 'Rationale Zahl' : fresh ? 'Neuer Gast' : 'Bisheriger Gast';
-  });
-  const corridor = $('.hotel-corridor');
-  corridor.removeAttribute('data-moved');
-  if (moved) { void (corridor as HTMLElement).offsetWidth; corridor.setAttribute('data-moved', ''); }
-  hotelRun.disabled = moved;
-  hotelRun.textContent = hotelMode === 'fractions' ? 'Brüche einchecken' : 'Gäste umziehen lassen';
-  $('[data-hotel-status]').textContent = !moved ? 'Überlege: Was passiert mit dem Gast im letzten sichtbaren Zimmer?' : hotelMode === 'one' ? 'Zimmer 1 ist frei geworden und nimmt den neuen Gast auf. Gast 8 wohnt jetzt in Zimmer 9, außerhalb unseres Ausschnitts. Jeder bisherige Gast n hat sein Zimmer n + 1.' : hotelMode === 'bus' ? 'Die bisherigen Gäste wohnen in den geraden Zimmern. Die Busgäste B1, B2, … belegen alle ungeraden Zimmer. Niemand geht verloren.' : 'Jeder gekürzte positive Bruch p/q erscheint bei seiner endlichen Summe p + q. Dazu kommt sein negatives Gegenstück. So erreichen wir jeden rationalen Gast genau einmal.';
-}
-$$<HTMLButtonElement>('[data-hotel-mode]').forEach(button => button.addEventListener('click', () => {
-  hotelMode = button.dataset.hotelMode!;
-  $$('[data-hotel-mode]').forEach(other => other.setAttribute('aria-pressed', String(other === button)));
-  renderHotel();
-}));
-hotelRun.addEventListener('click', () => renderHotel(true));
-$('[data-hotel-reset]', hotel).addEventListener('click', () => renderHotel());
+initializeHotel($('[data-hotel-exhibit]'), motion);
 
 let diagonalProgress = 0;
 let listSeed = 4;

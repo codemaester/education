@@ -25,6 +25,14 @@ export function sqrtTwoWindow(digits: number) {
 
 export function gcd(a: number, b: number): number { return b ? gcd(b, a % b) : a; }
 
+/** One source of truth for the visible hotel occupants and their animated trips. */
+export function hotelAssignment(mode: 'one' | 'bus', rooms = 8) {
+  return {
+    moves: Array.from({ length: rooms }, (_, i) => ({ guest: String(i + 1), room: mode === 'one' ? i + 2 : (i + 1) * 2 })),
+    arrivals: Array.from({ length: mode === 'one' ? 1 : Math.ceil(rooms / 2) }, (_, i) => ({ guest: mode === 'one' ? 'Neu' : `B${i + 1}`, room: mode === 'one' ? 1 : i * 2 + 1 })),
+  };
+}
+
 /** Diagonal enumeration: every positive reduced fraction appears once. */
 export function rationalGuests(count: number): string[] {
   const guests = ['0'];

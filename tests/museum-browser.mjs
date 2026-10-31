@@ -87,9 +87,19 @@ export async function testMuseum(browser, origin, screenshots) {
     await page.locator('[data-hotel-run]').click();
     assert.equal(await page.locator('[data-hotel-guest]').first().textContent(), 'Neu');
     await page.locator('[data-hotel-mode="bus"]').click();
+    assert.match(await page.locator('[data-hotel-task]').textContent(), /unendlich vielen Gästen/);
+    assert.match(await page.locator('[data-hotel-rule="existing"]').textContent(), /Zimmer n → Zimmer 2n/);
+    assert.match(await page.locator('[data-hotel-rule="new"]').textContent(), /Busgast k → Zimmer 2k − 1/);
+    const existingRule = await page.locator('[data-hotel-rule="existing"]').boundingBox();
+    const newRule = await page.locator('[data-hotel-rule="new"]').boundingBox();
+    assert.ok(width <= 740 ? newRule.y >= existingRule.y + existingRule.height + 31 : newRule.x >= existingRule.x + existingRule.width + 31);
     await page.locator('[data-hotel-run]').click();
     assert.equal(await page.locator('[data-hotel-guest]').nth(2).textContent(), 'B2');
     assert.equal(await page.locator('[data-hotel-guest]').nth(3).textContent(), '2');
+    assert.equal(await page.locator('[data-hotel-run]').textContent(), 'Noch einmal abspielen');
+    assert.match(await page.locator('[data-hotel-waiting-note]').textContent(), /Wartezone ist leer/);
+    assert.equal(await page.locator('[data-hotel-mover]').count(), 0);
+    if ([1440, 390, 320].includes(width)) await page.locator('[data-hotel-exhibit]').screenshot({ path: `${capture}/hotel-bus-${width}.png` });
     await page.locator('[data-hotel-mode="fractions"]').click();
     await page.locator('[data-hotel-run]').click();
     assert.equal(await page.locator('[data-hotel-guest]').nth(3).textContent(), '1/2');
@@ -231,6 +241,102 @@ export async function testMuseum(browser, origin, screenshots) {
   assert.equal(await moving.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   assert.deepEqual(motionErrors, []);
   await moving.close();
+  // Both arrival scenarios use the same real, interruptible two-stage journey.
+  for (const width of [1440, 1024, 768, 390, 320]) {
+    const hotelPage = await browser.newPage({ viewport: { width, height: 1100 }, reducedMotion: 'no-preference' });
+    const hotelErrors = [];
+    hotelPage.on('pageerror', error => hotelErrors.push(error.message));
+    await hotelPage.goto(origin + route);
+    await hotelPage.evaluate(() => document.fonts.ready);
+    const hotel = hotelPage.locator('[data-hotel-exhibit]');
+    const button = hotelPage.locator('[data-hotel-run]');
+    async function phase(value) {
+      await hotelPage.waitForFunction(expected => document.querySelector('[data-hotel-exhibit]').dataset.hotelPhase === expected, value);
+    }
+    for (const mode of ['one', 'bus']) {
+      await hotelPage.locator(`[data-hotel-mode="${mode}"]`).click();
+      await button.scrollIntoViewIfNeeded();
+      await hotelPage.waitForTimeout(100);
+      if (mode === 'one') {
+        await button.focus();
+        await hotelPage.keyboard.press('Enter');
+      } else await button.click();
+      await phase('moving');
+      assert.ok(await button.isDisabled());
+      assert.match(await hotelPage.locator('[data-hotel-waiting-title]').textContent(), /wart/);
+      assert.equal(await hotelPage.locator('[data-hotel-mover]').count(), 8);
+      assert.ok(await hotelPage.locator('[data-hotel-rule="existing"]').evaluate(el => el.hasAttribute('data-active')));
+      const traveler = hotelPage.locator('[data-hotel-mover="1"]');
+      const origin = await traveler.boundingBox();
+      await hotelPage.waitForTimeout(350);
+      const traveling = await traveler.boundingBox();
+      assert.ok(Math.hypot(traveling.x - origin.x, traveling.y - origin.y) > 5);
+      const targets = await hotelPage.locator('[data-hotel-mover]').evaluateAll(nodes => nodes.map(el => Number(el.dataset.hotelTarget)));
+      assert.deepEqual(targets, mode === 'one' ? [2,3,4,5,6,7,8,9] : [2,4,6,8,10,12,14,16]);
+      if ([1440, 320].includes(width)) await hotel.screenshot({ path: `${capture}/hotel-${mode}-moving-${width}.png` });
+      await phase('vacant');
+      const intermediate = await hotelPage.locator('[data-hotel-guest]').allTextContents();
+      assert.deepEqual(intermediate, mode === 'one' ? ['—','1','2','3','4','5','6','7'] : ['—','1','—','2','—','3','—','4']);
+      await phase('arriving');
+      assert.equal(await hotelPage.locator('[data-hotel-mover]').count(), mode === 'one' ? 1 : 4);
+      assert.ok(await hotelPage.locator('[data-hotel-rule="new"]').evaluate(el => el.hasAttribute('data-active')));
+      if ([1440, 320].includes(width)) await hotel.screenshot({ path: `${capture}/hotel-${mode}-arriving-${width}.png` });
+      await phase('complete');
+      assert.deepEqual(await hotelPage.locator('[data-hotel-guest]').allTextContents(), mode === 'one' ? ['Neu','1','2','3','4','5','6','7'] : ['B1','1','B2','2','B3','3','B4','4']);
+      assert.equal(await hotelPage.locator('[data-hotel-mover]').count(), 0);
+      assert.ok(await button.isEnabled());
+    }
+    // Replay is a fresh initial arrangement; resetting cancels its pending work.
+    await button.click();
+    await phase('moving');
+    await hotelPage.locator('[data-hotel-reset]').click();
+    await phase('ready');
+    assert.deepEqual(await hotelPage.locator('[data-hotel-guest]').allTextContents(), ['1','2','3','4','5','6','7','8']);
+    assert.equal(await hotelPage.locator('[data-hotel-mover]').count(), 0);
+    if (width === 1440) {
+      await button.click();
+      await phase('moving');
+      await hotelPage.locator('[data-hotel-mode="fractions"]').click();
+      await phase('ready');
+      await button.click();
+      await phase('complete');
+      assert.equal(await hotelPage.locator('[data-hotel-guest]').nth(3).textContent(), '1/2');
+      await hotelPage.locator('[data-hotel-mode="one"]').click();
+      await button.click();
+      await phase('arriving');
+      await hotelPage.locator('[data-hotel-reset]').click();
+      await phase('ready');
+      await button.click();
+      await phase('arriving');
+      await hotelPage.locator('[data-hotel-mode="bus"]').click();
+      await phase('ready');
+      await button.click();
+      await phase('moving');
+      await hotelPage.emulateMedia({ reducedMotion: 'reduce' });
+      await phase('complete');
+      await hotelPage.emulateMedia({ reducedMotion: 'no-preference' });
+      await button.click();
+      await phase('moving');
+      await hotelPage.evaluate(() => {
+        Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+        document.dispatchEvent(new Event('visibilitychange'));
+      });
+      await phase('complete');
+      await hotelPage.evaluate(() => { delete document.hidden; });
+      await button.click();
+      await phase('moving');
+      await hotelPage.setViewportSize({ width: 1024, height: 1100 });
+      await phase('complete');
+      await button.click();
+      await phase('moving');
+      await hotelPage.evaluate(() => window.scrollTo(0, 0));
+      await phase('complete');
+    }
+    assert.deepEqual(hotelErrors, []);
+    assert.equal(await hotelPage.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+    await hotelPage.close();
+    console.log(`Hotel ${width}px: moving guests, vacant rooms, arrivals, replay and cancellation passed`);
+  }
   const noJS = await browser.newPage({javaScriptEnabled: false});
   await noJS.goto(origin + route);
   assert.ok(await noJS.locator('.museum-note').isVisible());
@@ -240,6 +346,9 @@ export async function testMuseum(browser, origin, screenshots) {
   assert.match(await noJS.locator('[data-zoom-factor]').textContent(), /1-fach/);
   assert.ok(await noJS.locator('[data-zoom-in]').isDisabled());
   assert.ok(await noJS.locator('#orbit-speed').isDisabled());
+  assert.equal(await noJS.locator('.hotel-resident .hotel-person-icon').count(), 8);
+  assert.match(await noJS.locator('[data-hotel-rule="existing"]').textContent(), /n → Zimmer n \+ 1/);
+  assert.ok(await noJS.locator('[data-hotel-run]').isDisabled());
   assert.equal(await noJS.locator('[data-orbit-speed]').textContent(), '2 Schritte/s');
   await noJS.locator('#zoom-quiz noscript summary').click();
   assert.ok(await noJS.locator('#zoom-quiz noscript details[open]').isVisible());

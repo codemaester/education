@@ -41,6 +41,23 @@ Die drei vom Nutzer gewählten Museumsräume übernehmen das Modern-Classic-Them
   einschließlich Vorzeichen und 0, anschließend Cantors Diagonalargument.
   Acht Zimmer und sechs Dezimalstellen sind ausdrücklich nur Ausschnitte. Die
   Ersetzungsregel 1 → 2, sonst → 1 vermeidet Mehrdeutigkeit durch 9er-Perioden.
+  Einzelgast und Bus nutzen denselben automatischen Ablauf: Die bisherigen
+  Gäste verlassen als nummerierte Figuren ihre Zimmer und beziehen nach
+  n → n+1 beziehungsweise n → 2n ihre neuen Zimmer (1,6 s). Nach einer kurzen
+  Ansicht der freien Zimmer (0,4 s) ziehen die neuen Gäste aus der Wartezone ein
+  (1,2 s). Der Bus bringt ausdrücklich unendlich viele Gäste mit den Nummern
+  1, 2, 3, …; die neuen Gäste erhalten nach k → 2k−1 die ungeraden Zimmer.
+  Beide Regeln stehen getrennt und beschriftet mit mindestens 2 rem Abstand;
+  die jeweils ausgeführte Regel wird unterstrichen. Die ersten acht Zimmer,
+  vier Busgäste und beschriftete Wege zu nicht sichtbaren Zimmern zeigen nur
+  einen endlichen Ausschnitt. Die Wege berücksichtigen beide Zimmerreihen auf
+  kleinen Bildschirmen. Waldgrün und Terrakotta unterscheiden beide Gruppen.
+  Bewegungsziele und Zimmerbelegung teilen dieselbe Zuordnungsberechnung.
+  Wiederholen startet denselben Ablauf neu. Zurücksetzen und Situationswechsel
+  verwerfen alle laufenden Animationen und verzögerten Fortsetzungen. Ein
+  verborgener Tab, eine nicht sichtbare Bühne, Größenänderungen oder der Wechsel
+  zu reduzierter Bewegung führen zum korrekten Endzustand. Bei bereits reduzierter
+  Bewegung erscheint er sofort. Die Bruchaufzählung bleibt ohne Umzugsanimation.
 
 ## Didaktischer Aufbau
 
@@ -77,3 +94,6 @@ Fehler, No-JS-Lösungen und Druckansicht im Produktionsbuild.
 Die Zoomprüfung umfasst außerdem normale und reduzierte Bewegung, Vorwärts-/
 Rückwärtsschritte, unterbrochene Animationen, Reglersprünge, Zurücksetzen,
 tiefe Zoomstufen und die Ortsmarke für Ausschnitte unter einem Pixel.
+Die Hotelprüfung kontrolliert die eindeutigen Zuordnungen, bewegliche Figuren,
+freie Zwischenzustände, Einzug, Wiederholung und Abbruch in beiden Phasen sowie
+reduzierte Bewegung, Tab-/Größenwechsel und das Verlassen des Sichtbereichs.

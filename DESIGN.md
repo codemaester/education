@@ -220,6 +220,18 @@ Small controls, notes, answer fields, and labels use the small radius; chapter p
 
 ## Components
 
+The infinite hotel uses small numbered SVG people for both existing and new
+guests. Forest doors and travelers identify existing guests; terracotta identifies
+new arrivals. Two labelled rule blocks have a 2rem gap and stack below 740px;
+an underline marks the active rule. Both one-guest and bus scenarios use the same
+1.6s relocation, 0.4s vacant-room hold and 1.2s arrival sequence. Travelers leave
+their actual doors, follow measured aisle paths across the responsive room rows,
+and enter the assigned doors. A labelled continuation represents destinations
+beyond the eight visible rooms. A waiting area shows the incoming guest or the
+first four of infinitely many bus guests. Reset and mode changes cancel the
+sequence; replay starts it again. Reduced motion, hidden or offscreen stages,
+and size changes settle to the correct final occupancy without leftover figures.
+
 The museum circle walkers keep each step-size select centered below its own
 circle. Their shared 1–60 steps/s tempo slider (default 2) displays the current
 value alongside Start/Stop and the manual actions in one wrapping control row.
