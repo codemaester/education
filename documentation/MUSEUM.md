@@ -12,10 +12,12 @@ Die drei vom Nutzer gewählten Museumsräume übernehmen das Modern-Classic-Them
   Dezimalstellen angenähert. Endlich viele Ziffern beweisen keine Irrationalität.
   Der feste Überblick [1, 2] steht neben einer Lupe mit exakten Grenzen,
   Intervallbreite 10⁻ⁿ und Vergrößerung 10ⁿ. Unter 740 px stehen beide Ansichten
-  untereinander. Ein Zoomschritt hebt das nächste Zehntel 100 ms hervor und
-  vergrößert es anschließend in 600 ms zur vollständigen Zahlenlinie; beim
+  untereinander. Ein Zoomschritt hebt das nächste Zehntel 350 ms hervor und
+  vergrößert es anschließend in 900 ms zur vollständigen Zahlenlinie; beim
   Herauszoomen läuft der Maßstabswechsel rückwärts. Teilstriche und Marker
-  folgen derselben Kamera. Lokale Abstände werden vor der Bildschirmnäherung
+  folgen derselben Kamera. Eine kurze Statusmeldung erklärt den markierten
+  Ausschnitt und bestätigt anschließend, dass das neue Intervall die Lupe füllt.
+  Lokale Abstände werden vor der Bildschirmnäherung
   mit BigInt berechnet, auch jenseits der Gleitkommagenauigkeit.
   Im Überblick schrumpft die Markierung maßstabsgetreu. Unter einem tatsächlichen
   CSS-Pixel ersetzt sie eine ausdrücklich nicht maßstabsgetreue Ortsmarke;

@@ -203,8 +203,10 @@ The study sheet is a distinct two-page A4 layout with a 10mm print margin, white
 
 The museum number zoom pairs a fixed [1, 2] overview with a lens showing the
 current exact interval and its 10ⁿ magnification. A flat terracotta selection
-links both views; below 740px they stack. A 700ms step holds the selected tenth
-for 100ms, then expands it for 600ms with cubic deceleration. Ticks and the √2
+links both views; below 740px they stack. A 1250ms step holds the selected tenth
+for 350ms, then expands it for 900ms with cubic deceleration. A short status
+message identifies the selected tenth and confirms arrival in the new interval.
+Ticks and the √2
 marker share the camera; zooming out reverses the scale change. Subpixel
 selections become a labelled location mark, never an inflated interval. Range
 jumps, reset and interrupted steps settle immediately. Reduced motion removes

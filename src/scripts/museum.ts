@@ -22,6 +22,8 @@ const oldTicks = $('[data-zoom-old-ticks]', zoom);
 const marker = $('[data-zoom-marker]', zoom);
 const plotStart = 42;
 const plotWidth = 716;
+const zoomSelectionMs = 350;
+const zoomTravelMs = 900;
 let zoomDepth = 0;
 let zoomFrame = 0;
 let referencePixels = reference.getBoundingClientRect().width * plotWidth / 800;
@@ -65,7 +67,7 @@ function commitZoom() {
   $('[data-zoom-width]', zoom).textContent = `10${superscript(-zoomDepth)}${zoomDepth === 0 ? ' = 1' : ''}`;
   $('[data-zoom-status]', zoom).textContent = zoomDepth === 0
     ? '√2 liegt zwischen 1 und 2. Beide Grenzen sind rationale Zahlen.'
-    : `Das Intervall ist jetzt 10${superscript(-zoomDepth)} breit. Die Lupe vergrößert 10${superscript(zoomDepth)}-fach. Im festen Überblick wird der Ausschnitt kleiner. √2 bleibt exakt dieselbe Zahl.`;
+    : `Das neue Intervall füllt jetzt die Lupe. Es ist 10${superscript(-zoomDepth)} breit und wird 10${superscript(zoomDepth)}-fach vergrößert. Im festen Überblick bleibt seine Lage sichtbar. √2 bleibt exakt dieselbe Zahl.`;
   $('#zoom-svg-title', zoom).textContent = `√2 liegt zwischen ${bracket.left} und ${bracket.right}. Vergrößerung 10${superscript(zoomDepth)}-fach.`;
   marker.setAttribute('transform', `translate(${plotStart + bracket.fraction * plotWidth} 0)`);
   drawTicks(ticks, 0, 1);
@@ -112,9 +114,12 @@ function renderZoom(animate = false) {
   const selectedSpan = Math.min(oldSpan, newSpan);
   const started = performance.now();
   zoom.dataset.zoomAnimating = 'true';
+  $('[data-zoom-status]', zoom).textContent = zoomingIn
+    ? 'Das markierte Zehntel wächst jetzt zur ganzen Zahlenlinie unter der Lupe.'
+    : 'Die Lupe kehrt zum vorherigen, größeren Intervall zurück.';
   function draw(now: number) {
-    // A short hold lets the selected tenth register before it fills the lens.
-    const t = Math.min(1, Math.max(0, (now - started - 100) / 600));
+    // Let the selected tenth register, then ease into the new full-width interval.
+    const t = Math.min(1, Math.max(0, (now - started - zoomSelectionMs) / zoomTravelMs));
     const eased = 1 - (1 - t) ** 3;
     const span = oldSpan * (newSpan / oldSpan) ** eased;
     const travel = (oldSpan - span) / (oldSpan - newSpan);

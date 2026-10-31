@@ -175,6 +175,9 @@ export async function testMuseum(browser, origin, screenshots) {
   assert.equal(await exhibit.getAttribute('data-zoom-animating'), 'true');
   assert.ok(Number(await moving.locator('[data-detail-window]').getAttribute('width')) < 716);
   await moving.waitForTimeout(250);
+  assert.ok(Math.abs(Number(await moving.locator('[data-detail-window]').getAttribute('width')) - 71.6) < 1e-6, 'the selected tenth stays visible before zooming');
+  assert.match(await moving.locator('[data-zoom-status]').textContent(), /markierte Zehntel/);
+  await moving.waitForTimeout(350);
   const expanding = Number(await moving.locator('[data-detail-window]').getAttribute('width'));
   assert.ok(expanding > 71.6 && expanding < 716);
   const sharedScale = await moving.evaluate(() => {
@@ -189,6 +192,7 @@ export async function testMuseum(browser, origin, screenshots) {
   await exhibit.screenshot({ path: `${capture}/zoom-in-motion.png` });
   await settled(1);
   assert.equal(await moving.locator('[data-lower]').textContent(), '1,4');
+  assert.match(await moving.locator('[data-zoom-status]').textContent(), /neue Intervall füllt jetzt die Lupe/);
   await moving.locator('[data-zoom-out]').click();
   assert.equal(await exhibit.getAttribute('data-zoom-animating'), 'true');
   await settled(0);
