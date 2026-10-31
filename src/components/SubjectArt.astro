@@ -1,0 +1,36 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import physics from '../assets/subjects/physics-painted.png';
+import maths from '../assets/subjects/maths-painted.png';
+import biology from '../assets/subjects/biology-painted.png';
+import chemistry from '../assets/subjects/chemistry-painted.png';
+import languages from '../assets/subjects/languages-painted.png';
+import history from '../assets/subjects/history-painted.png';
+import geography from '../assets/subjects/geography-painted.png';
+import computing from '../assets/subjects/computing-painted.png';
+import art from '../assets/subjects/art-painted.png';
+
+interface Props { subject: string; }
+const illustrations: Record<string, ImageMetadata> = {
+  physik: physics,
+  mathematik: maths,
+  biologie: biology,
+  chemie: chemistry,
+  sprachen: languages,
+  geschichte: history,
+  geografie: geography,
+  informatik: computing,
+  kunst: art,
+};
+---
+
+<span class="subject-art" aria-hidden="true">
+  <Image src={illustrations[Astro.props.subject]} alt="" width={80} widths={[80, 160]} sizes="(max-width: 740px) 56px, 80px" format="webp" loading="lazy" />
+</span>
+
+<style>
+  .subject-art { width: 80px; height: 80px; flex: 0 0 auto; display: grid; place-items: center; }
+  .subject-art img { width: 100%; height: 100%; object-fit: contain; }
+  @media (max-width: 740px) { .subject-art { width: 56px; height: 56px; } }
+</style>

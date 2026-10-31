@@ -56,6 +56,15 @@ globalen Styles, Metadaten, den Sprunglink und die gemeinsame Navigation mit.
 werden vor Screenreadern verborgen; ein inhaltlich eigenständiges Icon erhält
 über `title` einen zugänglichen Namen. Fächer behalten sichtbare Texttitel.
 
+Die neun Fachicons im Verzeichnis der Startseite verwenden `SubjectArt.astro`
+mit gemalten, transparenten Motiven aus `src/assets/subjects/`. Papierstruktur,
+lasierende Farbflächen, Waldgrün, Salbei und Terrakotta greifen die vorhandenen
+Lektionsbilder auf. Astro liefert responsive WebP-Dateien in 80 und 160 Pixeln
+Breite; die Darstellung ist auf Desktop 80 und mobil 56 Pixel groß. Die Motive
+sind dekorativ, die Fachnamen bleiben als Linktext erhalten. Generiert wurden
+sie mit dem eingebauten `image_gen`-Werkzeug; die einzelnen Prompts stehen in
+`documentation/visual-directions/subject-icons-prompts.json`.
+
 ## Katalog erweitern
 
 `src/data/catalog.ts` enthält die Fächer und tatsächlich vorhandenen Kurse.
