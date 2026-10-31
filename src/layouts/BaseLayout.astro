@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import Icon from '../components/Icon.astro';
 
 interface Props {
   title: string;
@@ -16,7 +15,6 @@ const {
   skipTo = 'inhalt',
 } = Astro.props;
 const baseUrl = import.meta.env.BASE_URL;
-const courseUrl = `${baseUrl}physik/optik/`;
 ---
 
 <!doctype html>
@@ -39,7 +37,6 @@ const courseUrl = `${baseUrl}physik/optik/`;
         </a>
         <nav class="site-nav" aria-label="Hauptnavigation">
           <a href={`${baseUrl}#faecher`}>Fächer entdecken</a>
-          <a class="nav-lesson" href={courseUrl} aria-current={Astro.url.pathname === courseUrl ? 'page' : undefined}>Optik lernen <Icon name="arrow" size={17} /></a>
         </nav>
       </div>
     </header>
