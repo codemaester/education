@@ -70,8 +70,12 @@ export async function testCarousel(browser, origin, screenshots) {
   });
   await advance();
   assert.equal(await selected(), '1', 'visible tab starts a fresh interval');
+  // A compact viewport lets the footer move the entire carousel offscreen.
+  await page.setViewportSize({ width: 1440, height: 700 });
   await page.locator('footer').scrollIntoViewIfNeeded();
   await page.waitForTimeout(100);
+  const offscreen = await carousel.boundingBox();
+  assert.ok(offscreen.y + offscreen.height <= 0, 'carousel is fully outside the viewport');
   await advance();
   assert.equal(await selected(), '1', 'offscreen carousel clears the timer');
   await carousel.scrollIntoViewIfNeeded();
@@ -94,6 +98,32 @@ export async function testCarousel(browser, origin, screenshots) {
   assert.equal(await selected(), '0', 'touch stops rotation');
   assert.deepEqual(errors, []);
   await page.close();
+
+  // Inspect real CSS transitions at their midpoint, without wall-clock sleeps.
+  const fadePage = await browser.newPage({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'no-preference' });
+  await fadePage.goto(origin + '/');
+  await fadePage.locator('[data-carousel-controls]').waitFor({ state: 'visible' });
+  const fade = await fadePage.evaluate(() => {
+    const root = document.querySelector('[data-featured-courses]');
+    const outgoing = root.querySelector('[data-active]');
+    getComputedStyle(outgoing).opacity;
+    root.querySelector('[data-slide-choice="1"]').click();
+    const incoming = root.querySelector('[data-active]');
+    getComputedStyle(incoming).opacity;
+    const animations = [outgoing, incoming].map(slide => slide.getAnimations().find(animation => animation.transitionProperty === 'opacity'));
+    if (animations.some(animation => !animation)) return null;
+    animations.forEach(animation => {
+      animation.pause();
+      animation.currentTime = Number(animation.effect.getTiming().duration) / 2;
+    });
+    const midpoint = [outgoing, incoming].map(slide => ({ opacity: Number(getComputedStyle(slide).opacity), visibility: getComputedStyle(slide).visibility }));
+    [outgoing, incoming].forEach(slide => slide.getAnimations().forEach(animation => animation.finish()));
+    return { midpoint, final: [outgoing, incoming].map(slide => ({ opacity: Number(getComputedStyle(slide).opacity), visibility: getComputedStyle(slide).visibility })) };
+  });
+  assert.ok(fade, 'both outgoing and incoming slides animate their opacity');
+  assert.ok(fade.midpoint.every(slide => slide.opacity > 0 && slide.opacity < 1 && slide.visibility === 'visible'), 'both slides remain painted during the crossfade');
+  assert.deepEqual(fade.final, [{ opacity: 0, visibility: 'hidden' }, { opacity: 1, visibility: 'visible' }]);
+  await fadePage.close();
 
   for (const width of [1440, 1024, 768, 390, 320]) {
     const view = await browser.newPage({ viewport: { width, height: 1000 }, reducedMotion: 'reduce' });

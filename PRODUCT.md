@@ -26,6 +26,9 @@ rationaler und Überabzählbarkeit reeller Zahlen, mit Aufgaben und Museumsführ
 
 ## Brand Commitments
 
+Der Schriftzug im gemeinsamen Seitenkopf lautet **Education.Weiterdenken.**
+Die Startseite begrüßt mit **„Verstehe, wie die Welt funktioniert.“**
+
 Die gewählte Gestaltung ist **Modern Classic** aus
 `documentation/visual-directions/03-modern-classic.png`: Newsreader für
 Überschriften, Manrope für Lesetext und Bedienung, Papierweiß, Waldgrün,

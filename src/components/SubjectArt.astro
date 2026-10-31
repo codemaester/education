@@ -11,7 +11,9 @@ import geography from '../assets/subjects/geography-painted.png';
 import computing from '../assets/subjects/computing-painted.png';
 import art from '../assets/subjects/art-painted.png';
 
-interface Props { subject: string; }
+interface Props { subject: string; variant?: 'directory' | 'hero'; }
+const { subject, variant = 'directory' } = Astro.props;
+const hero = variant === 'hero';
 const illustrations: Record<string, ImageMetadata> = {
   physik: physics,
   mathematik: maths,
@@ -25,12 +27,16 @@ const illustrations: Record<string, ImageMetadata> = {
 };
 ---
 
-<span class="subject-art" aria-hidden="true">
-  <Image src={illustrations[Astro.props.subject]} alt="" width={80} widths={[80, 160]} sizes="(max-width: 740px) 56px, 80px" format="webp" loading="lazy" />
+<span class:list={['subject-art', { 'subject-art-hero': hero }]} aria-hidden="true">
+  <Image src={illustrations[subject]} alt="" width={hero ? 110 : 80} widths={hero ? [110, 220] : [80, 160]} sizes={hero ? '(max-width: 740px) 70px, 110px' : '(max-width: 740px) 56px, 80px'} format="webp" loading={hero ? 'eager' : 'lazy'} />
 </span>
 
 <style>
   .subject-art { width: 80px; height: 80px; flex: 0 0 auto; display: grid; place-items: center; }
   .subject-art img { width: 100%; height: 100%; object-fit: contain; }
-  @media (max-width: 740px) { .subject-art { width: 56px; height: 56px; } }
+  .subject-art-hero { width: 110px; height: 110px; }
+  @media (max-width: 740px) {
+    .subject-art { width: 56px; height: 56px; }
+    .subject-art-hero { width: 70px; height: 70px; }
+  }
 </style>

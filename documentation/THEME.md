@@ -56,11 +56,13 @@ globalen Styles, Metadaten, den Sprunglink und die gemeinsame Navigation mit.
 werden vor Screenreadern verborgen; ein inhaltlich eigenständiges Icon erhält
 über `title` einen zugänglichen Namen. Fächer behalten sichtbare Texttitel.
 
-Die neun Fachicons im Verzeichnis der Startseite verwenden `SubjectArt.astro`
+Die neun Fachicons im Verzeichnis der Startseite und auf den Fachseiten verwenden `SubjectArt.astro`
 mit gemalten, transparenten Motiven aus `src/assets/subjects/`. Papierstruktur,
 lasierende Farbflächen, Waldgrün, Salbei und Terrakotta greifen die vorhandenen
 Lektionsbilder auf. Astro liefert responsive WebP-Dateien in 80 und 160 Pixeln
-Breite; die Darstellung ist auf Desktop 80 und mobil 56 Pixel groß. Die Motive
+Breite; die Darstellung ist auf Desktop 80 und mobil 56 Pixel groß. Die Variante
+`hero` auf den Fachseiten verwendet 110 beziehungsweise 70 Pixel große Motive,
+mit Bilddateien in 110 und 220 Pixeln Breite. Die Motive
 sind dekorativ, die Fachnamen bleiben als Linktext erhalten. Generiert wurden
 sie mit dem eingebauten `image_gen`-Werkzeug; die einzelnen Prompts stehen in
 `documentation/visual-directions/subject-icons-prompts.json`.
@@ -94,9 +96,11 @@ Ohne JavaScript bleibt die neueste Vorschau zugänglich; bei null beziehungsweis
 einem Kurs entfallen der Bereich beziehungsweise die Wechselsteuerung.
 
 Das eigene Skript `src/scripts/featured-courses.ts` wechselt alle acht Sekunden
-mit einer 250-ms-Überblendung. Hover, ein verborgener Tab oder eine Vorschau
+mit einer sanften 650-ms-Überblendung. Das ausgehende Thema bleibt während
+seines Fade-outs sichtbar, während das nächste Thema eingeblendet wird. Die
+gemeinsame Salbeifläche und die Höhe bleiben dabei stabil. Hover, ein verborgener Tab oder eine Vorschau
 außerhalb des Sichtbereichs unterbrechen den Timer vorübergehend. Fokus,
-Berührung und manuelle Auswahl stoppen bis zum ausdrücklichen Start.
+Berührung und manuelle Auswahl stoppen den automatischen Wechsel für den restlichen Besuch.
 Bei reduzierter Bewegung startet die Vorschau statisch und wechselt ohne
 Animation. Nur die aktive Vorschau ist bedienbar und für Screenreader sichtbar;
 die Statusmeldung kündigt ausschließlich manuelle Wechsel an.
