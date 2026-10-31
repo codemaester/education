@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { integerSqrt, sqrtTwoWindow, hotelAssignment, rotationPoint, diagonalDigit } from '../src/data/museum-math.ts';
+import { integerSqrt, sqrtTwoWindow, hotelAssignment, rotationPoint, diagonalDigit, rationalDiagonalWalk, rationalList } from '../src/data/museum-math.ts';
 import { roomQuestions, finalQuestions } from '../src/data/museum.ts';
 
 test('all zoom windows strictly enclose sqrt(2), including beyond Number precision', () => {
@@ -69,10 +69,42 @@ test('Cantor replacement differs from every possible diagonal digit and avoids 0
   }
 });
 
-test('chapter checks and independent final assessment cover all three learning goals', () => {
+test('rational enumeration follows complete finite diagonals and omits duplicate values', () => {
+  const walk = rationalDiagonalWalk();
+  assert.equal(walk.length, 21);
+  assert.deepEqual(walk.slice(0, 6).map(v => `${v.numerator}/${v.denominator}`), ['1/1', '1/2', '2/1', '1/3', '2/2', '3/1']);
+  for (let sum = 2; sum <= 7; sum++) {
+    const diagonal = walk.filter(v => v.diagonal === sum);
+    assert.equal(diagonal.length, sum - 1);
+    assert.ok(diagonal.every(v => v.numerator + v.denominator === sum && v.numerator <= 6 && v.denominator <= 6));
+  }
+  assert.deepEqual(walk.find(v => v.numerator === 2 && v.denominator === 2), {numerator:2, denominator:2, diagonal:4, reduced:'1', keep:false});
+  assert.equal(walk.find(v => v.numerator === 2 && v.denominator === 4).reduced, '1/2');
+  const values = rationalList(walk);
+  assert.deepEqual(values.slice(0, 11), ['0', '1', '−1', '1/2', '−1/2', '2', '−2', '1/3', '−1/3', '3', '−3']);
+  assert.equal(values.length, 35);
+  assert.equal(new Set(values).size, values.length);
+  assert.equal(values.includes('−0'), false);
+  assert.deepEqual(rationalList([]), ['0']);
+});
+
+test('larger rational previews reach every reduced positive and negative value in their completed diagonals', () => {
+  const walk = rationalDiagonalWalk(40);
+  const values = rationalList(walk);
+  for (let p = 1; p <= 20; p++) for (let q = 1; q <= 20; q++) {
+    const visit = walk.find(v => v.numerator === p && v.denominator === q);
+    assert.ok(visit, `${p}/${q} is reached after finitely many cells`);
+    assert.ok(values.includes(visit.reduced));
+    assert.ok(values.includes(`−${visit.reduced}`));
+  }
+  assert.equal(new Set(values).size, values.length);
+});
+
+test('chapter checks and independent final assessment cover all four museum rooms', () => {
   for (const set of [roomQuestions, finalQuestions]) {
-    assert.deepEqual(new Set(set.map(q => q.room)), new Set(['zahlenzoom', 'kreiswanderer', 'hotel']));
+    assert.deepEqual(new Set(set.map(q => q.room)), new Set(['zahlenzoom', 'kreiswanderer', 'hotel', 'zahlenlisten']));
     assert.equal(new Set(set.map(q => q.id)).size, set.length);
     for (const q of set) { assert.ok(q.options[q.answer]); assert.ok(q.explanation.length > 50); }
   }
+  for (const room of ['zahlenzoom', 'kreiswanderer', 'hotel', 'zahlenlisten']) assert.equal(roomQuestions.filter(q => q.room === room).length, 2);
 });

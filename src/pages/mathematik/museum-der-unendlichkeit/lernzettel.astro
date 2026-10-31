@@ -3,12 +3,12 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import '../../../styles/museum-guide.css';
 const base = import.meta.env.BASE_URL;
 ---
-<BaseLayout title="Museumsführer · Museum der endlosen Dinge" description="Druckbarer Museumsführer: irrationale Zahlen, rationale und irrationale Kreisbahnen, Hilberts Hotel und Cantors Diagonalargument.">
+<BaseLayout title="Museumsführer · Museum der endlosen Dinge" description="Druckbarer Museumsführer: irrationale Zahlen, rationale und irrationale Kreisbahnen, Hilberts Hotel, die Abzählbarkeit rationaler Zahlen und Cantors Diagonalargument.">
   <div class="museum-guide-shell">
     <nav class="guide-actions" aria-label="Museumsführer"><a href={`${base}mathematik/museum-der-unendlichkeit/`}>Zurück ins Museum</a><button type="button" class="button" id="guide-print" disabled>Drucken / als PDF speichern</button></nav>
     <noscript><p>Du kannst diesen Museumsführer über die Druckfunktion deines Browsers drucken.</p></noscript>
     <article class="museum-guide">
-      <section class="guide-page"><header><p>Education · Mathematik · Museumsführer · 1 / 2</p><h1>Museum der<br /><em>endlosen Dinge.</em></h1><p>Drei Experimente über irrationale Zahlen und Unendlichkeit.</p></header>
+      <section class="guide-page"><header><p>Education · Mathematik · Museumsführer · 1 / 2</p><h1>Museum der<br /><em>endlosen Dinge.</em></h1><p>Vier Räume über irrationale Zahlen und Unendlichkeit.</p></header>
         <h2>I · Ein fester Ort, unendlich viele Stellen</h2>
         <p>Eine <strong>rationale Zahl</strong> lässt sich als Bruch p/q ganzer Zahlen mit q ≠ 0 schreiben. Ihre Dezimaldarstellung endet oder wird irgendwann periodisch. Eine <strong>irrationale Zahl</strong> lässt sich nicht so schreiben; ihre Dezimaldarstellung endet nicht und wird nie periodisch.</p>
         <p><strong>√2 ist exakt:</strong> die positive Zahl, deren Quadrat 2 ist. Dagegen ist 1,4142 = 14142/10000 eine rationale Näherung.</p>
@@ -21,17 +21,17 @@ const base = import.meta.env.BASE_URL;
         <p><strong>Dicht ≠ vollständig:</strong> In jedem offenen Kreisbogen liegt irgendwann ein Landepunkt. Trotzdem trifft die Bahn nur abzählbar viele Punkte. Nichtperiodisch bedeutet nicht zufällig. Die Bewegung folgt einer festen Regel.</p>
       </section>
       <section class="guide-page"><header><p>Education · Mathematik · Museumsführer · 2 / 2</p><h2>III · Das Unendlichkeitshotel</h2></header>
-        <p>Hilberts Hotel besitzt die Zimmer 1, 2, 3, … ohne letztes Zimmer. Jedes ist belegt. Es ist ein Gedankenexperiment über Zuordnungen, kein Bauplan.</p>
+        <p>Alle Zimmer 1, 2, 3, … sind belegt. Mit einer Regel für jeden bisherigen Gast wird Platz frei. Es ist ein Gedankenexperiment über Zuordnungen.</p>
         <table><thead><tr><th>Neue Gäste</th><th>Zuordnung</th></tr></thead><tbody><tr><td>Ein weiterer Gast</td><td>Bisheriger Gast n → Zimmer n + 1.<br />Der neue Gast erhält Zimmer 1.</td></tr><tr><td>Unendlich viele Busgäste: 1, 2, 3, …</td><td>Bisheriger Gast n → Zimmer 2n.<br />Busgast k → Zimmer 2k − 1.</td></tr></tbody></table>
-        <p><strong>Abzählbar unendlich:</strong> Eine vollständige Aufzählung mit den Nummern 1, 2, 3, … ist möglich. Sie endet nie, aber jedes einzelne Element kommt nach endlich vielen Schritten dran. Die natürlichen, ganzen und rationalen Zahlen sind abzählbar unendlich.</p>
-        <h3>Warum alle reellen Zahlen nicht hineinpassen</h3>
-        <p>Angenommen, eine Liste enthält alle reellen Zahlen zwischen 0 und 1. Konstruiere eine neue Zahl: Ihre n-te Nachkommastelle ist 2, wenn die n-te Stelle der n-ten Listenzahl 1 ist; sonst ist sie 1.</p>
-        <div class="guide-formula">Neue Stelle b<sub>n</sub> ≠ Stelle a<sub>nn</sub><br />für jede Zeile n = 1, 2, 3, …</div>
-        <p>Die neue Zahl unterscheidet sich von <strong>jeder Zeile n an der Stelle n</strong>. Sie fehlt also in der behaupteten vollständigen Liste. Das ist Cantors Diagonalargument. Da die neue Zahl nur 1 und 2 verwendet, entsteht kein Problem mit zwei Darstellungen wie 0,4999… = 0,5000…</p>
-        <p>Schon die reellen Zahlen zwischen 0 und 1 sind <strong>überabzählbar</strong>. Auch die irrationalen Zahlen sind überabzählbar: Zusammen mit den abzählbaren rationalen Zahlen bilden sie die reellen Zahlen. Zwei abzählbare Mengen wären zusammen wieder abzählbar.</p>
-        <h3>Drei Dinge, die du auseinanderhalten solltest</h3>
-        <ol><li><strong>Unendlich viele Dezimalstellen:</strong> eine Eigenschaft der Darstellung einer einzelnen Zahl.</li><li><strong>Eine unendliche, nichtperiodische Bahn:</strong> eine Folge verschiedener Positionen, die sich nach Schritten aufzählen lassen.</li><li><strong>Überabzählbar viele Zahlen:</strong> Keine Liste erreicht jeden Wert. Das ist eine andere Größe von Unendlichkeit.</li></ol>
-        <p class="guide-source">Fachliche Grundlagen: Wolfram MathWorld, „Irrational Number“ und „Cantor Diagonal Method“; Wolfram Demonstrations, „Three-Distance Theorem“. Quellenlinks und die Experimente: edu.promptworks.eu/mathematik/museum-der-unendlichkeit/</p>
+        <h2>IV · Zahlenlisten: zwei verschiedene Diagonalen</h2>
+        <p><strong>Abzählbar unendlich:</strong> Jeder Wert hat einen Platz 1, 2, 3, … in einer Liste. Die Liste endet nie, erreicht aber jeden einzelnen Wert nach endlich vielen Schritten.</p>
+        <div class="guide-comparison">
+          <div><h3>Rationale Zahlen aufzählen</h3><p>Trage positive Brüche p/q in eine Tabelle ein: Zähler p als Spalten, Nenner q als Zeilen. Gehe diagonal nach wachsendem p + q durch die Felder. Jede Diagonale ist endlich.</p><p>Notiere nur gekürzte Brüche: 2/2 = 1 ist bereits als 1/1 erfasst. Beginne mit 0 und ergänze nach jedem positiven Wert sein negatives Gegenstück.</p><div class="guide-formula">0, 1, −1, 1/2, −1/2,<br />2, −2, 1/3, −1/3, …</div><p>Jeder gekürzte Bruch liegt auf seiner endlichen Diagonale p + q. Vor ihm liegen nur endlich viele Felder. So werden <strong>alle rationalen Zahlen</strong> erreicht.</p></div>
+          <div><h3>Reelle Zahlen: Jede Liste bleibt unvollständig</h3><p>Nimm eine beliebige behauptete Liste aller reellen Zahlen zwischen 0 und 1. Ändere in Zeile n die n-te Nachkommastelle: aus 1 wird 2, sonst 1.</p><div class="guide-formula">b<sub>n</sub> ≠ a<sub>nn</sub><br />für jede Zeile n = 1, 2, 3, …</div><p>Die neue Zahl unterscheidet sich von jeder Zeile und fehlt deshalb. Die Regel muss für die ganze unendliche Liste gelten; sechs gezeigte Stellen allein sind kein Beweis.</p><p>Nur 1 und 2 als neue Ziffern vermeiden doppelte Schreibweisen wie 0,4999… = 0,5000… Schon dieses Intervall ist <strong>überabzählbar</strong>.</p></div>
+        </div>
+        <h3>Unterschiede festhalten</h3>
+        <p>Die Bruchtabelle <strong>liefert</strong> eine Aufzählung. Cantors Diagonalargument <strong>widerlegt</strong> eine behauptete vollständige Liste. Eine unendliche Dezimaldarstellung eines einzelnen Wertes sagt nichts über die Anzahl von Zahlen aus. Auch eine dichte, nichtperiodische Kreisbahn hat nur abzählbar viele Landepunkte.</p>
+        <p class="guide-source">Fachliche Grundlagen: Cornell University, „Cardinality and countability“; Wolfram MathWorld, „Cantor Diagonal Method“. Quellenlinks und Experimente: edu.promptworks.eu/mathematik/museum-der-unendlichkeit/</p>
       </section>
     </article>
   </div>

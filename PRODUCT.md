@@ -19,9 +19,10 @@ Lernseite behandelt Optik für Klasse 9 mit sieben Kapiteln, Simulationen,
 Videos, Kapitelübungen, Gesamtabfrage und druckbarem Lernzettel.
 Die Mathematik-Lernseite „Warum √2 irrational ist“ für Klasse 9 ergänzt die
 Sammlung um interaktive Beispiele, einen Beweis-Navigator und Wissenstest.
-Das „Museum der endlosen Dinge“ ergänzt drei experimentelle Räume zu
+Das „Museum der endlosen Dinge“ ergänzt vier experimentelle Räume zu
 irrationalen Zahlen und Unendlichkeit: Zahlenzoom, Kreiswanderer und
-Unendlichkeitshotel mit Diagonalargument, Aufgaben und Museumsführer.
+Unendlichkeitshotel sowie einen eigenen Zahlenlisten-Bereich zur Abzählbarkeit
+rationaler und Überabzählbarkeit reeller Zahlen, mit Aufgaben und Museumsführer.
 
 ## Brand Commitments
 

@@ -12,7 +12,7 @@ export async function testMuseum(browser, origin, screenshots) {
     page.on('response', response => { if (response.url().startsWith(origin) && response.status() >= 400) errors.push(response.url()); });
     await page.goto(origin + route);
     await page.evaluate(() => document.fonts.ready);
-    assert.equal(await page.locator('.museum-room').count(), 3);
+    assert.equal(await page.locator('.museum-room').count(), 4);
     assert.equal(await page.locator('h1').count(), 1);
     const referenceMarker = await page.locator('[data-reference-marker]').getAttribute('transform');
     await page.locator('[data-zoom-in]').click();
@@ -115,15 +115,50 @@ export async function testMuseum(browser, origin, screenshots) {
     assert.match(await page.locator('[data-hotel-waiting-note]').textContent(), /Wartezone ist leer/);
     assert.equal(await page.locator('[data-hotel-mover]').count(), 0);
     if ([1440, 390, 320].includes(width)) await page.locator('[data-hotel-exhibit]').screenshot({ path: `${capture}/hotel-bus-${width}.png` });
+    assert.equal(await page.locator('#hotel [data-diagonal-exhibit], #hotel [data-rational-exhibit]').count(), 0);
+    assert.equal(await page.locator('#zahlenlisten [data-diagonal-exhibit]').count(), 1);
+    assert.equal(await page.locator('#zahlenlisten [data-rational-exhibit]').count(), 1);
+    assert.equal(await page.locator('.museum-nav a[href="#zahlenlisten"]').count(), 1);
+    const rationalList = page.locator('[data-rational-list] li');
+    assert.deepEqual(await rationalList.allTextContents(), ['0']);
+    await page.locator('.museum-nav a[href="#zahlenlisten"]').click();
+    assert.equal(await page.evaluate(() => location.hash), '#zahlenlisten');
+    await page.locator('[data-rational-step]').focus();
+    await page.keyboard.press('Enter');
+    for (let i = 0; i < 3; i++) await page.locator('[data-rational-step]').click();
+    const beforeDuplicate = await rationalList.allTextContents();
+    await page.locator('[data-rational-step]').click();
+    assert.deepEqual(await rationalList.allTextContents(), beforeDuplicate);
+    assert.match(await page.locator('[data-rational-status]').textContent(), /2\/2 = 1.*überspringen/);
+    assert.equal(await page.locator('[data-rational-cell="2-2"]').getAttribute('aria-current'), 'step');
+    assert.equal(await page.locator('[data-rational-cell][data-skipped]').count(), 1);
+    await page.locator('[data-rational-all]').click();
+    assert.equal(await rationalList.count(), 35);
+    assert.equal(await page.locator('[data-rational-cell][data-visited]').count(), 21);
+    assert.ok(await page.locator('[data-rational-step]').isDisabled());
+    assert.ok(await page.locator('[data-rational-all]').isDisabled());
+    assert.match(await page.locator('[data-rational-status]').textContent(), /außerhalb der Tabelle/);
     await page.locator('[data-diagonal-step]').click();
     assert.equal(await page.locator('[data-changed]').count(), 1);
     await page.locator('[data-diagonal-all]').click();
+    assert.equal(await page.locator('[data-changed]').count(), 6);
+    assert.equal(await rationalList.count(), 35);
+    await page.locator('[data-rational-reset]').focus();
+    await page.keyboard.press('Space');
+    assert.deepEqual(await rationalList.allTextContents(), ['0']);
     assert.equal(await page.locator('[data-changed]').count(), 6);
     const digits = await page.locator('[data-diagonal-result]').textContent();
     const old = await page.locator('.diagonal-cell').allTextContents();
     digits.split(' ').forEach((digit, i) => assert.notEqual(digit, old[i]));
     await page.locator('[data-diagonal-reset]').click();
     assert.equal(await page.locator('[data-changed]').count(), 0);
+    const listsQuiz = page.locator('#lists-quiz');
+    await listsQuiz.locator('fieldset').first().locator('input').first().check();
+    await listsQuiz.locator('fieldset').nth(1).locator('input').nth(1).check();
+    await listsQuiz.getByRole('button', {name:'Antworten prüfen'}).click();
+    assert.match(await listsQuiz.locator('[data-quiz-summary]').textContent(), /2 richtig/);
+    assert.equal(await page.locator('#hotel-quiz input:checked').count(), 0);
+    await listsQuiz.getByRole('button', {name:'Neu versuchen'}).click();
     const quiz = page.locator('#zoom-quiz');
     await quiz.getByRole('button', { name: 'Antworten prüfen' }).click();
     assert.match(await quiz.locator('[data-quiz-summary]').textContent(), /0 von 2 beantwortet/);
@@ -142,29 +177,32 @@ export async function testMuseum(browser, origin, screenshots) {
     await page.keyboard.press('Enter');
     assert.equal(await page.locator('[data-lower]').textContent(), '1,4');
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${width}: no overflow`);
-    const clipped = await page.locator('.museum-page button, .museum-page h1, .museum-page h2, .museum-page output, .diagonal-table').evaluateAll(nodes => nodes.filter(node => node.scrollWidth > node.clientWidth + 1).map(node => node.textContent));
+    const clipped = await page.locator('.museum-page button, .museum-page h1, .museum-page h2, .museum-page output, .diagonal-table, .rational-table, .rational-sequence li').evaluateAll(nodes => nodes.filter(node => node.scrollWidth > node.clientWidth + 1).map(node => node.textContent));
     assert.deepEqual(clipped, [], `${width}: no clipped controls or numbers`);
     assert.deepEqual(errors, []);
     if ([1440, 390, 320].includes(width)) {
       await page.locator('[data-orbit-many]').click();
+      await page.locator('[data-rational-all]').click();
       await page.evaluate(() => { document.querySelectorAll('details').forEach(d => d.open = false); window.scrollTo(0, 0); });
       await page.screenshot({ path: `${capture}/museum-${width}.png`, fullPage: true });
       await page.locator('[data-orbit-exhibit]').screenshot({ path: `${capture}/orbit-${width}.png` });
       await page.locator('[data-zoom-exhibit]').screenshot({ path: `${capture}/zoom-${width}.png` });
       await page.locator('[data-hotel-exhibit]').screenshot({ path: `${capture}/hotel-${width}.png` });
       await page.locator('[data-diagonal-all]').click();
-      await page.locator('[data-diagonal-exhibit]').screenshot({ path: `${capture}/diagonal-${width}.png` });
+      await page.locator('[data-diagonal-exhibit]').screenshot({ path: `${capture}/diagonal-${width}.png`, style: '.skip-link { visibility: hidden !important; }' });
+      await page.locator('[data-rational-exhibit]').screenshot({ path: `${capture}/rationals-${width}.png`, style: '.skip-link { visibility: hidden !important; }' });
     }
     await page.goto(origin + route + 'lernzettel/');
     assert.ok(await page.getByRole('link', { name: 'Zurück ins Museum' }).isVisible());
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${width}: guide fits`);
     if (width === 1440) {
-      await page.pdf({path: `${capture}/museum-guide.pdf`, preferCSSPageSize: true});
+      const guidePDF = await page.pdf({path: `${capture}/museum-guide.pdf`, preferCSSPageSize: true});
+      assert.equal((guidePDF.toString('latin1').match(/\/Type\s*\/Page\b/g) || []).length, 2, 'guide stays on two A4 pages');
       await page.emulateMedia({media: 'print'});
       assert.equal(await page.locator('.guide-actions').isVisible(), false);
     }
     await page.close();
-    console.log(`Museum ${width}px: zoom, orbit animation, hotel, diagonal, quizzes, keyboard, layout and guide passed`);
+    console.log(`Museum ${width}px: zoom, orbit animation, hotel, rational enumeration, diagonal, quizzes, keyboard, layout and guide passed`);
   }
   // Exercise the spatial sequence with motion enabled; the main matrix above
   // deliberately uses reduced motion and must settle synchronously.
@@ -431,8 +469,13 @@ export async function testMuseum(browser, origin, screenshots) {
   }
   const noJS = await browser.newPage({javaScriptEnabled: false});
   await noJS.goto(origin + route);
-  assert.ok(await noJS.locator('.museum-note').isVisible());
-  assert.equal(await noJS.locator('.museum-room').count(), 3);
+  assert.ok(await noJS.locator('.museum-note').first().isVisible());
+  assert.equal(await noJS.locator('.museum-room').count(), 4);
+  assert.ok(await noJS.locator('[data-rational-step]').isDisabled());
+  assert.equal(await noJS.locator('[data-rational-cell]').count(), 36);
+  assert.ok(await noJS.locator('[data-rational-exhibit] noscript .museum-note').isVisible());
+  assert.equal(await noJS.locator('#hotel [data-diagonal-exhibit]').count(), 0);
+  assert.ok(await noJS.locator('#zahlenlisten [data-diagonal-exhibit]').isVisible());
   assert.ok(await noJS.locator('.zoom-overview').isVisible());
   assert.match(await noJS.locator('.zoom-reference').textContent(), /Referenzintervall \[1, 2\]/);
   assert.match(await noJS.locator('[data-zoom-factor]').textContent(), /1-fach/);

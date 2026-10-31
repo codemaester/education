@@ -12,7 +12,7 @@
 .museum-page summary { font-weight: 600; padding-block: .25rem; }
 .museum-note { padding: 1.5rem; background: var(--color-sand); }
 .museum-nav { position: sticky; top: 0; z-index: 10; background: var(--color-paper); border-block: 1px solid var(--color-rule); }
-.museum-nav > div { display: flex; gap: 1.5rem; align-items: center; justify-content: space-between; }
+.museum-nav > div { display: flex; gap: clamp(.65rem, 1.5vw, 1.5rem); align-items: center; justify-content: space-between; }
 .museum-nav a { display: inline-flex; align-items: center; gap: .5rem; padding: 1.1rem 0; text-decoration: none; font-size: .8rem; font-weight: 600; }
 .museum-nav a[aria-current] { color: var(--color-terracotta-dark); text-decoration: underline; text-underline-offset: .5rem; }
 .museum-room, .museum-exit, .museum-sources { scroll-margin-top: 7rem; padding-top: clamp(4rem, 7vw, 7rem); }
@@ -148,6 +148,34 @@
 .hotel-rule strong { display: block; font: 450 clamp(1.35rem, 2vw, 1.9rem)/1.35 var(--font-display); overflow-wrap: anywhere; }
 .hotel-rule strong > span { display: inline-block; white-space: nowrap; }
 .hotel-rule p { margin: .75rem 0 0; font-size: .8rem; }
+.rational-intro { max-width: 75ch; margin: 1.5rem 0; font-size: .95rem; }
+.rational-work { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); }
+.rational-work > div { min-width: 0; }
+.rational-table { border-collapse: collapse; width: 100%; table-layout: fixed; font-variant-numeric: tabular-nums; }
+.rational-table caption { text-align: left; font-size: .75rem; margin-bottom: .75rem; }
+.rational-table th { font-size: .75rem; font-weight: 600; }
+.rational-table td, .rational-table th { text-align: center; padding: .65rem .1rem; border-bottom: 1px solid var(--color-rule); }
+.rational-table td { font-size: .9rem; }
+.rational-table [data-active-diagonal] { background: var(--color-paper); }
+.rational-table [data-visited] { font-weight: 700; }
+.rational-table [data-skipped] { text-decoration: line-through; color: var(--color-muted); font-weight: 400; }
+.rational-table [aria-current] { background: var(--color-forest); color: var(--color-paper); outline: 2px solid var(--color-terracotta-dark); outline-offset: -2px; }
+.rational-table [aria-current][data-skipped] { color: var(--color-paper); }
+.rational-direction, .rational-list-note { font-size: .75rem; margin: .75rem 0 0; }
+.rational-current { border-top: 1px solid var(--color-rule); padding-top: 1rem; margin-top: 1rem; }
+.rational-current > span { display: block; font-size: .75rem; }
+.rational-current strong { display: block; font: 450 1.5rem/1.4 var(--font-display); margin-top: .25rem; }
+.rational-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.rational-actions .button { padding-inline: .75rem; }
+.rational-actions [data-rational-all] { grid-column: 1 / -1; }
+.rational-list-work h4 { font-size: 1rem; margin: 0 0 .75rem; }
+.rational-list-work > p { font-size: .85rem; }
+.rational-sequence { display: grid; grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr)); gap: .4rem .75rem; padding: 0; margin: 1rem 0; list-style-position: inside; font-size: .85rem; font-variant-numeric: tabular-nums; }
+.rational-sequence li { white-space: nowrap; }
+.rational-sequence li::marker { color: var(--color-muted); font-size: .7rem; }
+.lists-transition { margin-top: 2.5rem; border-top: 1px solid var(--color-forest); padding-top: 1.5rem; }
+.lists-transition h3 { font: 500 1.65rem/1.2 var(--font-display); margin: 0 0 1rem; }
+.lists-transition p { max-width: 76ch; font-size: .95rem; }
 .diagonal-exhibit { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(1.5rem, 4vw, 3.5rem); padding-top: 3rem; margin-top: 2rem; border-top: 1px solid var(--color-rule); }
 .diagonal-intro h3 { font: 450 clamp(2rem, 3vw, 2.7rem)/1.12 var(--font-display); margin: 0 0 1.5rem; }
 .diagonal-intro p { font-size: .95rem; }
@@ -189,6 +217,8 @@
   .room-heading h2 { font-size: clamp(2rem, 7.5vw, 3rem); }
   .room-number { font-size: 2.5rem; min-width: 1.8rem; }
   .room-reading, .diagonal-exhibit { grid-template-columns: 1fr; gap: 1.5rem; }
+  .rational-work { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .rational-table td { font-size: .8rem; }
   .exhibit-heading { flex-direction: column; gap: .4rem; }
   .zoom-bounds { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
   .zoom-pair { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; margin-top: 1.75rem; }

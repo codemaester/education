@@ -37,3 +37,32 @@ export function rotationPoint(step: number, turn: number) {
 }
 
 export function diagonalDigit(digit: number): number { return digit === 1 ? 2 : 1; }
+
+export interface RationalVisit {
+  numerator: number;
+  denominator: number;
+  diagonal: number;
+  reduced: string;
+  keep: boolean;
+}
+
+/** Complete anti-diagonals fitting in a size × size positive fraction grid. */
+export function rationalDiagonalWalk(size = 6): RationalVisit[] {
+  const gcd = (a: number, b: number): number => b ? gcd(b, a % b) : a;
+  const visits: RationalVisit[] = [];
+  for (let diagonal = 2; diagonal <= size + 1; diagonal++) {
+    for (let numerator = 1; numerator < diagonal; numerator++) {
+      const denominator = diagonal - numerator;
+      const divisor = gcd(numerator, denominator);
+      const p = numerator / divisor;
+      const q = denominator / divisor;
+      visits.push({ numerator, denominator, diagonal, reduced: q === 1 ? String(p) : `${p}/${q}`, keep: divisor === 1 });
+    }
+  }
+  return visits;
+}
+
+/** Interleave signs after 0; canonical fractions ensure that no value repeats. */
+export function rationalList(visits: RationalVisit[]): string[] {
+  return ['0', ...visits.filter(visit => visit.keep).flatMap(visit => [visit.reduced, `−${visit.reduced}`])];
+}

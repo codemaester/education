@@ -2,7 +2,8 @@
 
 Neue Mathematik-Lernseite unter `/mathematik/museum-der-unendlichkeit/`, ab Klasse 9
 mit einer ausdrücklich als Vertiefung bezeichneten Einführung in Mengenmächtigkeit.
-Die drei vom Nutzer gewählten Museumsräume übernehmen das Modern-Classic-Theme.
+Die vier Museumsräume übernehmen das Modern-Classic-Theme. Zahlenlisten bilden
+einen eigenen Lernbereich nach dem Hotel.
 
 ## Lernziele und Grenzen
 
@@ -41,9 +42,8 @@ Die drei vom Nutzer gewählten Museumsräume übernehmen das Modern-Classic-Them
   Auf kleinen Bildschirmen umbrechen die Aktionen und der Regler füllt seine Zeile. Tempoänderungen wirken
   während des Laufs, ohne die bisherigen Schritte zurückzusetzen.
 - Unendlichkeitshotel: ein neuer Gast mit n → n+1 und unendlich viele Busgäste
-  mit n → 2n, anschließend Cantors Diagonalargument.
-  Acht Zimmer und sechs Dezimalstellen sind ausdrücklich nur Ausschnitte. Die
-  Ersetzungsregel 1 → 2, sonst → 1 vermeidet Mehrdeutigkeit durch 9er-Perioden.
+  mit n → 2n. Die ersten acht Zimmer zeigen ausdrücklich nur einen Ausschnitt.
+  Das Hotel enthält weder die rationale Aufzählung noch Cantors Diagonalargument.
   Einzelgast und Bus nutzen denselben automatischen Ablauf: Die bisherigen
   Gäste verlassen als nummerierte Figuren ihre Zimmer (0,7 s) und beziehen nach
   n → n+1 beziehungsweise n → 2n ihre neuen Zimmer (2,2 s). Kurze Erklärungen
@@ -79,6 +79,26 @@ Die drei vom Nutzer gewählten Museumsräume übernehmen das Modern-Classic-Them
   zu reduzierter Bewegung führen zum korrekten Endzustand. Bei bereits reduzierter
   Bewegung erscheint er sofort.
 
+- Zahlenlisten: eigenständiger vierter Raum mit zwei unterschiedlichen diagonalen
+  Verfahren. Die Bruchtabelle zeigt p/q für p, q = 1…6 und durchläuft die ersten
+  sechs vollständigen Diagonalen mit p+q = 2…7 (21 Felder). Vollständig gekürzte
+  Brüche werden aufgenommen; ungekürzte Felder wie 2/2 oder 2/4 werden sichtbar
+  übersprungen. Die Liste beginnt mit 0 und ergänzt nach jedem positiven Wert
+  sein negatives Gegenstück. „Nächstes Feld“, die vollständige Vorschau und
+  Zurücksetzen steuern den Durchlauf ohne automatische Animation. Die nächste
+  Diagonale enthält etwa 1/7 außerhalb der Tabelle. Das endliche Bild illustriert
+  den allgemeinen Beweis: Jeder gekürzte Bruch liegt auf seiner endlichen
+  Diagonale; davor liegen nur endlich viele Felder. Die Liste muss nicht nach
+  Zahlenwert sortiert sein. Null, Vorzeichen und ganze Zahlen sind berücksichtigt.
+  Cantors bisherige Dezimaltabelle folgt als unabhängiges zweites Experiment.
+  Es gibt keine Rezeption und keine Gäste in diesem Argument. Die Ersetzungsregel
+  1 → 2, sonst → 1 vermeidet 9er-Perioden und doppelte Dezimalschreibweisen.
+  Sechs Stellen illustrieren die Konstruktion; der Beweis benötigt die Regel für
+  jede Zeile einer beliebigen vorgeschlagenen unendlichen Liste. Die Diagonale
+  der Bruchtabelle liefert eine Aufzählung, Cantors Argument widerlegt die
+  Vollständigkeit einer reellen Liste. Hauptquelle: Cornell University,
+  „Cardinality and countability“, CS 2800, Fall 2017.
+
 ## Didaktischer Aufbau
 
 Jeder Raum hat ein Experiment, eigenständige Erklärung, Vertiefungsfrage mit
@@ -89,7 +109,7 @@ keine Speicherung oder Serververbindung. Der eigenständige Museumsführer fasst
 alle Räume auf zwei für A4 angelegten Seiten zusammen.
 
 Abweichung von den SOLL-Videos im gemeinsamen Lernseitenstandard: Diese erste,
-explizit experimentbasierte Museumsausgabe nutzt bewusst die drei selbst
+explizit experimentbasierte Museumsausgabe nutzt bewusst die selbst
 steuerbaren Exponate als zentrales Medium. Es werden keine ungesichteten Videos
 als Ersatz eingebettet. Eigenständige Erklärungen, Aufgabenlösungen und nach
 Raum zugeordnete fachliche Quellen bleiben auch ohne JavaScript verfügbar.
@@ -107,8 +127,9 @@ führt kein neues Designsystem ein.
 
 `tests/museum.test.mjs` prüft Intervallinvarianten und verschachtelte Zehntel
 einschließlich lokaler Abstände bis 24 Dezimalstellen,
-Hotelzuordnungen, Kreisgeometrie und Periodizität, Diagonalregel und Aufgabenabdeckung.
-`tests/museum-browser.mjs` prüft die drei Experimente, Animation, Quiz-Neustart,
+Hotelzuordnungen, Kreisgeometrie und Periodizität, rationale Diagonalfolgen,
+kanonische Brüche und beide Vorzeichen, Diagonalregel und Aufgabenabdeckung.
+`tests/museum-browser.mjs` prüft die vier Räume und ihre Experimente, Animation, Quiz-Neustart,
 getrennte Ergebnisse, Tastaturbedienung, fünf Bildschirmbreiten, Quellen-/Asset-
 Fehler, No-JS-Lösungen und Druckansicht im Produktionsbuild.
 Die Zoomprüfung umfasst außerdem normale und reduzierte Bewegung, Vorwärts-/
@@ -119,3 +140,7 @@ Erklärpausen, Pause/Weiter, transparente Figuren, lückenlosen Einzug, schmaler
 werdende verblassende Türen, rechte Ausgänge, freie
 Zwischenzustände, Einzug, Wiederholung und Abbruch in den Phasen sowie
 reduzierte Bewegung, Tab-/Größenwechsel und das Verlassen des Sichtbereichs.
+
+Der neue Zahlenlisten-Test prüft übersprungene Duplikate, fortlaufende
+Listennummern, Vorschaugrenzen, unabhängige Neustarts beider Experimente, eigene
+Aufgaben, Navigation und Lesbarkeit ohne JavaScript.

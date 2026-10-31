@@ -222,6 +222,18 @@ Small controls, notes, answer fields, and labels use the small radius; chapter p
 
 ## Components
 
+The fourth museum room, Zahlenlisten, stands outside the hotel narrative. A
+positive-fraction table walks complete anti-diagonals p+q=2…7 inside a 6×6 preview,
+marks the active diagonal and current cell, and crosses out non-reduced duplicates.
+A numbered rational sequence starts at 0 and interleaves positive and negative
+values. Step, complete-preview and reset controls sit directly beneath the table for
+mobile use and provide deliberate pacing.
+An adjacent explanation distinguishes diagonal enumeration from Cantor’s separate
+existing decimal-table argument. Both have independent state and reset, a local
+quiz and standalone explanations without JavaScript. The shared guide keeps its
+two-page A4 treatment with a separate IV heading for the two list arguments.
+The catalog, navigation and review links identify all four rooms.
+
 The infinite hotel uses small numbered gouache-painted people with paper grain
 inside their transparent silhouettes for both existing and new guests. Forest doors and travelers identify existing guests; terracotta identifies
 new arrivals. Two labelled rule blocks have a 2rem gap and stack below 740px;

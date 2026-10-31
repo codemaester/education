@@ -1,5 +1,6 @@
 import { initializeHotel } from './hotel';
-import { sqrtTwoWindow, rotationPoint, diagonalDigit } from '../data/museum-math';
+import { initializeNumberLists } from './number-lists';
+import { sqrtTwoWindow, rotationPoint } from '../data/museum-math';
 
 const $ = <T extends Element = HTMLElement>(selector: string, root: ParentNode = document) => root.querySelector<T>(selector)!;
 const $$ = <T extends Element = HTMLElement>(selector: string, root: ParentNode = document) => [...root.querySelectorAll<T>(selector)];
@@ -244,29 +245,8 @@ renderOrbit();
 // Room III: the rule is infinite; the eight room slots are a finite preview.
 initializeHotel($('[data-hotel-exhibit]'), motion);
 
-let diagonalProgress = 0;
-let listSeed = 4;
-const digitCells = $$('[data-digit]');
-const diagonalStep = $<HTMLButtonElement>('[data-diagonal-step]');
-const diagonalAll = $<HTMLButtonElement>('[data-diagonal-all]');
-function renderDiagonal(newList = false) {
-  if (newList) { listSeed = (listSeed + 3) % 10; diagonalProgress = 0; }
-  const diagonal: number[] = [];
-  digitCells.forEach(cell => {
-    const [r, c] = cell.dataset.digit!.split('-').map(Number);
-    const digit = (r * 7 + c * 3 + listSeed + (r === c ? r : 0)) % 10;
-    cell.textContent = String(digit);
-    cell.toggleAttribute('data-changed', r === c && r < diagonalProgress);
-    if (r === c) diagonal.push(diagonalDigit(digit));
-  });
-  $('[data-diagonal-result]').textContent = diagonal.map((d, i) => i < diagonalProgress ? String(d) : '_').join(' ');
-  diagonalStep.disabled = diagonalProgress === 6; diagonalAll.disabled = diagonalProgress === 6;
-  $('[data-diagonal-status]').textContent = diagonalProgress === 0 ? 'Ändere die erste Stelle. Deine neue Zahl wird sich von Zeile 1 unterscheiden.' : diagonalProgress < 6 ? `Stelle ${diagonalProgress}: Die neue Ziffer ist ${diagonal[diagonalProgress - 1]}. Unsere Zahl unterscheidet sich jetzt von jeder der ersten ${diagonalProgress} Zeilen an mindestens einer Stelle.` : 'Sechs Unterschiede sind sichtbar. Setzen wir die Regel für alle n fort, unterscheidet sich die neue Zahl von Zeile n an Stelle n. Sie fehlt in der gesamten unendlichen Liste.';
-}
-diagonalStep.addEventListener('click', () => { diagonalProgress++; renderDiagonal(); });
-diagonalAll.addEventListener('click', () => { diagonalProgress = 6; renderDiagonal(); });
-$('[data-diagonal-reset]').addEventListener('click', () => renderDiagonal(true));
-renderDiagonal();
+// Room IV compares a rational enumeration with Cantor’s diagonal argument.
+initializeNumberLists($('[data-number-lists]'));
 
 $$<HTMLFormElement>('[data-museum-quiz]').forEach(form => {
   const questions = $$<HTMLFieldSetElement>('[data-question]', form);
