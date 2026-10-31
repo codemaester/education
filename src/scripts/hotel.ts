@@ -2,7 +2,7 @@ import { hotelAssignment } from '../data/museum-math';
 
 type Mode = 'one' | 'bus';
 type Phase = 'ready' | 'preparing' | 'leaving' | 'departed' | 'moving' | 'vacant' | 'welcoming' | 'arriving' | 'complete';
-type Point = { x: number; y: number };
+type Point = { x: number; y: number; opacity?: number };
 
 export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
   const get = <T extends Element = HTMLElement>(selector: string) => hotel.querySelector<T>(selector)!;
@@ -153,7 +153,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     const animation = traveler.animate(points.map((p, i) => ({
       transform: `translate(${p.x}px, ${p.y}px)`,
       offset: distance ? lengths[i] / distance : i / (points.length - 1),
-      opacity: 1,
+      opacity: p.opacity ?? 1,
     })), { duration, easing: 'cubic-bezier(.25,.1,.25,1)', fill: 'both' });
     animations.push(animation);
     await animation.finished.catch(() => undefined);
@@ -199,10 +199,20 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
       const target = move.room <= 8 ? point(residents[move.room - 1])
         : { x: layer.getBoundingClientRect().width + 40, y: startLane };
       const endLane = move.room <= 8 ? lane(move.room) : startLane;
-      const points = [outside];
+      const points: Point[] = [outside];
       if (Math.abs(startLane - endLane) > 1) points.push({ x: rail, y: startLane }, { x: rail, y: endLane });
-      points.push({ x: target.x, y: endLane });
-      if (move.room <= 8) points.push(target);
+      if (move.room <= 8) points.push({ x: target.x, y: endLane }, target);
+      else {
+        // Follow the distant doors on desktop, or the rightmost aisle on mobile.
+        const stageRect = stage.getBoundingClientRect();
+        const doorsLeft = get('.hotel-infinity-doors').getBoundingClientRect().left - stageRect.left;
+        const fadeStart = Math.max(outside.x, Math.max(doorsLeft, stageRect.width * .7) - 20);
+        points.push(
+          { x: fadeStart, y: endLane },
+          { x: stageRect.width - 20, y: endLane, opacity: 0 },
+          { ...target, opacity: 0 },
+        );
+      }
       residents[i].setAttribute('data-traveling', '');
       frames[i].setAttribute('data-open', '');
       const traveler = departing[i];

@@ -113,7 +113,8 @@
 .hotel-stage { position: relative; margin-right: 1rem; }
 .hotel-corridor { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .4fr); gap: 1rem; margin-top: 2rem; }
 .hotel-rooms { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 1rem .4rem; min-width: 0; }
-.hotel-infinity { min-width: 0; padding-top: 1.775rem; }
+.hotel-infinity { min-width: 0; }
+.hotel-infinity-symbol { display: block; width: 3rem; height: 1.25rem; margin: 0 auto .525rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .hotel-infinity-doors { display: flex; align-items: flex-end; gap: 3px; height: 130px; }
 .hotel-distant-door { flex: var(--door-scale) 1 0; min-width: 0; height: calc(130px * var(--door-height)); opacity: var(--door-opacity); }
 .hotel-distant-frame { width: 100%; height: 100%; border-radius: 44px 44px 0 0; background: var(--color-forest); }

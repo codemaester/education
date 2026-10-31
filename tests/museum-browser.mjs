@@ -90,6 +90,10 @@ export async function testMuseum(browser, origin, screenshots) {
     assert.deepEqual(await page.locator('[data-hotel-mode]').evaluateAll(nodes => nodes.map(el => el.dataset.hotelMode)), ['one', 'bus']);
     assert.equal(await page.locator('.door-knob, [data-hotel-exit], .hotel-continuation').count(), 0);
     assert.equal(await page.locator('.hotel-rooms .door-frame').count(), 8);
+    const infinity = await page.locator('.hotel-infinity-symbol').boundingBox();
+    const continuation = await page.locator('.hotel-infinity-doors').boundingBox();
+    assert.ok(infinity && infinity.y + infinity.height <= continuation.y, `${width}: infinity symbol sits above the continuing doors`);
+    assert.ok(infinity.x >= continuation.x && infinity.x + infinity.width <= continuation.x + continuation.width, `${width}: infinity symbol stays over the continuing doors`);
     const distantDoors = await page.locator('.hotel-distant-door').evaluateAll(nodes => nodes.map(el => ({ width: el.getBoundingClientRect().width, opacity: Number(getComputedStyle(el).opacity) })));
     assert.equal(distantDoors.length, 7);
     for (let i = 1; i < distantDoors.length; i++) {
@@ -350,14 +354,25 @@ export async function testMuseum(browser, origin, screenshots) {
         const frames = el.getAnimations().at(-1).effect.getKeyframes();
         const start = frames[0].transform.match(/translate\(([-\d.]+)px, ([-\d.]+)px\)/);
         const end = frames.at(-1).transform.match(/translate\(([-\d.]+)px, ([-\d.]+)px\)/);
-        return { x1: Number(start[1]), y1: Number(start[2]), x2: Number(end[1]), y2: Number(end[2]), opacity: frames.at(-1).opacity, background: getComputedStyle(el).backgroundColor };
+        const fadeStart = frames.at(-3).transform.match(/translate\(([-\d.]+)px, ([-\d.]+)px\)/);
+        const fadeEnd = frames.at(-2).transform.match(/translate\(([-\d.]+)px, ([-\d.]+)px\)/);
+        return { x1: Number(start[1]), y1: Number(start[2]), x2: Number(end[1]), y2: Number(end[2]), opacity: frames.at(-1).opacity,
+          startOpacity: frames[0].opacity, fadeStart: Number(fadeStart[1]) + 20, fadeEnd: Number(fadeEnd[1]) + 20,
+          fadeStartOpacity: frames.at(-3).opacity, fadeEndOpacity: frames.at(-2).opacity, background: getComputedStyle(el).backgroundColor };
       }));
       for (const route of offscreen) {
         assert.ok(route.x2 > stageBox.width, 'offscreen guests leave at the right edge');
         assert.equal(route.y2, route.y1, 'offscreen guests keep their aisle instead of heading down to the text');
-        assert.equal(Number(route.opacity), 1, 'guests walk out without fading in the middle');
+        assert.equal(Number(route.startOpacity), 1, 'guests start fully visible');
+        assert.ok(route.fadeStart >= stageBox.width * .7 - 1, 'fade starts in the rightmost continuation');
+        assert.ok(route.fadeEnd > route.fadeStart, 'fade spans a visible stretch of the aisle');
+        assert.ok(Math.abs(route.fadeEnd - stageBox.width) < 1, 'guests disappear by the stage edge');
+        assert.equal(Number(route.fadeStartOpacity), 1);
+        assert.equal(Number(route.fadeEndOpacity), 0);
+        assert.equal(Number(route.opacity), 0, 'guests remain invisible beyond the fading doors');
         assert.equal(route.background, 'rgba(0, 0, 0, 0)');
       }
+      assert.ok(await hotelPage.locator('[data-hotel-mover]').evaluateAll(nodes => nodes.filter(el => Number(el.dataset.hotelTarget) <= 8).every(el => el.getAnimations().at(-1).effect.getKeyframes().every(frame => Number(frame.opacity) === 1))), 'guests entering visible rooms stay opaque');
       if (width === 1440 && mode === 'one') {
         await hotelPage.locator('[data-hotel-pause]').click();
         await traveler.evaluate(async el => { await Promise.all(el.getAnimations().map(animation => animation.ready)); });
@@ -482,6 +497,7 @@ export async function testMuseum(browser, origin, screenshots) {
   assert.ok(await noJS.locator('[data-zoom-in]').isDisabled());
   assert.ok(await noJS.locator('#orbit-speed').isDisabled());
   assert.equal(await noJS.locator('.hotel-resident .hotel-person-icon').count(), 8);
+  assert.ok(await noJS.locator('.hotel-infinity-symbol').isVisible());
   assert.match(await noJS.locator('[data-hotel-rule="existing"]').textContent(), /n → Zimmer n \+ 1/);
   assert.ok(await noJS.locator('[data-hotel-run]').isDisabled());
   assert.equal(await noJS.locator('[data-orbit-speed]').textContent(), '2 Schritte/s');

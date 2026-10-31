@@ -104,6 +104,7 @@ const base = import.meta.env.BASE_URL;
             <div class="hotel-corridor">
               <div class="hotel-rooms" aria-label="Die ersten acht Zimmer als Ausschnitt des unendlichen Hotels">{Array.from({length:8}, (_, i) => <div class="hotel-door"><span>Zimmer {i + 1}</span><div class="door-frame"><div class="hotel-resident"><HotelGuest/><span data-hotel-guest>{i + 1}</span></div></div><small data-guest-label>Bisheriger Gast</small></div>)}</div>
               <div class="hotel-infinity" role="img" aria-label="Weitere Zimmer setzen sich nach rechts endlos fort.">
+                <svg class="hotel-infinity-symbol" viewBox="0 0 64 24" aria-hidden="true"><path d="M32 12C24 1 5 1 5 12S24 23 32 12 59 1 59 12 40 23 32 12Z"/></svg>
                 <div class="hotel-infinity-doors" aria-hidden="true">{[1, .82, .66, .5, .36, .24, .14].map((scale, i) => <div class="hotel-distant-door" style={`--door-scale: ${scale}; --door-height: ${1 - i * .055}; --door-opacity: ${.62 - i * .085}`}><div class="hotel-distant-frame"></div></div>)}</div>
               </div>
             </div>

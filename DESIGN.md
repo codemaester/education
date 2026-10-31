@@ -244,10 +244,12 @@ their actual doors, follow measured aisle paths across the responsive room rows,
 and enter the assigned doors without fading. Each incoming image is decoded
 before replacing the waiting figure, and the room receives it at matching size.
 Narrower, knob-free active doors leave room for seven progressively compressed,
-fading door silhouettes representing the infinite continuation. On narrow screens
+fading door silhouettes with an infinity symbol above them representing the infinite continuation. On narrow screens
 this continuation follows below the two active room rows. It replaces the former
 continuation sentence. Departing guests walk straight off the right
-edge of their own aisle without a background tile or an early fade. A short
+edge of their own aisle without a background tile. They fade only through the
+rightmost continuation, becoming fully transparent at the stage edge; guests
+entering visible rooms stay opaque. A short
 caption above the scene explains each transition, and Pause/Continue controls
 both motion and explanatory holds. A waiting area shows the incoming guest or the
 first four of infinitely many bus guests. Reset and mode changes cancel the

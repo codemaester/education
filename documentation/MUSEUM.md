@@ -54,7 +54,9 @@ einen eigenen Lernbereich nach dem Hotel.
   Der Bus bringt ausdrücklich unendlich viele Gäste mit den Nummern 1, 2, 3, …;
   die neuen Gäste erhalten nach k → 2k−1 die ungeraden Zimmer. Gäste mit einem
   Ziel außerhalb des Ausschnitts verlassen ihre jeweilige Reihe gerade nach
-  rechts, ohne zum Beschreibungstext zu laufen oder mitten im Bild zu verblassen.
+  rechts, ohne zum Beschreibungstext zu laufen. Erst im rechten Auslaufbereich
+  verblassen sie passend zu den entfernten Türen; am Bühnenrand sind sie ganz
+  unsichtbar. Gäste mit sichtbarem Zielzimmer behalten volle Deckkraft.
   Die Figuren bleiben beim Einzug durchgehend sichtbar: Bewegte Bilder werden
   vor dem Ausblenden der wartenden Person dekodiert, behalten volle Deckkraft
   und gehen ohne Zwischenbild in die gleich große Zimmerdarstellung über.
@@ -62,7 +64,8 @@ einen eigenen Lernbereich nach dem Hotel.
   die jeweils ausgeführte Regel wird unterstrichen. Die ersten acht Zimmer,
   vier Busgäste und sieben zunehmend schmale, eng stehende, verblassende
   Türsilhouetten zeigen nur einen endlichen Ausschnitt. Die schmaleren aktiven
-  Türen haben keinen Türknopf. Ein zusätzlicher Fortsetzungstext entfällt.
+  Türen haben keinen Türknopf. Ein Unendlichkeitssymbol steht über der
+  verblassenden Türreihe. Ein zusätzlicher Fortsetzungstext entfällt.
   Auf kleinen Bildschirmen folgt die verblassende Reihe unter den aktiven Zimmern.
   Die Wege berücksichtigen beide Zimmerreihen auf
   kleinen Bildschirmen. Waldgrün und Terrakotta unterscheiden beide Gruppen.
@@ -137,7 +140,8 @@ Rückwärtsschritte, unterbrochene Animationen, Reglersprünge, Zurücksetzen,
 tiefe Zoomstufen und die Ortsmarke für Ausschnitte unter einem Pixel.
 Die Hotelprüfung kontrolliert die eindeutigen Zuordnungen, bewegliche Figuren,
 Erklärpausen, Pause/Weiter, transparente Figuren, lückenlosen Einzug, schmaler
-werdende verblassende Türen, rechte Ausgänge, freie
+werdende verblassende Türen mit Unendlichkeitssymbol, rechte Ausgänge mit
+allmählichem Verblassen erst am rechten Rand, freie
 Zwischenzustände, Einzug, Wiederholung und Abbruch in den Phasen sowie
 reduzierte Bewegung, Tab-/Größenwechsel und das Verlassen des Sichtbereichs.
 
