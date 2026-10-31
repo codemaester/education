@@ -55,10 +55,16 @@ Die drei vom Nutzer gewählten Museumsräume übernehmen das Modern-Classic-Them
   die neuen Gäste erhalten nach k → 2k−1 die ungeraden Zimmer. Gäste mit einem
   Ziel außerhalb des Ausschnitts verlassen ihre jeweilige Reihe gerade nach
   rechts, ohne zum Beschreibungstext zu laufen oder mitten im Bild zu verblassen.
+  Die Figuren bleiben beim Einzug durchgehend sichtbar: Bewegte Bilder werden
+  vor dem Ausblenden der wartenden Person dekodiert, behalten volle Deckkraft
+  und gehen ohne Zwischenbild in die gleich große Zimmerdarstellung über.
   Beide Regeln stehen getrennt und beschriftet mit mindestens 2 rem Abstand;
   die jeweils ausgeführte Regel wird unterstrichen. Die ersten acht Zimmer,
-  vier Busgäste und beschriftete Fortsetzungen zu nicht sichtbaren Zimmern zeigen nur
-  einen endlichen Ausschnitt. Die Wege berücksichtigen beide Zimmerreihen auf
+  vier Busgäste und sieben zunehmend schmale, eng stehende, verblassende
+  Türsilhouetten zeigen nur einen endlichen Ausschnitt. Die schmaleren aktiven
+  Türen haben keinen Türknopf. Ein zusätzlicher Fortsetzungstext entfällt.
+  Auf kleinen Bildschirmen folgt die verblassende Reihe unter den aktiven Zimmern.
+  Die Wege berücksichtigen beide Zimmerreihen auf
   kleinen Bildschirmen. Waldgrün und Terrakotta unterscheiden beide Gruppen.
   Die Figuren sind gemalte transparente Ausschnitte mit Papierstruktur nur
   innerhalb der Person; auch der bewegliche Träger hat keinen Hintergrund.
@@ -109,6 +115,7 @@ Die Zoomprüfung umfasst außerdem normale und reduzierte Bewegung, Vorwärts-/
 Rückwärtsschritte, unterbrochene Animationen, Reglersprünge, Zurücksetzen,
 tiefe Zoomstufen und die Ortsmarke für Ausschnitte unter einem Pixel.
 Die Hotelprüfung kontrolliert die eindeutigen Zuordnungen, bewegliche Figuren,
-Erklärpausen, Pause/Weiter, transparente Figuren, rechte Ausgänge, freie
+Erklärpausen, Pause/Weiter, transparente Figuren, lückenlosen Einzug, schmaler
+werdende verblassende Türen, rechte Ausgänge, freie
 Zwischenzustände, Einzug, Wiederholung und Abbruch in den Phasen sowie
 reduzierte Bewegung, Tab-/Größenwechsel und das Verlassen des Sichtbereichs.

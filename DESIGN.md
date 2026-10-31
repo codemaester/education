@@ -229,8 +229,12 @@ an underline marks the active rule. Both one-guest and bus scenarios use the sam
 9.7s narrated sequence: 1.2s preparation, 0.7s exit, 0.9s aisle hold, 2.2s
 relocation, 1.6s empty-room hold, 1.1s arrival explanation and 2s entry. Travelers leave
 their actual doors, follow measured aisle paths across the responsive room rows,
-and enter the assigned doors. A labelled continuation represents destinations
-beyond the eight visible rooms; departing guests walk straight off the right
+and enter the assigned doors without fading. Each incoming image is decoded
+before replacing the waiting figure, and the room receives it at matching size.
+Narrower, knob-free active doors leave room for seven progressively compressed,
+fading door silhouettes representing the infinite continuation. On narrow screens
+this continuation follows below the two active room rows. It replaces the former
+continuation sentence. Departing guests walk straight off the right
 edge of their own aisle without a background tile or an early fade. A short
 caption above the scene explains each transition, and Pause/Continue controls
 both motion and explanatory holds. A waiting area shows the incoming guest or the

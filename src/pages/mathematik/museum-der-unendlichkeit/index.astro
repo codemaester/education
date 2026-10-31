@@ -100,8 +100,12 @@ const base = import.meta.env.BASE_URL;
           <p class="hotel-task" data-hotel-task>Alle Zimmer sind belegt. Vor der Tür wartet noch ein Gast. Öffne die Türen mit einer einzigen Regel.</p>
           <p class="hotel-explanation" data-hotel-status role="status">Alles ist belegt. Starte den Umzug und beobachte, welche Zimmer frei werden.</p>
           <div class="hotel-stage" data-hotel-stage>
-            <div class="hotel-corridor" aria-label="Die ersten acht Zimmer als Ausschnitt des unendlichen Hotels">{Array.from({length:8}, (_, i) => <div class="hotel-door"><span>Zimmer {i + 1}</span><div class="door-frame"><div class="hotel-resident"><HotelGuest/><span data-hotel-guest>{i + 1}</span></div><span class="door-knob" aria-hidden="true"></span></div><small data-guest-label>Bisheriger Gast</small></div>)}</div>
-            <p class="hotel-continuation" data-hotel-exit>Weiter zu Zimmer 9, … Die Zimmer gehen ohne letztes Zimmer weiter.</p>
+            <div class="hotel-corridor">
+              <div class="hotel-rooms" aria-label="Die ersten acht Zimmer als Ausschnitt des unendlichen Hotels">{Array.from({length:8}, (_, i) => <div class="hotel-door"><span>Zimmer {i + 1}</span><div class="door-frame"><div class="hotel-resident"><HotelGuest/><span data-hotel-guest>{i + 1}</span></div></div><small data-guest-label>Bisheriger Gast</small></div>)}</div>
+              <div class="hotel-infinity" role="img" aria-label="Weitere Zimmer setzen sich nach rechts endlos fort.">
+                <div class="hotel-infinity-doors" aria-hidden="true">{[1, .82, .66, .5, .36, .24, .14].map((scale, i) => <div class="hotel-distant-door" style={`--door-scale: ${scale}; --door-height: ${1 - i * .055}; --door-opacity: ${.62 - i * .085}`}><div class="hotel-distant-frame"></div></div>)}</div>
+              </div>
+            </div>
             <div class="hotel-waiting" data-hotel-waiting>
               <div><strong data-hotel-waiting-title>Ein neuer Gast wartet</strong><span data-hotel-waiting-note>Er zieht nach dem Umzug in Zimmer 1.</span></div>
               <div class="hotel-waiting-people">{Array.from({length:4}, (_, i) => <div class="hotel-waiting-person" data-waiting-person hidden={i > 0}><HotelGuest/><span data-waiting-guest>{i ? `B${i + 1}` : 'Neu'}</span></div>)}<span data-waiting-more hidden>…</span></div>
@@ -116,7 +120,7 @@ const base = import.meta.env.BASE_URL;
             </div>
           </div>
           <div class="museum-actions"><button class="button" type="button" data-hotel-run disabled data-museum-js>Gäste umziehen lassen</button><button class="button button-secondary" type="button" data-hotel-pause aria-pressed="false" hidden>Pause</button><button class="button button-secondary" type="button" data-hotel-reset disabled data-museum-js>Zurücksetzen</button></div>
-          <p class="exhibit-footnote">Die acht Türen sind ein Ausschnitt. Es gibt kein letztes Zimmer. Die Regel beschreibt die Zuordnung für alle Gäste, nicht einen real ausführbaren Umzug.</p>
+          <p class="exhibit-footnote">Die ersten acht Zimmer zeigen einen Ausschnitt. Die verblassenden Türen deuten die endlose Fortsetzung an. Die Regel gilt für alle Gäste; der Umzug ist ein Gedankenexperiment.</p>
         </div>
         <div class="room-reading"><div><h3>Unendlich plus eins passt hinein.</h3><p>Wenn jeder Gast aus Zimmer n in Zimmer n + 1 zieht, wird Zimmer 1 frei. Kommen unendlich viele neue Gäste mit den Nummern 1, 2, 3, … an, ziehen die bisherigen Gäste von n nach 2n. Die neuen Gäste erhalten die ungeraden Zimmer 1, 3, 5, …</p></div><aside class="museum-insight"><h3>Abzählbar heißt: Jeder kommt dran.</h3><p>Eine Menge ist abzählbar unendlich, wenn ihre Elemente den Zimmernummern 1, 2, 3, … zugeordnet werden können: jedes Element genau einmal.</p><p>Natürliche Zahlen, ganze Zahlen und Brüche haben in diesem Sinn dieselbe Größe.</p></aside></div>
 

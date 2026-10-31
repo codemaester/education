@@ -88,6 +88,17 @@ export async function testMuseum(browser, origin, screenshots) {
     await page.waitForTimeout(550);
     assert.equal(await page.locator('[data-orbit-count]').textContent(), stopped);
     assert.deepEqual(await page.locator('[data-hotel-mode]').evaluateAll(nodes => nodes.map(el => el.dataset.hotelMode)), ['one', 'bus']);
+    assert.equal(await page.locator('.door-knob, [data-hotel-exit], .hotel-continuation').count(), 0);
+    assert.equal(await page.locator('.hotel-rooms .door-frame').count(), 8);
+    const distantDoors = await page.locator('.hotel-distant-door').evaluateAll(nodes => nodes.map(el => ({ width: el.getBoundingClientRect().width, opacity: Number(getComputedStyle(el).opacity) })));
+    assert.equal(distantDoors.length, 7);
+    for (let i = 1; i < distantDoors.length; i++) {
+      assert.ok(distantDoors[i].width < distantDoors[i - 1].width, `${width}: continuation gets narrower`);
+      assert.ok(distantDoors[i].opacity < distantDoors[i - 1].opacity, `${width}: continuation fades`);
+    }
+    const firstRoom = await page.locator('.door-frame').first().boundingBox();
+    assert.ok(distantDoors[0].width < firstRoom.width, `${width}: distant rooms are smaller than the active rooms`);
+    if (width >= 1024) assert.ok(firstRoom.width < 105, `${width}: doors leave room for the continuation`);
     await page.locator('[data-hotel-run]').click();
     assert.equal(await page.locator('[data-hotel-guest]').first().textContent(), 'Neu');
     await page.locator('[data-hotel-mode="bus"]').click();
@@ -339,8 +350,32 @@ export async function testMuseum(browser, origin, screenshots) {
       assert.match(await explanation.textContent(), /Jetzt/);
       await phase('arriving');
       assert.equal(await hotelPage.locator('[data-hotel-mover]').count(), mode === 'one' ? 1 : 4);
+      assert.ok(await hotelPage.locator('[data-hotel-mover]').evaluateAll(nodes => nodes.every(el => el.querySelector('img').complete && el.querySelector('img').naturalWidth > 0)), 'incoming images are ready before the waiting guests are hidden');
       assert.ok(await hotelPage.locator('[data-hotel-rule="new"]').evaluate(el => el.hasAttribute('data-active')));
       if ([1440, 320].includes(width)) await hotel.locator('[data-hotel-stage]').screenshot({ path: `${capture}/hotel-${mode}-arriving-${width}.png` });
+      const continuity = await hotelPage.evaluate(() => new Promise(resolve => {
+        const exhibit = document.querySelector('[data-hotel-exhibit]');
+        const guest = document.querySelector('[data-hotel-mode="bus"]').getAttribute('aria-pressed') === 'true' ? 'B1' : 'Neu';
+        const resident = exhibit.querySelector('.hotel-resident');
+        let samples = 0;
+        let gaps = 0;
+        function visible(node) {
+          if (!node) return false;
+          const image = node.querySelector('img');
+          return image.complete && image.naturalWidth > 0 && getComputedStyle(image).visibility === 'visible'
+            && getComputedStyle(node).visibility === 'visible' && Number(getComputedStyle(node).opacity) > .99;
+        }
+        function sample() {
+          samples++;
+          const mover = [...exhibit.querySelectorAll('[data-hotel-mover]')].find(el => el.dataset.hotelMover === guest);
+          if (!visible(mover) && !(resident.querySelector('[data-hotel-guest]').textContent === guest && visible(resident))) gaps++;
+          if (exhibit.dataset.hotelPhase === 'complete') resolve({ samples, gaps });
+          else requestAnimationFrame(sample);
+        }
+        sample();
+      }));
+      assert.ok(continuity.samples > 5, 'observe several frames before and after arrival');
+      assert.equal(continuity.gaps, 0, 'incoming guest stays visible through the handoff into the room');
       await phase('complete');
       assert.deepEqual(await hotelPage.locator('[data-hotel-guest]').allTextContents(), mode === 'one' ? ['Neu','1','2','3','4','5','6','7'] : ['B1','1','B2','2','B3','3','B4','4']);
       assert.equal(await hotelPage.locator('[data-hotel-mover]').count(), 0);

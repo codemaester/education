@@ -97,7 +97,6 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     newRule.querySelector('[data-rule-title]')!.textContent = mode === 'bus' ? 'Neue Busgäste' : 'Neuer Gast';
     formula(newRule, mode === 'bus' ? 'Busgast k → Zimmer 2k − 1' : 'Neuer Gast → Zimmer 1');
     newRule.querySelector('[data-rule-example]')!.textContent = mode === 'bus' ? 'Gast 1 → Zimmer 1, Gast 2 → Zimmer 3, Gast 3 → Zimmer 5, …' : 'Erst umziehen, dann den neuen Gast aufnehmen.';
-    get('[data-hotel-exit]').textContent = mode === 'bus' ? 'Weiter zu Zimmer 10, 12, 14, 16, … Die Zimmer gehen ohne letztes Zimmer weiter.' : 'Weiter zu Zimmer 9, … Die Zimmer gehen ohne letztes Zimmer weiter.';
     get('[data-hotel-waiting-title]').textContent = mode === 'bus' ? 'Unendlich viele Busgäste warten' : 'Ein neuer Gast wartet';
     get('[data-hotel-waiting-note]').textContent = mode === 'bus' ? 'Gast 1, 2, 3, 4, … — hier die ersten vier.' : 'Er zieht nach dem Umzug in Zimmer 1.';
     get('[data-waiting-more]').hidden = mode !== 'bus';
@@ -116,8 +115,8 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
   }
 
   function complete() {
-    cancel();
     occupants(true, true);
+    cancel();
     setPhase('complete');
     status.textContent = mode === 'one' ? 'Alle haben Platz: der neue Gast in Zimmer 1, die bisherigen Gäste je ein Zimmer weiter.'
       : 'Alle haben Platz: bisherige Gäste in geraden Zimmern, Busgäste in ungeraden Zimmern.';
@@ -131,7 +130,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
   function lane(room: number) {
     return frames[room - 1].getBoundingClientRect().bottom - stage.getBoundingClientRect().top + 32;
   }
-  function makeTraveler(guest: string, room: number, fresh: boolean) {
+  async function makeTraveler(guest: string, room: number, fresh: boolean) {
     const traveler = document.createElement('div');
     traveler.className = `hotel-traveler${fresh ? ' hotel-traveler-new' : ''}`;
     traveler.dataset.hotelMover = guest;
@@ -140,10 +139,12 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     const badge = document.createElement('span');
     badge.textContent = guest;
     traveler.append(badge);
-    layer.append(traveler);
+    // Decode while the original is still visible, before handing it to the mover.
+    await traveler.querySelector<HTMLImageElement>('img')!.decode().catch(() => undefined);
     return traveler;
   }
-  async function fly(traveler: HTMLElement, points: Point[], duration: number, fade = true) {
+  async function fly(traveler: HTMLElement, points: Point[], duration: number) {
+    if (!traveler.isConnected) layer.append(traveler);
     let distance = 0;
     const lengths = points.map((p, i) => {
       if (i) distance += Math.hypot(p.x - points[i - 1].x, p.y - points[i - 1].y);
@@ -152,7 +153,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     const animation = traveler.animate(points.map((p, i) => ({
       transform: `translate(${p.x}px, ${p.y}px)`,
       offset: distance ? lengths[i] / distance : i / (points.length - 1),
-      opacity: fade && i === points.length - 1 ? 0 : 1,
+      opacity: 1,
     })), { duration, easing: 'cubic-bezier(.25,.1,.25,1)', fill: 'both' });
     animations.push(animation);
     await animation.finished.catch(() => undefined);
@@ -184,7 +185,10 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     setPhase('preparing');
     status.textContent = mode === 'one' ? 'Jeder bisherige Gast zieht ein Zimmer weiter: 1 → 2, 2 → 3, …'
       : 'Zuerst ziehen die bisherigen Gäste in die geraden Zimmer: 1 → 2, 2 → 4, …';
-    await wait(1200);
+    const [, departing] = await Promise.all([
+      wait(1200),
+      Promise.all(assignment.moves.map(move => makeTraveler(move.guest, move.room, false))),
+    ]);
     if (token !== generation) return;
     setPhase('leaving');
     status.textContent = 'Die Gäste verlassen ihre bisherigen Zimmer. Ihre Gastnummer bleibt gleich.';
@@ -201,8 +205,8 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
       if (move.room <= 8) points.push(target);
       residents[i].setAttribute('data-traveling', '');
       frames[i].setAttribute('data-open', '');
-      const traveler = makeTraveler(move.guest, move.room, false);
-      return { traveler, points, offscreen: move.room > 8, departure: fly(traveler, [origin, outside], 700, false) };
+      const traveler = departing[i];
+      return { traveler, points, departure: fly(traveler, [origin, outside], 700) };
     });
     await Promise.all(trips.map(trip => trip.departure));
     if (token !== generation) return;
@@ -213,7 +217,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     setPhase('moving');
     status.textContent = mode === 'one' ? 'Alle rücken ein Zimmer weiter. Gast 8 geht rechts weiter zu Zimmer 9.'
       : 'Alle ziehen in gerade Zimmer. Gäste ab Nummer 5 gehen rechts zu weiteren Zimmern.';
-    await Promise.all(trips.map(trip => fly(trip.traveler, trip.points, 2200, !trip.offscreen)));
+    await Promise.all(trips.map(trip => fly(trip.traveler, trip.points, 2200)));
     if (token !== generation) return;
     layer.replaceChildren();
     residents.forEach(resident => resident.removeAttribute('data-traveling'));
@@ -227,7 +231,10 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
     setPhase('welcoming');
     status.textContent = mode === 'one' ? 'Jetzt ist Platz für den neuen Gast: Er bekommt Zimmer 1.'
       : 'Jetzt kommen die Busgäste. Gast 1 bekommt Zimmer 1, Gast 2 Zimmer 3, …';
-    await wait(1100);
+    const [, arriving] = await Promise.all([
+      wait(1100),
+      Promise.all(assignment.arrivals.map(move => makeTraveler(move.guest, move.room, true))),
+    ]);
     if (token !== generation) return;
     setPhase('arriving');
     status.textContent = mode === 'one' ? 'Der neue Gast zieht in Zimmer 1 ein.' : 'Die Busgäste beziehen die freien ungeraden Zimmer: 1, 3, 5, 7, …';
@@ -238,7 +245,7 @@ export function initializeHotel(hotel: HTMLElement, motion: MediaQueryList) {
       const points = [origin, { x: rail, y: origin.y }, { x: rail, y: endLane }, { x: target.x, y: endLane }, target];
       waiting[i].setAttribute('data-traveling', '');
       frames[move.room - 1].setAttribute('data-open', '');
-      return fly(makeTraveler(move.guest, move.room, true), points, 2000);
+      return fly(arriving[i], points, 2000);
     }));
     if (token === generation) complete();
   }

@@ -111,27 +111,30 @@
 .hotel-task { margin-top: 1.5rem; max-width: 70ch; font-size: .95rem; min-height: 3.4em; }
 .hotel-explanation { display: flex; align-items: center; border-block: 1px solid var(--color-muted); padding-block: .75rem; margin: 1.25rem 0 0; min-height: calc(3.4em + 1.5rem + 2px); font-size: .95rem; }
 .hotel-stage { position: relative; margin-right: 1rem; }
-.hotel-corridor { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 1rem .75rem; margin-top: 2rem; }
-.hotel-door { text-align: center; min-width: 0; padding-bottom: 4.5rem; }
+.hotel-corridor { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .4fr); gap: 1rem; margin-top: 2rem; }
+.hotel-rooms { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 1rem .4rem; min-width: 0; }
+.hotel-infinity { min-width: 0; padding-top: 1.775rem; }
+.hotel-infinity-doors { display: flex; align-items: flex-end; gap: 3px; height: 130px; }
+.hotel-distant-door { flex: var(--door-scale) 1 0; min-width: 0; height: calc(130px * var(--door-height)); opacity: var(--door-opacity); }
+.hotel-distant-frame { width: 100%; height: 100%; border-radius: 44px 44px 0 0; background: var(--color-forest); }
+.hotel-door { text-align: center; min-width: 0; padding-bottom: 5.5rem; }
 .hotel-door > span { font-size: .75rem; display: block; }
 .door-frame { background: var(--color-forest); color: var(--color-paper); border-radius: 44px 44px 0 0; height: 130px; margin-top: .5rem; display: grid; place-items: center; position: relative; }
-.hotel-resident { display: flex; flex-direction: column; align-items: center; width: 40px; }
-.hotel-resident > span { font: 450 1.3rem/1.2 var(--font-display); }
+.hotel-resident { display: flex; flex-direction: column; align-items: center; width: 40px; height: 76px; }
+.hotel-resident > span { font: 550 1rem/1.2 var(--font-display); }
 .hotel-person-icon { display: block; flex-shrink: 0; width: 40px; height: 56px; object-fit: contain; }
 .hotel-resident[data-empty] .hotel-person-icon { visibility: hidden; }
 .hotel-resident[data-traveling], .hotel-waiting-person[data-traveling], .hotel-waiting-person[data-arrived] { visibility: hidden; }
 [data-waiting-more][data-arrived] { visibility: hidden; }
 .door-frame[data-open] { background: var(--color-forest-deep); outline: 2px solid var(--color-muted); outline-offset: 2px; }
-.door-frame .door-knob { position: absolute; right: 10px; top: 60%; width: 4px; height: 4px; border-radius: 50%; background: var(--color-sand); }
 .hotel-door small { display: block; overflow-wrap: anywhere; font-size: .65rem; margin-top: .5rem; }
 .hotel-door[data-new] .door-frame { background: var(--color-terracotta-dark); }
-.hotel-continuation { font-size: .8rem; min-height: 3.4em; margin: .5rem 0 1rem; padding-right: 1rem; text-align: right; }
 .hotel-waiting { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; border-top: 1px solid var(--color-muted); padding-block: 1rem; color: var(--color-terracotta-dark); }
 .hotel-waiting > div:first-child { flex: 1 1 14rem; }
 .hotel-waiting strong, .hotel-waiting > div > span { display: block; font-size: .8rem; }
 .hotel-waiting > div > span { color: var(--color-forest); margin-top: .35rem; }
 .hotel-waiting-people { display: flex; align-items: center; gap: 1rem; }
-.hotel-waiting-person { display: flex; flex-direction: column; align-items: center; width: 40px; font: 450 1rem/1.2 var(--font-display); }
+.hotel-waiting-person { display: flex; flex-direction: column; align-items: center; width: 40px; height: 76px; font: 550 1rem/1.2 var(--font-display); }
 .hotel-motion-layer { position: absolute; inset: 0 -2.25rem 0 0; overflow: hidden; pointer-events: none; z-index: 2; }
 .hotel-traveler { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; align-items: center; width: 40px; height: 76px; color: var(--color-forest); font: 550 1rem/1.2 var(--font-display); }
 .hotel-traveler-new { color: var(--color-terracotta-dark); }
@@ -201,7 +204,11 @@
   .zoom-line text { font-size: 44px; }
   .zoom-marker-dot { r: 9px; }
   .diagram-axis, .diagram-tick { stroke-width: 2; }
-  .hotel-corridor { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 1.2rem .65rem; }
+  .hotel-corridor { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .hotel-rooms { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem .4rem; }
+  .hotel-infinity { padding: 0 0 1.5rem; }
+  .hotel-infinity-doors { height: 110px; width: 90%; }
+  .hotel-distant-door { height: calc(110px * var(--door-height)); }
   .door-frame { height: 110px; }
   .hotel-rule-pair { grid-template-columns: minmax(0, 1fr); }
   .hotel-explanation { min-height: calc(6.8em + 1.5rem + 2px); }
