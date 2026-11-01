@@ -57,3 +57,7 @@ package.json        Abhängigkeiten und Entwicklungsbefehle
 
 `package-lock.json` wird versioniert. Generierte Verzeichnisse wie `dist/`,
 `.astro/` und `node_modules/` werden nicht eingecheckt.
+
+## Latein-Vokabeltrainer
+
+Unter `/sprachen/latein/vokabeltrainer/` lassen sich lateinische Wörter deutschen Bedeutungen zuordnen. Die [Trainer-Dokumentation](documentation/LATEIN_TRAINER.md) beschreibt Datenübernahme, Ablauf, Zugänglichkeit und die Begrenzungen der ersten Iteration.

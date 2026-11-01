@@ -5,6 +5,7 @@ import { resolve, extname, sep } from 'node:path';
 import { chromium } from 'playwright';
 import { testMuseum } from './museum-browser.mjs';
 import { testCarousel } from './carousel-browser.mjs';
+import { testLatin } from './latin-browser.mjs';
 
 // Serve the actual Pages build, including nested index.html routes.
 const root = resolve('dist');
@@ -25,6 +26,7 @@ if (screenshots) await mkdir(screenshots, { recursive: true });
 let browser;
 try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_EXECUTABLE_PATH || undefined });
+  await testLatin(browser, origin, screenshots);
   await testCarousel(browser, origin, screenshots);
   await testMuseum(browser, origin, screenshots);
   for (const width of [1440, 1024, 768, 390, 320]) {

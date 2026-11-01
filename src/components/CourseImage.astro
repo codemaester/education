@@ -1,9 +1,10 @@
 ---
 import { Image } from 'astro:assets';
+import latinIllustration from '../assets/latin-vocabulary-painted.png';
 import illustration from '../assets/optics-editorial.png';
 import mathIllustration from '../assets/sqrt-two-editorial.png';
 import museumIllustration from '../assets/infinity-museum.png';
-interface Props { alt?: string; priority?: boolean; kind?: 'optics' | 'sqrt-two' | 'museum'; }
+interface Props { alt?: string; priority?: boolean; kind?: 'optics' | 'sqrt-two' | 'museum' | 'latin'; }
 const { alt = '', priority = false, kind = 'optics' } = Astro.props;
 ---
-<Image src={kind === 'museum' ? museumIllustration : kind === 'sqrt-two' ? mathIllustration : illustration} alt={alt} widths={[480, 768, 1200, 1536]} sizes="(max-width: 740px) 100vw, 50vw" format="webp" quality={85} loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'} />
+<Image src={kind === 'latin' ? latinIllustration : kind === 'museum' ? museumIllustration : kind === 'sqrt-two' ? mathIllustration : illustration} alt={alt} widths={[480, 768, 1200, 1536]} sizes="(max-width: 740px) 100vw, 50vw" format="webp" quality={85} loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'} />

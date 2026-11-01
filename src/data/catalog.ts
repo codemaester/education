@@ -24,10 +24,11 @@ export interface Course {
   chapterLabel?: string;
   highlights: { icon: IconName; label: string }[];
   artCaption: string;
-  cover: 'optics' | 'sqrt-two' | 'museum';
+  cover: 'optics' | 'sqrt-two' | 'museum' | 'latin';
   href: string;
 }
 export const courses: Course[] = [
+  { slug: 'latein-vokabeltrainer', subject: 'sprachen', title: 'Latein-Vokabeltrainer', shortTitle: 'Latein', addedOrder: 4, description: 'Wörter verbinden, Bedeutungen entdecken. Ordne lateinische Vokabeln ihren deutschen Übersetzungen zu und trainiere in deinem Tempo.', level: 'Erste Lateinkenntnisse', chapters: 1, chapterLabel: 'Übungsart', highlights: [{ icon: 'languages', label: '955 Wörter' }, { icon: 'check', label: 'Direktes Feedback' }], artCaption: 'Wörter lernen. Verbindungen finden.', cover: 'latin', href: 'sprachen/latein/vokabeltrainer/' },
   { slug: 'optik', subject: 'physik', title: 'Licht, Schatten, Spiegel & Brechung', shortTitle: 'Optik', addedOrder: 1, description: 'Vom ersten Lichtstrahl bis zur Totalreflexion. Entdecke die Optik mit Simulationen, Erklärvideos und Aufgaben.', level: 'Klasse 9 · Gymnasium', chapters: 7, highlights: [{ icon: 'lens', label: 'Simulationen' }, { icon: 'print', label: 'Lernzettel' }], artCaption: 'Eine neue Perspektive auf Licht.', cover: 'optics', href: 'physik/optik/' },
   { slug: 'wurzel-2', subject: 'mathematik', title: 'Warum √2 irrational ist', shortTitle: 'Warum √2?', addedOrder: 2, description: 'Warum kann √2 kein Bruch sein? Entdecke rationale Zahlen, probiere Beispiele aus und folge dem Beweis in sieben kleinen Schritten.', level: 'Klasse 9', chapters: 5, chapterLabel: 'Abschnitte', highlights: [{ icon: 'maths', label: 'Beweis-Navigator' }, { icon: 'check', label: 'Wissenstest' }], artCaption: 'Fläche 2. Seitenlänge √2.', cover: 'sqrt-two', href: 'mathematik/wurzel-2/' },
   { slug: 'museum-der-unendlichkeit', subject: 'mathematik', title: 'Museum der endlosen Dinge', shortTitle: 'Unendlichkeit', addedOrder: 3, description: 'Vier Räume über irrationale Zahlen und Unendlichkeit: Zahlenzoom, Kreiswanderer, Unendlichkeitshotel und Zahlenlisten.', level: 'Ab Klasse 9 · Vertiefung', chapters: 4, chapterLabel: 'Museumsräume', highlights: [{ icon: 'maths', label: 'Experimente' }, { icon: 'print', label: 'Museumsführer' }], artCaption: 'Vier Räume. Kein letztes Ende.', cover: 'museum', href: 'mathematik/museum-der-unendlichkeit/' },
