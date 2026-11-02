@@ -10,6 +10,7 @@
 .latin-settings label { display: grid; gap: .4rem; flex: 1 1 12rem; font-weight: 600; }
 .latin-settings label span { font-size: .8rem; font-weight: 400; color: var(--color-muted); }
 .latin-settings input { width: 100%; min-width: 0; max-width: 12rem; min-height: 48px; border: 1px solid var(--color-rule); border-radius: var(--radius-small); background: var(--color-paper); color: var(--color-forest); padding: .5rem .75rem; font-variant-numeric: tabular-nums; }
+.latin-settings select { font-weight: 400; }
 .latin-settings input[aria-invalid='true'] { border-color: var(--color-incorrect); }
 .latin-trainer button:disabled { opacity: .55; cursor: not-allowed; }
 .latin-progress { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin: 1.5rem 0 .75rem; }
@@ -104,6 +105,15 @@
 .latin-answer-field [aria-invalid='true'] { border-color: var(--color-incorrect); }
 .latin-answer-field small[data-tone='correct'] { color: var(--color-correct); }
 .latin-answer-field small[data-tone='incorrect'] { color: var(--color-incorrect); }
+.latin-answer-fields[data-answer-format='selection'] { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+.latin-selection-field legend { padding: 0 0 .75rem; font-weight: 600; }
+.latin-answer-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
+.latin-answer-option { width: 100%; min-width: 0; min-height: 48px; padding: .65rem .85rem; border: 1px solid var(--color-rule); border-radius: var(--radius-small); background: var(--color-paper); color: var(--color-forest); font: inherit; font-size: .9rem; font-weight: 400; line-height: 1.55; text-align: left; overflow-wrap: anywhere; cursor: pointer; }
+.latin-answer-option:hover:not(:disabled) { background: var(--color-sage-light); }
+.latin-answer-option[aria-pressed='true'] { background: var(--color-forest); color: var(--color-paper); border-color: var(--color-forest); }
+.latin-selection-field[aria-invalid='true'] .latin-answer-options { outline: 1px solid var(--color-incorrect); outline-offset: 3px; }
+.latin-selection-field:disabled .latin-answer-option { opacity: 1; cursor: default; }
+.latin-selection-field small:empty { display: none; }
 .latin-trainer .latin-actions { gap: .75rem; }
 .latin-tiles { margin-bottom: 1.5rem; }
 .latin-tiles button[aria-pressed='true'] { background: var(--color-forest); color: var(--color-paper); }
@@ -117,7 +127,7 @@
 .latin-self-check button { margin: .25rem .5rem .25rem 0; }
 .latin-activity > [data-activity-next] { margin-top: 1rem; }
 @media (max-width: 600px) {
-  .latin-configuration, .latin-answer-fields { grid-template-columns: minmax(0, 1fr); }
+  .latin-configuration, .latin-answer-fields, .latin-answer-options { grid-template-columns: minmax(0, 1fr); }
   .latin-activity .latin-actions > .button { flex: 1 1 auto; }
   .latin-self-check .button { width: 100%; margin-right: 0; }
   .latin-mode-grid { grid-template-columns: minmax(0, 1fr); }

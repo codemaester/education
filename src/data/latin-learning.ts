@@ -1,8 +1,10 @@
 import { shuffle, vocabulary, type TrainerWord } from './latin.ts';
-import { detectiveCases, missionCases, huntCases, thematicGroups } from '../content/latin/activities.ts';
+import { detectiveCases, missionCases, huntCases, thematicGroups, wordFamilies, formationGroups } from '../content/latin/activities.ts';
+import { confusableLemmas, detectiveDistractors, missionDistractors, overlappingMeanings } from '../content/latin/choice-distractors.ts';
 import lessonSource from '../content/latin/lessons.json' with { type: 'json' };
 
 export type Mode = 'matching' | 'workshop' | 'detective' | 'mission' | 'hunt' | 'parcours';
+export type AnswerFormat = 'input' | 'selection';
 export type Dimension = 'meaning' | 'forms' | 'grammar' | 'context';
 export const modes: { id: Mode; label: string; description: string; details: string[] }[] = [
   { id: 'matching', label: 'Wörter zuordnen', description: 'Verbinde lateinische Wörter mit ihren deutschen Bedeutungen.', details: [
@@ -12,28 +14,28 @@ export const modes: { id: Mode; label: string; description: string; details: str
   ] },
   { id: 'workshop', label: 'Stammformen-Werkstatt', description: 'Ergänze fehlende Stammformen und rufe die deutsche Grundbedeutung ab.', details: [
     'Ausgehend von einem lateinischen Infinitiv ergänzt du wechselnde Lücken in der Stammformenreihe: Präsens, Perfekt und – soweit hinterlegt – das Supinum auf -um. Zusätzlich nennst du eine deutsche Grundbedeutung.',
-    'Mit Formenbausteinen kannst du die Reihen zunächst zusammensetzen. Ohne Bausteine tippst du die fehlenden Formen selbst ein. Längenzeichen musst du nicht eingeben.',
+    'Wähle zwischen „Selbst eingeben“ und „Auswählen“. Bei der Auswahl entscheidest du dich für jede Lücke und die Bedeutung aus jeweils zehn Optionen. Beim Eingeben sind optional Formenbausteine verfügbar; Längenzeichen musst du nicht eingeben.',
     'Bedeutungen und einzelne Formen werden getrennt bewertet. Unsichere Angaben kommen später noch einmal vor. Deponentien erhalten passende Aufgaben; fehlende Daten werden nicht als Fehler gewertet.',
   ] },
   { id: 'detective', label: 'Formen-Detektiv', description: 'Erkenne Wortformen im Satz und finde Grundform und Übersetzung.', details: [
     'Du siehst eine veränderte lateinische Verbform in einem kurzen Satz. Finde den zugehörigen Infinitiv, übersetze die Form passend ins Deutsche und ergänze die vorhandenen Stammformen.',
-    'Dabei begegnest du besonders Perfektstämmen, unregelmäßigen Verben und Deponentien. Bei Bedarf kannst du Hinweise zum Stamm und zum Anfang der Grundform aufdecken.',
+    'Du kannst selbst eingeben oder auswählen: zwölf mögliche Infinitive und jeweils zehn Optionen für Übersetzung und Stammformen. Ähnliche Stämme sowie Unterschiede in Person, Tempus und Aktiv oder Passiv verlangen genaues Hinsehen. Hinweise lassen sich aufdecken.',
     'Die Rückmeldung erklärt, wie die Form zur Stammformenreihe gehört und welche Bedeutung im Satz passt. So übst du das Wiedererkennen der Vokabeln, die dir in der Lektüre begegnen.',
   ] },
   { id: 'mission', label: 'Bedeutungs-Mission', description: 'Erschließe passende Bedeutungen und Konstruktionen in kurzen lateinischen Texten.', details: [
     'Kurze lateinische Übungstexte führen dich zum Brückenbau, zu einer Friedensgesandtschaft oder in eine Senatsdebatte. Übersetze jeweils die hervorgehobene Wortgruppe so, dass sie zum Zusammenhang passt.',
     'Bei passenden Aufgaben bestimmst du zusätzlich den verlangten Kasus oder ergänzt einen Perfektstamm. Entscheidend ist die Bedeutung im Text: Nicht jede Wörterbuchbedeutung passt zu jeder Verwendung.',
-    'Nach deiner Antwort erklärt die Auflösung die wichtigen Textsignale und Konstruktionen. Unbekannte deutsche Formulierungen kannst du mit den Lösungen vergleichen und selbst bewerten.',
+    'Du kannst selbst übersetzen oder aus zehn Vorschlägen auswählen. Nicht passende Wortbedeutungen und veränderte Bezüge fordern genaues Lesen. Die Auflösung erklärt die Textsignale; beim Eingeben kannst du unbekannte Formulierungen selbst bewerten.',
   ] },
-  { id: 'hunt', label: 'Fehlerjagd und Verwechslungsduell', description: 'Entdecke Verwechslungen bei Formen und Bedeutungen. Danach folgt ein freier Abruf.', details: [
+  { id: 'hunt', label: 'Fehlerjagd und Verwechslungsduell', description: 'Entdecke Verwechslungen bei Formen und Bedeutungen. Danach prüfst du dein Wissen erneut.', details: [
     'Prüfe eine Formenreihe oder eine Aussage zu Bedeutung, Genus oder Kasus. Sie kann einen Fehler enthalten oder vollständig richtig sein. Entscheide dich und gib die passende Angabe an.',
     'Du unterscheidest zum Beispiel ähnliche Perfektstämme oder erkennst, ob eine deutsche Bedeutung zur lateinischen Form passt. Die Auflösung zeigt dir die entscheidende Abgrenzung.',
-    'Anschließend folgt ein freier Abruf desselben Wortes. Damit überprüfst du, ob du die Bedeutung und die Zusatzangaben auch ohne vorgegebene Aussage wiedergeben kannst.',
+    'Anschließend prüfst du dasselbe Wort ohne die vorgegebene Aussage. Je nach Antwortart gibst du Bedeutung und Zusatzangaben selbst ein oder wählst sie aus jeweils zehn Optionen. Die Auswahl wird für das Duell neu gemischt.',
   ] },
   { id: 'parcours', label: 'Vokabel-Parcours', description: 'Übe in drei Etappen: Bedeutungen, grammatische Zusatzangaben und gemischte Wiederholung.', details: [
     'In der ersten Etappe siehst du lateinische Stichwörter und nennst eine deutsche Grundbedeutung. Danach ergänzt du die grammatischen Zusatzangaben der Wörter aus deinem Lernpaket.',
     'Je nach Wortart sind das Stammformen, Genitiv und Genus, Adjektivgrundformen oder eine bekannte Kasusrektion. Abgefragt wird nur, was für das jeweilige Wort hinterlegt ist.',
-    'Zum Abschluss folgen gemischte Aufgaben. Unsichere Angaben werden erneut abgerufen; Bedeutungen und Formen behalten eigene Lernstände. Der Parcours eignet sich für eine abwechslungsreiche tägliche Wiederholung.',
+    'Alle drei Etappen sind mit eigener Eingabe oder mit jeweils zehn Auswahlmöglichkeiten pro Feld spielbar. Unsichere Angaben kommen erneut vor; auch bei Wiederholungen bleibt die gewählte Antwortart erhalten. Bedeutungen und Formen behalten eigene Lernstände.',
   ] },
 ];
 export const dimensions: Record<Dimension, string> = { meaning: 'Bedeutungen', forms: 'Stammformen', grammar: 'Zusatzangaben', context: 'Bedeutung im Kontext' };
@@ -44,7 +46,7 @@ export interface LearningField {
 export interface Exercise {
   id: string; wordId: string; mode: Exclude<Mode, 'matching'>; title: string; prompt: string;
   context?: string; target?: string; explanation: string; hints: string[]; fields: LearningField[];
-  provided?: string[]; tiles?: string[]; retry?: boolean;
+  provided?: string[]; tiles?: string[]; retry?: boolean; answerFormat?: AnswerFormat;
 }
 export interface SkillProgress { attempts: number; correct: number; streak: number; lastReviewed: number; nextDue: number; }
 export interface Progress { version: 1; words: Record<string, Record<string, SkillProgress>>; }
@@ -179,7 +181,7 @@ export type AnswerResult = 'correct' | 'incorrect' | 'review';
 export function checkAnswer(field: LearningField, answer: string): AnswerResult {
   const normalize = field.kind === 'latin' ? normalizeLatin : normalizeGerman;
   if (field.answers.some(a => normalize(a) === normalize(answer))) return 'correct';
-  return field.kind === 'german' && answer.trim() ? 'review' : 'incorrect';
+  return field.kind === 'german' && !field.choices && answer.trim() ? 'review' : 'incorrect';
 }
 const labels: Record<string, string> = { praesens_1sg: '1. Person Singular Präsens', perfekt_1sg: '1. Person Singular Perfekt', supinum: 'Supinum auf -um', genitiv: 'Genitiv Singular', genitiv_plural: 'Genitiv Plural', geschlecht: 'Genus', nominativ_weiblich: 'Weibliche Grundform', nominativ_saechlich: 'Sächliche Grundform', komparativ: 'Komparativ', superlativ: 'Superlativ' };
 function grammarField(word: TrainerWord, key: string, partOfSpeech: string): LearningField | null {
@@ -221,7 +223,7 @@ function recallExercise(word: TrainerWord, mode: Exercise['mode'], id: string, t
     hints: [word.partsOfSpeech.join(' · '), ...word.usages.flatMap(u => u.hinweis ? [u.hinweis] : [])],
     fields: [meaningField(word), ...(grammar ? additionalFields(word) : [])] };
 }
-export function buildExercises(mode: Exclude<Mode, 'matching'>, pool: readonly TrainerWord[], total: number, support = false, random: () => number = Math.random): Exercise[] {
+function buildInputExercises(mode: Exclude<Mode, 'matching'>, pool: readonly TrainerWord[], total: number, support: boolean, random: () => number): Exercise[] {
   const available = pool.filter(w => eligibleForMode(w, mode));
   if (!Number.isInteger(total) || total < 1 || total > available.length) throw new Error(`Wähle 1 bis ${available.length} Wörter für diesen Modus und dieses Paket.`);
   const chosen = shuffle(available, random).slice(0, total);
@@ -272,8 +274,92 @@ export function buildExercises(mode: Exclude<Mode, 'matching'>, pool: readonly T
   });
 }
 
-export function retryExercise(exercise: Exercise, failedKeys: string[]): Exercise {
-  return { ...exercise, id: `${exercise.id}:retry`, title: 'Erneuter Abruf · Noch einmal ohne Hilfe', provided: undefined, tiles: undefined, retry: true,
+/** Options keep the field's language, accepted variants and skill identity. */
+function selectionExercise(exercise: Exercise, random: () => number): Exercise {
+  const word = wordById(exercise.wordId)!;
+  const fields = exercise.fields.map(field => {
+    // Closed grammatical categories retain their complete, meaningful options.
+    if (field.kind === 'choice') {
+      const correct = field.choices!.filter(choice => checkAnswer(field, choice) === 'correct');
+      if (correct.length <= 1) return { ...field, choices: shuffle(field.choices!, random) };
+      // Some nouns explicitly allow both masculine and feminine. Show that
+      // complete fact as one option instead of marking either gender wrong.
+      const combined = correct.join(' oder ');
+      return { ...field, answers: [...field.answers, combined],
+        choices: shuffle([combined, ...field.choices!.filter(choice => !correct.includes(choice))], random) };
+    }
+    const key = (value: string) => field.kind === 'latin' ? normalizeLatin(value)
+      : normalizeGerman(value.replace(/\s*\(.*?\)/g, '').trim());
+    const accepted = new Set(field.answers.map(key));
+    let candidates: string[];
+    if (field.dimension === 'context') {
+      candidates = exercise.mode === 'detective' ? detectiveDistractors[word.latin] ?? []
+        : missionDistractors[exercise.id.replace(/:retry$/, '')] ?? [];
+    } else {
+      // Meanings that are shared with a source entry exclude all its synonyms.
+      // A different lemma alone does not make its translation a wrong answer.
+      if (field.kind === 'german') {
+        const answers = new Set(accepted);
+        for (const group of overlappingMeanings) {
+          if (group.some(value => answers.has(key(value)))) group.forEach(value => accepted.add(key(value)));
+        }
+        const excludedSenses = new Set(accepted);
+        for (const candidate of vocabulary) if (candidate.meanings.some(value => excludedSenses.has(key(value)))) {
+          candidate.meanings.forEach(value => accepted.add(key(value)));
+        }
+      }
+      const groups = [...Object.values(wordFamilies), ...Object.values(formationGroups), ...Object.values(thematicGroups)]
+        .filter(group => group.lemmas.includes(word.latin));
+      const targetTypes = word.usages.filter(usage => field.kind !== 'german'
+        || usage.bedeutungen.some(value => field.answers.some(answer => key(answer) === key(value)))).map(usage => usage.wortart);
+      const ranked = shuffle(vocabulary.filter(candidate => candidate.id !== word.id
+        && candidate.usages.some(usage => targetTypes.includes(usage.wortart))
+        && !(field.kind === 'german' && infinitive(word) && !infinitive(candidate))), random)
+        .map(candidate => {
+          let values: string[];
+          if (field.key === 'lemma') values = infinitive(candidate) ? [candidate.latin] : [];
+          else if (field.kind === 'german') values = candidate.usages.filter(usage => targetTypes.includes(usage.wortart))
+            .flatMap(usage => usage.bedeutungen).filter(value => !/^(?:Subst|Adv|Adj)\./.test(value));
+          else if (field.skill === 'adjective') {
+            const feminine = grammarValues(candidate, 'nominativ_weiblich', 'Adjektiv');
+            const neuter = grammarValues(candidate, 'nominativ_saechlich', 'Adjektiv');
+            values = feminine.flatMap(f => neuter.map(n => `${f}, ${n}`));
+          } else values = grammarValues(candidate, field.skill, field.dimension === 'forms' ? 'Verb' : undefined);
+          const commonGroups = groups.filter(group => group.lemmas.includes(candidate.latin)).length;
+          const sameBeginning = normalizeLatin(candidate.latin).slice(0, 2) === normalizeLatin(word.latin).slice(0, 2);
+          const knownConfusion = field.kind === 'latin' && confusableLemmas.some(group => group.includes(word.latin) && group.includes(candidate.latin));
+          return { values, score: Number(knownConfusion) * 20 + commonGroups * 4 + Number(sameBeginning) };
+        }).sort((a, b) => b.score - a.score);
+      candidates = ranked.flatMap(candidate => candidate.values);
+    }
+    const seen = new Set(accepted);
+    const distinct = candidates.filter(value => {
+      const normalized = key(value);
+      if (!normalized || seen.has(normalized)) return false;
+      seen.add(normalized); return true;
+    });
+    const count = field.key === 'lemma' ? 12 : 10;
+    // Keep the closest confusions, then vary the remaining plausible options.
+    const distractors = [...distinct.slice(0, 4), ...shuffle(distinct.slice(4, 32), random)]
+      .slice(0, count - 1);
+    const label = field.key === 'context' ? `Welche Übersetzung passt zu „${exercise.target}“?`
+      : field.label.replace(/^Nenne /, 'Wähle ').replace(/ \(mit Komma getrennt\)/, '');
+    return { ...field, label, choices: shuffle([field.answers[0], ...distractors], random) };
+  });
+  const title = exercise.title === 'Verwechslungsduell · Jetzt frei abrufen' ? 'Verwechslungsduell · Die passende Angabe wählen' : exercise.title;
+  return { ...exercise, answerFormat: 'selection', title, tiles: undefined, fields };
+}
+
+export function buildExercises(mode: Exclude<Mode, 'matching'>, pool: readonly TrainerWord[], total: number, support = false,
+  random: () => number = Math.random, answerFormat: AnswerFormat = 'input'): Exercise[] {
+  const exercises = buildInputExercises(mode, pool, total, support && answerFormat === 'input', random);
+  return answerFormat === 'selection' ? exercises.map(exercise => selectionExercise(exercise, random)) : exercises;
+}
+
+export function retryExercise(exercise: Exercise, failedKeys: string[], random: () => number = Math.random): Exercise {
+  const retry = { ...exercise, id: `${exercise.id}:retry`, title: exercise.answerFormat === 'selection'
+    ? 'Erneute Auswahl · Noch einmal entscheiden' : 'Erneuter Abruf · Noch einmal ohne Hilfe', provided: undefined, tiles: undefined, retry: true,
     fields: exercise.fields.filter(f => failedKeys.includes(f.key)) };
+  return exercise.answerFormat === 'selection' ? selectionExercise(retry, random) : retry;
 }
 export const wordById = (id: string): TrainerWord | undefined => vocabulary.find(w => w.id === id);

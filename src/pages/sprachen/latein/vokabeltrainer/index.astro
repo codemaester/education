@@ -48,6 +48,7 @@ const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detec
           <p class="latin-pool-size" data-pool-size role="status" aria-live="polite"></p>
           <div class="latin-settings">
             <label for="round-size" data-matching-settings>Paare pro Runde<input id="round-size" name="roundSize" type="number" min="2" max="10" step="1" value="5" required aria-describedby="round-help config-error" /><span id="round-help">2 bis 10 gleichzeitig</span></label>
+            <label for="answer-format" data-answer-format-settings hidden>Antwortart<select id="answer-format" aria-describedby="answer-format-help"><option value="input">Selbst eingeben</option><option value="selection">Auswählen</option></select><span id="answer-format-help">Auswählen: meist 10 Optionen pro Feld, 12 Infinitive beim Detektiv.</span></label>
             <label for="total-words">Vokabeln insgesamt<input id="total-words" name="total" type="number" min="1" max={vocabulary.length} step="1" value="20" required aria-describedby="total-help config-error" /><span id="total-help" data-total-help>1 bis {vocabulary.length} verschiedene Wörter</span></label>
             <label for="form-support" class="latin-check-label" data-workshop-settings hidden><input type="checkbox" id="form-support" />Mit Formenbausteinen einüben<span>Ohne Bausteine: freier Abruf.</span></label>
             <button class="button" type="submit">Training starten <Icon name="arrow" size={18} /></button>
@@ -67,6 +68,7 @@ const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detec
         <p class="latin-passage" data-activity-context lang="la" hidden></p>
         <p class="latin-prompt" data-activity-prompt lang="la"></p>
         <p class="latin-provided" data-provided-forms hidden></p>
+        <p class="latin-instruction" data-answer-help hidden>Wähle pro Feld eine Antwort. Erneutes Anklicken hebt die Auswahl auf. Erst „Antwort prüfen“ wertet aus. Auswählen zählt als Üben mit Hilfe.</p>
         <form data-answer-form novalidate>
           <div class="latin-answer-fields" data-answer-fields></div>
           <p class="latin-tile-target" data-tile-target></p><div class="latin-actions latin-tiles" data-tiles></div>

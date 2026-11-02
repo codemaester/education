@@ -60,4 +60,4 @@ package.json        Abhängigkeiten und Entwicklungsbefehle
 
 ## Latein-Vokabeltrainer
 
-Unter `/sprachen/latein/vokabeltrainer/` trainieren Fortgeschrittene mit sechs bebilderten Trainingsmodi deutsche Bedeutungen, lateinische Stammformen und Wörter im Kontext. Kombinierbare Lernpakete und lokale Wiederholungsstände unterstützen gezieltes Üben. Die [Trainer-Dokumentation](documentation/LATEIN_TRAINER.md) beschreibt Datenherkunft, Lernmodi, Bewertung, Speicherung und Prüfungen.
+Unter `/sprachen/latein/vokabeltrainer/` trainieren Fortgeschrittene mit sechs bebilderten Trainingsmodi deutsche Bedeutungen, lateinische Stammformen und Wörter im Kontext. Neben „Wörter zuordnen“ bieten alle Modi freie Eingabe oder direkt sichtbare Auswahlmöglichkeiten mit meist zehn Optionen pro Feld. Kombinierbare Lernpakete und lokale Wiederholungsstände unterstützen gezieltes Üben. Die [Trainer-Dokumentation](documentation/LATEIN_TRAINER.md) beschreibt Datenherkunft, Lernmodi, Bewertung, Speicherung und Prüfungen.

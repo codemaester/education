@@ -1,7 +1,7 @@
 import { vocabulary, type TrainerWord } from '../data/latin';
 import { buildExercises, checkAnswer, decodeProgress, defaultFilters, dimensions, filterWords,
   PROGRESS_KEY, progressSummary, recordProgress, retryExercise, wordById, wordTypesForMode,
-  type AnswerResult, type Dimension, type Exercise, type Filters, type Mode, type Progress } from '../data/latin-learning';
+  type AnswerFormat, type AnswerResult, type Dimension, type Exercise, type Filters, type Mode, type Progress } from '../data/latin-learning';
 
 export function initLearning(root: HTMLElement, edit: () => void) {
   const el = <T extends HTMLElement>(selector: string) => root.querySelector<T>(selector)!;
@@ -19,6 +19,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   let configuredWordTypeMode: Mode | null = null;
   const weaknessInput = el<HTMLSelectElement>('#learning-weakness');
   const supportInput = el<HTMLInputElement>('#form-support');
+  const answerFormatInput = el<HTMLSelectElement>('#answer-format');
   const totalInput = el<HTMLInputElement>('#total-words');
   const activity = el('[data-activity]');
   const activityForm = el<HTMLFormElement>('[data-answer-form]');
@@ -41,7 +42,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   let activeLatinInput: HTMLInputElement | null = null;
   let totals: Record<Dimension, { correct: number; total: number }>;
   let mistakes: Set<string>;
-  let running: { mode: Exclude<Mode, 'matching'>; pool: TrainerWord[]; total: number; support: boolean } | null = null;
+  let running: { mode: Exclude<Mode, 'matching'>; pool: TrainerWord[]; total: number; support: boolean; answerFormat: AnswerFormat } | null = null;
 
   const mode = () => selectedModeInput().value as Mode;
   const filters = (): Filters => ({ packageId: packInput.value, partOfSpeech: posInput.value, lesson: null, weakness: weaknessInput.value });
@@ -170,7 +171,10 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     totalInput.max = String(count);
     if (clamp) totalInput.value = String(Math.max(1, Math.min(Number(totalInput.value) || 12, count)));
     el('[data-matching-settings]').hidden = mode() !== 'matching';
-    el('[data-workshop-settings]').hidden = mode() !== 'workshop';
+    el('[data-answer-format-settings]').hidden = mode() === 'matching';
+    answerFormatInput.disabled = mode() === 'matching';
+    el('[data-workshop-settings]').hidden = mode() !== 'workshop' || answerFormatInput.value === 'selection';
+    supportInput.disabled = mode() !== 'workshop' || answerFormatInput.value === 'selection';
     el('[data-pool-size]').dataset.empty = String(!count);
     el('#config-error').hidden = true; el('#config-error').textContent = '';
     totalInput.removeAttribute('aria-invalid');
@@ -185,6 +189,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     openMode(modeInputs.find(input => input.value === nextMode)!, false);
   }
   for (const input of [packInput, posInput, weaknessInput]) input.addEventListener('change', () => refresh(true));
+  answerFormatInput.addEventListener('change', () => refresh());
   modeInputs.forEach(input => {
     input.addEventListener('change', () => openMode(input));
     input.addEventListener('click', () => openMode(input));
@@ -218,10 +223,32 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     el('[data-activity-context]').hidden = !exercise.context;
     el('[data-provided-forms]').textContent = exercise.provided?.join(' · ') ?? '';
     el('[data-provided-forms]').hidden = !exercise.provided?.length;
+    el('[data-answer-help]').hidden = exercise.answerFormat !== 'selection';
     el('[data-activity-hints]').replaceChildren();
     el<HTMLButtonElement>('[data-hint]').disabled = exercise.hints.length === 0;
     el('[data-tiles]').replaceChildren(); el('[data-tile-target]').textContent = '';
+    fields.dataset.answerFormat = exercise.answerFormat ?? 'input';
     fields.replaceChildren(...exercise.fields.map((field, n) => {
+      if (exercise.answerFormat === 'selection') {
+        const group = document.createElement('fieldset'); group.className = 'latin-answer-field latin-selection-field';
+        group.setAttribute('aria-describedby', `latin-response-${n}`);
+        const legend = document.createElement('legend'); legend.textContent = field.label;
+        const value = document.createElement('input'); value.type = 'hidden'; value.id = `latin-answer-${n}`; value.name = field.key;
+        const options = document.createElement('div'); options.className = 'latin-answer-options';
+        const response = document.createElement('small'); response.id = `latin-response-${n}`;
+        options.append(...field.choices!.map(choice => {
+          const button = document.createElement('button'); button.type = 'button'; button.className = 'latin-answer-option';
+          button.textContent = choice; button.lang = field.kind === 'latin' ? 'la' : 'de'; button.setAttribute('aria-pressed', 'false');
+          button.addEventListener('click', () => {
+            if (statuses) return;
+            value.value = value.value === choice ? '' : choice;
+            options.querySelectorAll('button').forEach(option => option.setAttribute('aria-pressed', String(option.textContent === value.value)));
+            group.removeAttribute('aria-invalid'); response.textContent = '';
+          });
+          return button;
+        }));
+        group.append(legend, value, options, response); return group;
+      }
       const label = document.createElement('label'); label.className = 'latin-answer-field';
       const text = document.createElement('span'); text.textContent = field.label;
       const control = field.choices ? document.createElement('select')
@@ -272,18 +299,25 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     const failed: string[] = [];
     exercise.fields.forEach((field, n) => {
       const correct = statuses![n] === 'correct'; totals[field.dimension].total++; totals[field.dimension].correct += Number(correct);
-      progress = recordProgress(progress, exercise.wordId, field.skill, correct, Date.now(), hinted || selfAssessed.has(n));
+      progress = recordProgress(progress, exercise.wordId, field.skill, correct, Date.now(), exercise.answerFormat === 'selection' || hinted || selfAssessed.has(n));
       if (!correct) { failed.push(field.key); mistakes.add(`${wordById(exercise.wordId)?.latin} · ${field.label}`); }
     });
     if (failed.length && !exercise.retry) queue.splice(Math.min(queue.length, index + 3), 0, retryExercise(exercise, failed));
     save(); next.hidden = false; next.textContent = index + 1 === queue.length ? 'Auswertung ansehen' : 'Nächste Aufgabe';
-    el('[data-activity-count]').textContent = `Aufgabe ${index + 1} von ${queue.length} · ${failed.length ? 'Unsichere Angaben werden noch einmal abgefragt.' : hinted ? 'Mit Hilfe gelöst · später noch einmal frei abrufen.' : 'Rückmeldung gespeichert.'}`;
+    el('[data-activity-count]').textContent = `Aufgabe ${index + 1} von ${queue.length} · ${failed.length ? 'Unsichere Angaben werden noch einmal abgefragt.' : hinted || exercise.answerFormat === 'selection' ? 'Mit Hilfe gelöst · später noch einmal frei abrufen.' : 'Rückmeldung gespeichert.'}`;
   }
   activityForm.addEventListener('submit', event => {
     event.preventDefault(); if (statuses) return;
     const exercise = current();
     const emptyIndex = exercise.fields.findIndex((_, n) => !controlAt(n).value.trim());
-    if (emptyIndex >= 0) { el(`#latin-response-${emptyIndex}`).textContent = 'Bitte antworte oder wähle „Lösung aufdecken“. '; controlAt(emptyIndex).setAttribute('aria-invalid', 'true'); controlAt(emptyIndex).focus(); return; }
+    if (emptyIndex >= 0) {
+      el(`#latin-response-${emptyIndex}`).textContent = exercise.answerFormat === 'selection'
+        ? 'Bitte wähle eine Antwort oder „Lösung aufdecken“.' : 'Bitte antworte oder wähle „Lösung aufdecken“.';
+      const control = controlAt(emptyIndex);
+      const target = exercise.answerFormat === 'selection' ? control.closest<HTMLElement>('fieldset')! : control;
+      target.setAttribute('aria-invalid', 'true');
+      (target.querySelector<HTMLButtonElement>('button') ?? control).focus(); return;
+    }
     evaluate(false);
   });
   function evaluate(reveal: boolean): void {
@@ -293,6 +327,10 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     statuses = exercise.fields.map((field, n) => reveal ? 'incorrect' : checkAnswer(field, controlAt(n).value));
     exercise.fields.forEach((field, n) => {
       const control = controlAt(n); control.disabled = true; control.removeAttribute('aria-invalid');
+      if (exercise.answerFormat === 'selection') {
+        const group = control.closest<HTMLFieldSetElement>('fieldset')!;
+        group.disabled = true; group.removeAttribute('aria-invalid');
+      }
       const response = el(`#latin-response-${n}`);
       const status = statuses![n]; response.dataset.tone = status;
       response.textContent = status === 'correct' ? 'Richtig.' : status === 'review' ? 'Vergleiche deine Formulierung unten mit der Lösung.' : `Noch üben. Lösung: ${field.answers.join(' / ')}`;
@@ -347,16 +385,17 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     el('[data-activity-result-title]').focus();
   }
   next.addEventListener('click', () => { if (!committed) return; index++; if (index === queue.length) finish(); else render(); });
-  function start(selectedMode: Exclude<Mode, 'matching'>, selectedPool: TrainerWord[], total: number, support: boolean): void {
-    running = { mode: selectedMode, pool: selectedPool, total, support };
-    queue = buildExercises(selectedMode, selectedPool, total, support); index = 0;
+  function start(selectedMode: Exclude<Mode, 'matching'>, selectedPool: TrainerWord[], total: number, support: boolean,
+    answerFormat = answerFormatInput.value as AnswerFormat): void {
+    running = { mode: selectedMode, pool: selectedPool, total, support, answerFormat };
+    queue = buildExercises(selectedMode, selectedPool, total, support, Math.random, answerFormat); index = 0;
     totals = { meaning: { correct: 0, total: 0 }, forms: { correct: 0, total: 0 }, grammar: { correct: 0, total: 0 }, context: { correct: 0, total: 0 } }; mistakes = new Set();
     el<HTMLFieldSetElement>('[data-settings]').disabled = true; el('[data-config]').hidden = true;
     el('[data-result]').hidden = true; el('[data-workspace]').hidden = true; summary.hidden = true; activity.hidden = false; render();
   }
   el('[data-activity-abort]').addEventListener('click', edit);
   el('[data-activity-edit]').addEventListener('click', edit);
-  el('[data-activity-restart]').addEventListener('click', () => { if (running) start(running.mode, running.pool, running.total, running.support); });
+  el('[data-activity-restart]').addEventListener('click', () => { if (running) start(running.mode, running.pool, running.total, running.support, running.answerFormat); });
   el('[data-mixed-review]').addEventListener('click', () => configure('parcours'));
   el('[data-followup]').addEventListener('click', () => {
     const packageId = packInput.value;

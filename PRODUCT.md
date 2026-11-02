@@ -24,7 +24,7 @@ irrationalen Zahlen und Unendlichkeit: Zahlenzoom, Kreiswanderer und
 Unendlichkeitshotel sowie einen eigenen Zahlenlisten-Bereich zur Abzählbarkeit
 rationaler und Überabzählbarkeit reeller Zahlen, mit Aufgaben und Museumsführer.
 
-Der Latein-Vokabeltrainer ergänzt unter Sprachen sechs Trainingsmodi für Fortgeschrittene mit etwa fünf Lernjahren: Zuordnung, Stammformen-Werkstatt, Formen-Detektiv, Bedeutungs-Mission, Fehlerjagd und Vokabel-Parcours. 955 eindeutige Stichwörter, kombinierbare Lernpakete und lokal gespeicherte Wiederholungsstände verbinden Bedeutungen, Formen und Textverständnis. Übersetzungen gehen ausschließlich von Latein nach Deutsch. Der Wortschatz ist eine eigenständige Kopie aus dem Latin-Projekt.
+Der Latein-Vokabeltrainer ergänzt unter Sprachen sechs Trainingsmodi für Fortgeschrittene mit etwa fünf Lernjahren: Zuordnung, Stammformen-Werkstatt, Formen-Detektiv, Bedeutungs-Mission, Fehlerjagd und Vokabel-Parcours. Außer der bereits auswählbaren Zuordnung bieten alle Modi freie Eingabe oder eine vollständig per Auswahl bedienbare Variante mit meist zehn Optionen je Feld. 955 eindeutige Stichwörter, kombinierbare Lernpakete und lokal gespeicherte Wiederholungsstände verbinden Bedeutungen, Formen und Textverständnis. Übersetzungen gehen ausschließlich von Latein nach Deutsch. Der Wortschatz ist eine eigenständige Kopie aus dem Latin-Projekt.
 
 ## Brand Commitments
 

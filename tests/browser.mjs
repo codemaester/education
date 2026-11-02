@@ -7,6 +7,7 @@ import { testMuseum } from './museum-browser.mjs';
 import { testCarousel } from './carousel-browser.mjs';
 import { testLatin } from './latin-browser.mjs';
 import { testLatinLearning } from './latin-learning-browser.mjs';
+import { testLatinSelection } from './latin-selection-browser.mjs';
 
 // Serve the actual Pages build, including nested index.html routes.
 const root = resolve('dist');
@@ -29,6 +30,7 @@ try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_EXECUTABLE_PATH || undefined });
   await testLatin(browser, origin, screenshots);
   await testLatinLearning(browser, origin, screenshots);
+  await testLatinSelection(browser, origin, screenshots);
   if (process.env.EDUCATION_BROWSER_FOCUS !== 'latin') {
   await testCarousel(browser, origin, screenshots);
   await testMuseum(browser, origin, screenshots);
