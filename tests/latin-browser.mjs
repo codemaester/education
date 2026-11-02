@@ -28,6 +28,8 @@ export async function testLatin(browser, origin, screenshots) {
     const right = id => root.locator(`[data-right] [data-id="${id}"]`);
     const status = root.locator('[data-feedback]');
     assert.equal(await page.locator('h1').count(), 1);
+    assert.ok(await root.locator('[data-training-options]').isHidden());
+    await root.locator('.latin-mode-tile:has(input[value="matching"])').click();
     assert.equal(await root.locator('#round-size').inputValue(), '5');
     assert.equal(await root.locator('#total-words').inputValue(), '20');
     if ([1440, 390, 320].includes(width)) await capturePage('latin-settings');
@@ -135,6 +137,8 @@ export async function testLatin(browser, origin, screenshots) {
     const reloaded = await page.reload();
     assert.equal(reloaded.status(), 200, `Latin ${width}: reload ${page.url()}`);
     assert.ok(page.url().endsWith(route), `Latin ${width}: reload stays on trainer`);
+    assert.ok(await root.locator('[data-training-options]').isHidden());
+    await root.locator('.latin-mode-tile:has(input[value="matching"])').click();
     assert.equal(await root.locator('#total-words').inputValue(), '20');
     assert.ok(await root.locator('[data-workspace]').isHidden());
     assert.deepEqual(errors, [], `Latin ${width}: no browser or network errors`);

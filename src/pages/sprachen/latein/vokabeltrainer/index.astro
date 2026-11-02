@@ -2,27 +2,86 @@
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Icon from '../../../../components/Icon.astro';
 import { vocabulary } from '../../../../data/latin';
+import { modes, packages, commonWordTypes } from '../../../../data/latin-learning';
+import { Image } from 'astro:assets';
+import matchingArt from '../../../../assets/latin-vocabulary-painted.png';
+import workshopArt from '../../../../assets/latin-mode-workshop.png';
+import detectiveArt from '../../../../assets/latin-mode-detective.png';
+import missionArt from '../../../../assets/latin-mode-mission.png';
+import huntArt from '../../../../assets/latin-mode-hunt.png';
+import parcoursArt from '../../../../assets/latin-mode-parcours.png';
 import '../../../../styles/latin.css';
 const baseUrl = import.meta.env.BASE_URL;
+const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detectiveArt, mission: missionArt, hunt: huntArt, parcours: parcoursArt };
 ---
-<BaseLayout title="Latein-Vokabeltrainer" description="Latein und Deutsch verbinden: Trainiere deinen Wortschatz mit zufälligen Zuordnungen und direkter Rückmeldung." pageClass="latin-page">
+<BaseLayout title="Latein-Vokabeltrainer" description="Latein für Fortgeschrittene: Bedeutungen, Stammformen und Wörter im Kontext in sechs Trainingsmodi üben." pageClass="latin-page">
   <div class="page-shell latin-shell">
     <nav class="breadcrumb" aria-label="Brotkrumennavigation"><a href={baseUrl}>Startseite</a><Icon name="chevron" size={12} /><a href={`${baseUrl}faecher/sprachen/`}>Sprachen</a><Icon name="chevron" size={12} /><span aria-current="page">Latein</span></nav>
-    <header class="latin-intro"><h1>Wörter lernen.<br /><em>Verbindungen finden.</em></h1><div><p>Dein Latein-Vokabeltrainer: Wähle links ein Wort und rechts die passende deutsche Übersetzung. Stimmen beide überein?</p><p class="muted">Für Lernende mit ersten Lateinkenntnissen. Du übst die Bedeutungen von {vocabulary.length} lateinischen Wörtern – in deinem Tempo, ohne Zeitlimit.</p></div></header>
+    <header class="latin-intro"><h1>Wörter kennen.<br /><em>Latein verstehen.</em></h1><div><p>Bedeutungen abrufen, Stammformen erkennen und Wörter im Text erschließen. Dein Training für fortgeschrittene Lateinkenntnisse.</p><p class="muted">{vocabulary.length} Stichwörter · sechs Trainingsmodi · ohne Zeitlimit. Übersetzungen immer von Latein nach Deutsch.</p></div></header>
     <section class="latin-trainer" data-latin-trainer aria-labelledby="trainer-title">
       <h2 id="trainer-title">Dein Training</h2>
       <form data-config novalidate>
         <fieldset data-settings disabled>
           <legend class="visually-hidden">Training einstellen</legend>
+          <fieldset class="latin-mode-picker" data-mode-picker aria-describedby="mode-choice-help">
+            <legend>Trainingsmodus</legend>
+            <p id="mode-choice-help" class="latin-mode-help">Wähle, wie du heute trainieren möchtest.</p>
+            <button class="button button-secondary latin-change-mode" type="button" data-change-mode hidden><Icon name="arrow" size={16} />Anderen Modus wählen</button>
+            <div class="latin-mode-grid">
+              {modes.map(mode => <label class="latin-mode-tile">
+                <input type="radio" name="trainingMode" id={`training-mode-${mode.id}`} value={mode.id} aria-labelledby={`mode-title-${mode.id}`} aria-describedby={`mode-description-${mode.id}`} />
+                <span class="latin-mode-content">
+                  <Image class="latin-mode-image" src={modeArt[mode.id]} alt="" widths={[320, 640, 1024]} sizes="(max-width: 600px) 100vw, 50vw" format="webp" quality={85} loading={mode.id === 'matching' ? 'eager' : 'lazy'} />
+                  <span class="latin-mode-copy"><span class="latin-mode-title" id={`mode-title-${mode.id}`} tabindex="-1" role="heading" aria-level="3">{mode.label}</span><span class="latin-mode-description" id={`mode-description-${mode.id}`}>{mode.description}</span><span class="latin-mode-details" id={`mode-details-${mode.id}`} hidden>{mode.details.map(paragraph => <span>{paragraph}</span>)}</span></span>
+                </span>
+              </label>)}
+            </div>
+          </fieldset>
+          <fieldset class="latin-training-options" data-training-options disabled hidden>
+          <legend>Training konfigurieren</legend>
+          <div class="latin-configuration">
+            <label for="learning-package">Lernpaket<select id="learning-package">{[...new Set(packages.map(pack => pack.group))].map(group => <optgroup label={group}>{packages.filter(pack => pack.group === group).map(pack => <option value={pack.id}>{pack.label}</option>)}</optgroup>)}</select></label>
+            <label for="word-type">Wortart<select id="word-type" aria-describedby="word-type-note"><option value="">Alle Wortarten</option>{commonWordTypes.map(option => <option value={option.value}>{option.label}</option>)}</select><span class="latin-config-help" id="word-type-note" data-word-type-note hidden></span></label>
+              <label for="learning-weakness">Persönlicher Lernbedarf<select id="learning-weakness"><option value="">Alle passenden Wörter</option><option value="due">Jetzt zur Wiederholung fällig</option><option value="weak">Unsichere Angaben</option><option value="meaning">Bedeutung unsicher</option><option value="perfekt_1sg">Perfektstamm unsicher</option><option value="geschlecht">Genus unsicher</option></select></label>
+            <div class="latin-filter-actions"><button class="button button-secondary" type="button" data-clear-filters>Filter zurücksetzen</button></div>
+          </div>
+          <p class="latin-pool-size" data-pool-size role="status" aria-live="polite"></p>
           <div class="latin-settings">
-            <label for="round-size">Paare pro Runde<input id="round-size" name="roundSize" type="number" min="2" max="10" step="1" value="5" required aria-describedby="round-help config-error" /><span id="round-help">2 bis 10 gleichzeitig</span></label>
-            <label for="total-words">Vokabeln insgesamt<input id="total-words" name="total" type="number" min="1" max={vocabulary.length} step="1" value="20" required aria-describedby="total-help config-error" /><span id="total-help">1 bis {vocabulary.length} verschiedene Wörter</span></label>
+            <label for="round-size" data-matching-settings>Paare pro Runde<input id="round-size" name="roundSize" type="number" min="2" max="10" step="1" value="5" required aria-describedby="round-help config-error" /><span id="round-help">2 bis 10 gleichzeitig</span></label>
+            <label for="total-words">Vokabeln insgesamt<input id="total-words" name="total" type="number" min="1" max={vocabulary.length} step="1" value="20" required aria-describedby="total-help config-error" /><span id="total-help" data-total-help>1 bis {vocabulary.length} verschiedene Wörter</span></label>
+            <label for="form-support" class="latin-check-label" data-workshop-settings hidden><input type="checkbox" id="form-support" />Mit Formenbausteinen einüben<span>Ohne Bausteine: freier Abruf.</span></label>
             <button class="button" type="submit">Training starten <Icon name="arrow" size={18} /></button>
           </div>
+          <details class="latin-saved-progress"><summary>Dein Lernstand und Wiederholungen</summary>
+            <p data-learning-summary></p><p class="muted" data-storage-note></p><ul data-due-list></ul>
+            <div class="latin-actions"><button class="button button-secondary" type="button" data-reset-progress>Lernstand löschen</button><button class="button button-secondary" type="button" data-cancel-reset hidden>Behalten</button></div>
+          </details>
+          </fieldset>
         </fieldset>
         <p id="config-error" class="latin-error" role="alert" hidden></p>
       </form>
-      <noscript><p>Zum Zuordnen der Vokabeln brauchst du JavaScript. Aktiviere es in deinem Browser und lade die Seite erneut.</p></noscript>
+      <noscript><p>Für das Vokabeltraining brauchst du JavaScript. Aktiviere es in deinem Browser und lade die Seite erneut.</p></noscript>
+      <section class="latin-activity" data-activity hidden aria-labelledby="activity-title">
+        <div class="latin-progress"><div><h3 id="activity-title" data-activity-title tabindex="-1"></h3><p data-activity-count></p></div><button class="button button-secondary" type="button" data-activity-abort>Training abbrechen</button></div>
+        <progress data-activity-progress value="0" max="1" aria-label="Bearbeitete Aufgaben"></progress>
+        <p class="latin-passage" data-activity-context lang="la" hidden></p>
+        <p class="latin-prompt" data-activity-prompt lang="la"></p>
+        <p class="latin-provided" data-provided-forms hidden></p>
+        <form data-answer-form novalidate>
+          <div class="latin-answer-fields" data-answer-fields></div>
+          <p class="latin-tile-target" data-tile-target></p><div class="latin-actions latin-tiles" data-tiles></div>
+          <div class="latin-actions"><button class="button" type="submit" data-check-answer>Antwort prüfen</button><button class="button button-secondary" type="button" data-hint>Hinweis aufdecken</button><button class="button button-secondary" type="button" data-reveal>Lösung aufdecken</button></div>
+        </form>
+        <div class="latin-hints" data-activity-hints role="status" aria-live="polite"></div>
+        <div class="latin-answer-report" data-answer-report role="region" aria-label="Rückmeldung zu deiner Antwort" tabindex="-1" hidden></div>
+        <button class="button" type="button" data-activity-next hidden>Nächste Aufgabe <Icon name="arrow" size={18} /></button>
+      </section>
+      <section class="latin-result" data-activity-result aria-labelledby="activity-result-title" hidden>
+        <h3 id="activity-result-title" data-activity-result-title tabindex="-1"></h3>
+        <p>Deutsche Bedeutungen, Stammformen und Zusatzangaben zählen jeweils für sich. Antworten mit Hilfe bleiben zur Wiederholung vorgemerkt.</p>
+        <dl data-activity-stats></dl><p data-activity-mistakes></p>
+        <div class="latin-actions"><button class="button" type="button" data-followup>Weiter als Formen-Detektiv</button><button class="button button-secondary" type="button" data-mixed-review>Gemischt weiterlernen</button><button class="button button-secondary" type="button" data-activity-restart>Erneut trainieren</button><button class="button button-secondary" type="button" data-activity-edit>Einstellungen ändern</button></div>
+      </section>
       <div data-workspace hidden>
         <div class="latin-progress"><div><h3 data-round-title tabindex="-1"></h3><p data-progress></p></div><button class="button button-secondary" type="button" data-abort>Training abbrechen</button></div>
         <progress data-progress-bar value="0" max="20" aria-label="Gelöste Vokabeln"></progress>
@@ -38,7 +97,6 @@ const baseUrl = import.meta.env.BASE_URL;
         <div class="latin-actions"><button class="button" type="button" data-restart>Erneut trainieren <Icon name="arrow" size={18} /></button><button class="button button-secondary" type="button" data-edit>Einstellungen ändern</button></div>
       </section>
     </section>
-    <aside class="latin-notes"><h2>So funktioniert’s</h2><p>Jedes Wort erscheint höchstens einmal pro Training. Rechts stehen alle hinterlegten Bedeutungen. Ein falsches Paar bleibt zum Weiterüben verfügbar; nach einer vollständig gelösten Runde geht es mit „Nächste Runde“ weiter.</p><p>Der Wortschatz stammt aus den Lektionen 1–23 der Sammlung im Latin-Projekt. Wiederkehrende Stichwörter sind zusammengefasst. Dein Ergebnis bleibt nur auf dieser geöffneten Seite erhalten.</p></aside>
   </div>
 </BaseLayout>
 <script>

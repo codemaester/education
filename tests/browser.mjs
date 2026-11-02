@@ -6,6 +6,7 @@ import { chromium } from 'playwright';
 import { testMuseum } from './museum-browser.mjs';
 import { testCarousel } from './carousel-browser.mjs';
 import { testLatin } from './latin-browser.mjs';
+import { testLatinLearning } from './latin-learning-browser.mjs';
 
 // Serve the actual Pages build, including nested index.html routes.
 const root = resolve('dist');
@@ -27,6 +28,8 @@ let browser;
 try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_EXECUTABLE_PATH || undefined });
   await testLatin(browser, origin, screenshots);
+  await testLatinLearning(browser, origin, screenshots);
+  if (process.env.EDUCATION_BROWSER_FOCUS !== 'latin') {
   await testCarousel(browser, origin, screenshots);
   await testMuseum(browser, origin, screenshots);
   for (const width of [1440, 1024, 768, 390, 320]) {
@@ -221,6 +224,7 @@ try {
   assert.ok(await staticMaths.locator('[data-number="2"]').isDisabled());
   await staticMaths.close();
   console.log('No-JavaScript fallback, learning-sheet access and empty-subject navigation passed');
+  }
 } finally {
   await browser?.close();
   await new Promise(resolve => server.close(resolve));

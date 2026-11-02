@@ -1,4 +1,5 @@
-import { configError, createSession, currentRound, nextRound, selectCard, stage, vocabulary, type Session, type Side, type TrainingConfig } from '../data/latin';
+import { configError, createSession, currentRound, nextRound, selectCard, stage, type Session, type Side, type TrainingConfig } from '../data/latin';
+import { initLearning } from './latin-learning';
 
 export function initLatinTrainer(root: HTMLElement): void {
   const element = <T extends HTMLElement>(selector: string) => root.querySelector<T>(selector)!;
@@ -14,6 +15,7 @@ export function initLatinTrainer(root: HTMLElement): void {
   let state: Session | null = null;
   let incorrect: Record<Side, string | null> = { left: null, right: null };
   let config: TrainingConfig = { roundSize: 5, total: 20 };
+  const learning = initLearning(root, edit);
 
   function update(): void {
     if (!state) return;
@@ -72,7 +74,7 @@ export function initLatinTrainer(root: HTMLElement): void {
   }
 
   function start(): void {
-    state = createSession(vocabulary, config);
+    state = createSession(learning.pool(), config);
     settings.disabled = true;
     form.hidden = true;
     result.hidden = true;
@@ -89,24 +91,30 @@ export function initLatinTrainer(root: HTMLElement): void {
     settings.disabled = false;
     feedback.textContent = '';
     delete feedback.dataset.tone;
-    roundSize.focus();
+    learning.stop();
+    learning.focusSelection();
   }
 
   form.addEventListener('submit', event => {
     event.preventDefault();
+    if (!learning.ready()) return;
     const proposed = { roundSize: roundSize.valueAsNumber, total: total.valueAsNumber };
-    const message = configError(proposed, vocabulary.length);
+    const available = learning.pool().length;
+    const message = available === 0 ? 'Keine passenden Wörter. Wähle ein anderes Paket oder lockere die Filter.'
+      : configError({ ...proposed, roundSize: learning.mode() === 'matching' ? proposed.roundSize : 5 }, available);
     error.hidden = !message;
     error.textContent = message ?? '';
     roundSize.removeAttribute('aria-invalid');
     total.removeAttribute('aria-invalid');
     if (message) {
-      const invalid = configError({ roundSize: proposed.roundSize, total: 1 }, vocabulary.length) ? roundSize : total;
+      const invalid = learning.mode() === 'matching' && configError({ roundSize: proposed.roundSize, total: 1 }, Math.max(1, available)) ? roundSize : total;
       invalid.setAttribute('aria-invalid', 'true');
       invalid.focus();
       return;
     }
     config = proposed;
+    const mode = learning.mode();
+    if (mode !== 'matching') { learning.start(mode, learning.pool(), proposed.total, learning.support()); return; }
     start();
   });
   workspace.addEventListener('click', event => {
@@ -124,10 +132,13 @@ export function initLatinTrainer(root: HTMLElement): void {
       const word = currentRound(state).left.find(word => word.id === latinId)!;
       feedback.textContent = `Richtig: ${word.latin} – ${word.meanings.join('; ')}.${stage(state) === 'round-complete' ? ' Runde geschafft! Weiter mit „Nächste Runde“.' : ''}`;
       feedback.dataset.tone = 'correct';
+      learning.recordMatching(word.id, true);
     } else if (outcome.feedback === 'incorrect') {
       incorrect = { left: side === 'left' ? target.dataset.id! : previous.selected.left, right: side === 'right' ? target.dataset.id! : previous.selected.right };
       feedback.textContent = 'Das passt noch nicht. Wähle ein neues Paar und versuche es erneut.';
       feedback.dataset.tone = 'incorrect';
+      const failedId = side === 'left' ? target.dataset.id! : previous.selected.left!;
+      learning.recordMatching(failedId, false);
     } else {
       feedback.textContent = outcome.feedback === 'cleared' ? 'Auswahl aufgehoben.' : side === 'left' ? 'Lateinisches Wort ausgewählt. Wähle die passende Übersetzung.' : 'Übersetzung ausgewählt. Wähle das passende lateinische Wort.';
     }

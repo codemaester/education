@@ -24,7 +24,7 @@ irrationalen Zahlen und Unendlichkeit: Zahlenzoom, Kreiswanderer und
 Unendlichkeitshotel sowie einen eigenen Zahlenlisten-Bereich zur Abzählbarkeit
 rationaler und Überabzählbarkeit reeller Zahlen, mit Aufgaben und Museumsführer.
 
-Der Latein-Vokabeltrainer ergänzt unter Sprachen ein konfigurierbares Zuordnungstraining mit 955 eindeutigen Stichwörtern, direkter Rückmeldung und Abschlussauswertung. Der Wortschatz ist eine eigenständige Kopie aus dem Latin-Projekt.
+Der Latein-Vokabeltrainer ergänzt unter Sprachen sechs Trainingsmodi für Fortgeschrittene mit etwa fünf Lernjahren: Zuordnung, Stammformen-Werkstatt, Formen-Detektiv, Bedeutungs-Mission, Fehlerjagd und Vokabel-Parcours. 955 eindeutige Stichwörter, kombinierbare Lernpakete und lokal gespeicherte Wiederholungsstände verbinden Bedeutungen, Formen und Textverständnis. Übersetzungen gehen ausschließlich von Latein nach Deutsch. Der Wortschatz ist eine eigenständige Kopie aus dem Latin-Projekt.
 
 ## Brand Commitments
 
@@ -40,7 +40,7 @@ wiederverwendbar sein. Icons und grafische Symbole unterstützen die Orientierun
 ## Capabilities and Constraints
 
 - Ein gemeinsames Astro-Projekt mit erweiterbaren Unterseiten.
-- Der Latein-Vokabeltrainer ist in der ersten Iteration ein begrenztes Übungswerkzeug ohne Kapitel, Videos oder Lernzettel; siehe [Trainer-Dokumentation](documentation/LATEIN_TRAINER.md).
+- Der Latein-Vokabeltrainer bleibt ein Übungswerkzeug ohne Lehrgangskapitel, Videos oder Lernzettel; siehe [Trainer-Dokumentation](documentation/LATEIN_TRAINER.md).
 - Neue Lernseiten folgen den
   [gemeinsamen Anforderungen](documentation/LERNSEITEN_ANFORDERUNGEN.md).
 - Hosting unter `https://edu.promptworks.eu/` über GitHub Pages.

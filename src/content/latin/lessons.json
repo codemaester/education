@@ -1,0 +1,235 @@
+{
+  "source": "Latin: scans/VERARBEITET.md, dokumentierte Original-ID-Bereiche der Lektionen 1–23. Zuordnung je Original-ID, nicht nach Reihenfolge konsolidierter Wörter.",
+  "ranges": [
+    {
+      "lesson": 14,
+      "first": 9,
+      "last": 31
+    },
+    {
+      "lesson": 14,
+      "first": 32,
+      "last": 65
+    },
+    {
+      "lesson": 1,
+      "first": 66,
+      "last": 91
+    },
+    {
+      "lesson": 1,
+      "first": 92,
+      "last": 107
+    },
+    {
+      "lesson": 2,
+      "first": 108,
+      "last": 122
+    },
+    {
+      "lesson": 2,
+      "first": 123,
+      "last": 150
+    },
+    {
+      "lesson": 3,
+      "first": 151,
+      "last": 166
+    },
+    {
+      "lesson": 3,
+      "first": 167,
+      "last": 192
+    },
+    {
+      "lesson": 4,
+      "first": 193,
+      "last": 209
+    },
+    {
+      "lesson": 4,
+      "first": 210,
+      "last": 234
+    },
+    {
+      "lesson": 5,
+      "first": 235,
+      "last": 253
+    },
+    {
+      "lesson": 5,
+      "first": 254,
+      "last": 279
+    },
+    {
+      "lesson": 6,
+      "first": 280,
+      "last": 296
+    },
+    {
+      "lesson": 6,
+      "first": 297,
+      "last": 322
+    },
+    {
+      "lesson": 7,
+      "first": 323,
+      "last": 338
+    },
+    {
+      "lesson": 7,
+      "first": 339,
+      "last": 363
+    },
+    {
+      "lesson": 8,
+      "first": 364,
+      "last": 383
+    },
+    {
+      "lesson": 8,
+      "first": 384,
+      "last": 412
+    },
+    {
+      "lesson": 9,
+      "first": 413,
+      "last": 433
+    },
+    {
+      "lesson": 9,
+      "first": 434,
+      "last": 460
+    },
+    {
+      "lesson": 10,
+      "first": 461,
+      "last": 476
+    },
+    {
+      "lesson": 10,
+      "first": 477,
+      "last": 511
+    },
+    {
+      "lesson": 11,
+      "first": 512,
+      "last": 531
+    },
+    {
+      "lesson": 11,
+      "first": 532,
+      "last": 560
+    },
+    {
+      "lesson": 12,
+      "first": 561,
+      "last": 575
+    },
+    {
+      "lesson": 12,
+      "first": 576,
+      "last": 603
+    },
+    {
+      "lesson": 13,
+      "first": 604,
+      "last": 621
+    },
+    {
+      "lesson": 13,
+      "first": 622,
+      "last": 646
+    },
+    {
+      "lesson": 15,
+      "first": 647,
+      "last": 660
+    },
+    {
+      "lesson": 15,
+      "first": 661,
+      "last": 691
+    },
+    {
+      "lesson": 16,
+      "first": 692,
+      "last": 709
+    },
+    {
+      "lesson": 16,
+      "first": 710,
+      "last": 738
+    },
+    {
+      "lesson": 17,
+      "first": 739,
+      "last": 754
+    },
+    {
+      "lesson": 17,
+      "first": 755,
+      "last": 786
+    },
+    {
+      "lesson": 18,
+      "first": 787,
+      "last": 800
+    },
+    {
+      "lesson": 18,
+      "first": 801,
+      "last": 829
+    },
+    {
+      "lesson": 19,
+      "first": 830,
+      "last": 843
+    },
+    {
+      "lesson": 19,
+      "first": 844,
+      "last": 874
+    },
+    {
+      "lesson": 20,
+      "first": 875,
+      "last": 890
+    },
+    {
+      "lesson": 20,
+      "first": 891,
+      "last": 917
+    },
+    {
+      "lesson": 21,
+      "first": 918,
+      "last": 932
+    },
+    {
+      "lesson": 21,
+      "first": 933,
+      "last": 961
+    },
+    {
+      "lesson": 22,
+      "first": 962,
+      "last": 979
+    },
+    {
+      "lesson": 22,
+      "first": 980,
+      "last": 1006
+    },
+    {
+      "lesson": 23,
+      "first": 1007,
+      "last": 1017
+    },
+    {
+      "lesson": 23,
+      "first": 1018,
+      "last": 1045
+    }
+  ]
+}

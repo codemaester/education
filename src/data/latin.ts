@@ -3,9 +3,19 @@ import dataset from '../content/latin/vocabulary.json' with { type: 'json' };
 export interface VocabularyEntry {
   id: string;
   latein: string;
-  verwendungen: { bedeutungen: string[] }[];
+  verwendungen: VocabularyUsage[];
 }
-export interface TrainerWord { id: string; latin: string; meanings: string[]; signature: string; }
+export interface VocabularyUsage {
+  bedeutungen: string[];
+  ids?: string[];
+  wortart?: string;
+  grammatik?: Record<string, string | string[] | undefined>;
+  hinweis?: string;
+}
+export interface TrainerWord {
+  id: string; latin: string; meanings: string[]; signature: string;
+  usages: VocabularyUsage[]; partsOfSpeech: string[]; sourceIds: string[];
+}
 export interface TrainingConfig { roundSize: number; total: number; }
 export type Side = 'left' | 'right';
 export interface Round { left: TrainerWord[]; right: TrainerWord[]; }
@@ -25,7 +35,10 @@ const normalize = (text: string) => text.normalize('NFC').trim();
 export function adaptVocabulary(entries: readonly VocabularyEntry[]): TrainerWord[] {
   return entries.map(entry => {
     const meanings = [...new Set(entry.verwendungen.flatMap(use => use.bedeutungen).map(normalize))];
-    return { id: entry.id, latin: entry.latein, meanings, signature: JSON.stringify([...meanings].sort()) };
+    return { id: entry.id, latin: entry.latein, meanings, signature: JSON.stringify([...meanings].sort()),
+      usages: structuredClone(entry.verwendungen),
+      partsOfSpeech: [...new Set(entry.verwendungen.flatMap(use => use.wortart ? [use.wortart] : []))],
+      sourceIds: [...new Set(entry.verwendungen.flatMap(use => use.ids ?? [entry.id]))] };
   });
 }
 export const vocabulary = adaptVocabulary(dataset);

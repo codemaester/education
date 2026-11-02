@@ -60,4 +60,4 @@ package.json        Abhängigkeiten und Entwicklungsbefehle
 
 ## Latein-Vokabeltrainer
 
-Unter `/sprachen/latein/vokabeltrainer/` lassen sich lateinische Wörter deutschen Bedeutungen zuordnen. Die [Trainer-Dokumentation](documentation/LATEIN_TRAINER.md) beschreibt Datenübernahme, Ablauf, Zugänglichkeit und die Begrenzungen der ersten Iteration.
+Unter `/sprachen/latein/vokabeltrainer/` trainieren Fortgeschrittene mit sechs bebilderten Trainingsmodi deutsche Bedeutungen, lateinische Stammformen und Wörter im Kontext. Kombinierbare Lernpakete und lokale Wiederholungsstände unterstützen gezieltes Üben. Die [Trainer-Dokumentation](documentation/LATEIN_TRAINER.md) beschreibt Datenherkunft, Lernmodi, Bewertung, Speicherung und Prüfungen.
