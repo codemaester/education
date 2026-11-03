@@ -5,6 +5,7 @@ import { resolve, extname, sep } from 'node:path';
 import { chromium } from 'playwright';
 import { testMuseum } from './museum-browser.mjs';
 import { testCarousel } from './carousel-browser.mjs';
+import { testLatinFlashcards } from './latin-flashcards-browser.mjs';
 import { testLatin } from './latin-browser.mjs';
 import { testLatinLearning } from './latin-learning-browser.mjs';
 import { testLatinSelection } from './latin-selection-browser.mjs';
@@ -28,6 +29,7 @@ if (screenshots) await mkdir(screenshots, { recursive: true });
 let browser;
 try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_EXECUTABLE_PATH || undefined });
+  await testLatinFlashcards(browser, origin, screenshots);
   await testLatin(browser, origin, screenshots);
   await testLatinLearning(browser, origin, screenshots);
   await testLatinSelection(browser, origin, screenshots);

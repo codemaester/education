@@ -5,7 +5,7 @@ import { adaptVocabulary, vocabulary } from '../src/data/latin.ts';
 import { buildExercises, checkAnswer, decodeProgress, defaultFilters, emptyProgress, eligibleForMode,
   filterWords, formFields, additionalFields, grammarValues, lessonsFor, modes, normalizeLatin, packages,
   progressSummary, recordProgress, retryExercise, commonWordTypes, wordTypesForMode } from '../src/data/latin-learning.ts';
-import { detectiveCases, missionCases, huntCases, formationGroups, thematicGroups, wordFamilies } from '../src/content/latin/activities.ts';
+import { detectiveCases, huntCases, formationGroups, thematicGroups, wordFamilies } from '../src/content/latin/activities.ts';
 
 const word = lemma => {
   const entry = vocabulary.find(w => w.latin === lemma);
@@ -52,7 +52,7 @@ test('overlapping packages combine with word type, lesson and progress filters',
   assert.ok(conjunction.meanings.includes('obwohl'));
   assert.ok(!conjunction.meanings.includes('mit'));
   assert.ok(!conjunction.usages.some(u => u.wortart === 'Präposition'));
-  assert.ok(!filterWords(vocabulary, 'mission', { ...defaultFilters(), partOfSpeech: 'Konjunktion' }, emptyProgress()).some(w => w.latin === 'cum'));
+  assert.ok(!filterWords(vocabulary, 'hunt', { ...defaultFilters(), partOfSpeech: 'Konjunktion' }, emptyProgress()).some(w => w.latin === 'cum'));
 });
 
 test('learning packages are independent of grammatical word categories', () => {
@@ -71,7 +71,7 @@ test('learning packages are independent of grammatical word categories', () => {
 test('only common and mode-appropriate word types can be selected', () => {
   const general = ['Verb', 'Substantiv', 'Adjektiv', 'Pronomen', 'Adverb', 'Präposition', 'Konjunktion'];
   assert.deepEqual(commonWordTypes.map(option => option.value), general);
-  const expected = { matching: general, workshop: ['Verb'], detective: ['Verb'], mission: ['Verb', 'Substantiv', 'Präposition'],
+  const expected = { matching: general, workshop: ['Verb'], detective: ['Verb'], flashcards: general,
     hunt: ['Verb', 'Substantiv', 'Adjektiv', 'Präposition'], parcours: general };
   for (const { id: mode } of modes) {
     assert.deepEqual(wordTypesForMode(mode).map(option => option.value), expected[mode], mode);
@@ -88,12 +88,9 @@ test('only common and mode-appropriate word types can be selected', () => {
 });
 
 test('authored cases and explicit memberships refer to real vocabulary and contextual targets', () => {
-  for (const c of [...detectiveCases, ...missionCases, ...huntCases]) word(c.lemma);
+  for (const c of [...detectiveCases, ...huntCases]) word(c.lemma);
   for (const c of detectiveCases) {
     assert.ok(c.context.includes(c.form)); assert.ok(c.meanings.length); assert.ok(c.analysis);
-  }
-  for (const c of missionCases) {
-    assert.ok(c.passage.includes(c.target)); assert.ok(c.meanings.length); assert.ok(c.explanation);
   }
   assert.ok(huntCases.every(c => c.correction), 'the presence of a correction field must not give away the verdict');
   for (const group of [formationGroups, thematicGroups, wordFamilies]) for (const p of Object.values(group)) {
@@ -102,9 +99,9 @@ test('authored cases and explicit memberships refer to real vocabulary and conte
   }
 });
 
-test('five additional modes use only Latin prompts and known grammatical forms', () => {
+test('four exercise modes use only Latin prompts and known grammatical forms', () => {
   const before = structuredClone(vocabulary);
-  for (const { id: mode } of modes.filter(m => m.id !== 'matching')) {
+  for (const { id: mode } of modes.filter(m => !['matching', 'flashcards'].includes(m.id))) {
     const pool = vocabulary.filter(w => eligibleForMode(w, mode));
     assert.ok(pool.length > 0);
     const exercises = buildExercises(mode, pool, Math.min(6, pool.length), false, random());
@@ -163,16 +160,12 @@ test('Latin input accepts absent macrons and source variants but rejects wrong f
   assert.equal(checkAnswer(field('lēx', 'geschlecht'), 'männlich'), 'incorrect');
 });
 
-test('German synonyms can be self-assessed and context answers do not inherit unrelated senses', () => {
+test('German synonyms can be self-assessed', () => {
   const meaning = buildExercises('parcours', [word('amīcus')], 1)[0].fields[0];
   assert.equal(checkAnswer(meaning, 'Freund'), 'correct');
   assert.equal(checkAnswer(meaning, 'ein Freund.'), 'correct');
   assert.equal(checkAnswer(meaning, 'ein guter Gefährte'), 'review');
   assert.equal(checkAnswer(meaning, ''), 'incorrect');
-  const context = buildExercises('mission', [word('cum')], 1)[0];
-  assert.equal(checkAnswer(context.fields[0], 'mit den Freunden'), 'correct');
-  assert.equal(checkAnswer(context.fields[0], 'obwohl'), 'review');
-  assert.equal(checkAnswer(context.fields.find(f => f.key === 'construction'), 'Akkusativ'), 'incorrect');
 });
 
 test('parcours has ordered stages and word-type-specific additional questions', () => {

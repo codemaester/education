@@ -3,8 +3,8 @@ import { test } from 'node:test';
 import { vocabulary } from '../src/data/latin.ts';
 import { buildExercises, checkAnswer, defaultFilters, emptyProgress, filterWords, normalizeGerman,
   normalizeLatin, retryExercise, recordProgress } from '../src/data/latin-learning.ts';
-import { detectiveCases, missionCases } from '../src/content/latin/activities.ts';
-import { detectiveDistractors, missionDistractors } from '../src/content/latin/choice-distractors.ts';
+import { detectiveCases } from '../src/content/latin/activities.ts';
+import { detectiveDistractors } from '../src/content/latin/choice-distractors.ts';
 
 const rng = (seed = 7251) => () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32);
 const word = lemma => {
@@ -14,9 +14,9 @@ const exercises = (mode, pool, total = pool.length, seed = 7251) => buildExercis
 const normalize = (field, value) => field.kind === 'latin' ? normalizeLatin(value)
   : normalizeGerman(value.replace(/\s*\(.*?\)/g, '').trim());
 
-test('all five selection variants have distinct options and exactly one correct option per field', () => {
+test('all four selection variants have distinct options and exactly one correct option per field', () => {
   const before = structuredClone(vocabulary);
-  for (const mode of ['workshop', 'detective', 'mission', 'hunt', 'parcours']) {
+  for (const mode of ['workshop', 'detective', 'hunt', 'parcours']) {
     const pool = filterWords(vocabulary, mode, defaultFilters(), emptyProgress());
     const tasks = exercises(mode, pool, Math.min(pool.length, mode === 'workshop' ? 20 : 30));
     assert.deepEqual(tasks, exercises(mode, pool, Math.min(pool.length, mode === 'workshop' ? 20 : 30)));
@@ -37,14 +37,14 @@ test('all five selection variants have distinct options and exactly one correct 
 });
 
 test('the complete authored contexts offer ten translations and twelve detective infinitives', () => {
-  for (const mode of ['mission', 'detective']) {
+  for (const mode of ['detective']) {
     const pool = filterWords(vocabulary, mode, defaultFilters(), emptyProgress());
     const tasks = exercises(mode, pool);
-    assert.equal(tasks.length, mode === 'mission' ? missionCases.length : detectiveCases.length);
+    assert.equal(tasks.length, detectiveCases.length);
     for (const task of tasks) {
       const field = task.fields.find(f => f.dimension === 'context');
       const lemma = vocabulary.find(w => w.id === task.wordId).latin;
-      const authored = mode === 'mission' ? missionDistractors[task.id] : detectiveDistractors[lemma];
+      const authored = detectiveDistractors[lemma];
       assert.ok(authored.length >= 11);
       assert.equal(field.choices.length, 10);
       assert.ok(authored.every(choice => !field.answers.some(answer => normalize(field, answer) === normalize(field, choice))));

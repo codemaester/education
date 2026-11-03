@@ -23,30 +23,6 @@ export const detectiveCases: DetectiveCase[] = [
   { lemma: 'incipere', form: 'coepērunt', context: 'Mīlitēs pontem facere coepērunt.', meanings: ['sie begannen', 'sie haben begonnen', 'sie fingen an', 'sie haben angefangen'], analysis: '3. Person Plural, Indikativ Perfekt Aktiv. coepī ist im Datensatz neben incēpī als Perfekt zu incipere hinterlegt.' },
 ];
 
-export interface MissionCase {
-  id: string; mission: string; passage: string; lemma: string; target: string;
-  partOfSpeech?: string;
-  meanings: string[]; explanation: string; construction?: { question: string; answers: string[] };
-}
-const bridge = 'Caesar pontem facere cōnstituit. Mīlitēs ad flūmen contendunt. Pontem ab hostibus dēfendunt.';
-const peace = 'Lēgātī pācem petunt. Cōnsul cōnsilium capit. Senātus lēgātīs respondet.';
-const trust = 'Dux cum amīcīs venit. Amīcī in urbe manent. Dux amīcīs crēdit.';
-const debate = 'Ōrātor dē lēge dīcit. Cīvēs fidem servant. Senātus novam lēgem probat.';
-export const missionCases: MissionCase[] = [
-  { id: 'bridge-build', mission: 'Die Brücke sichern', passage: bridge, lemma: 'facere', target: 'pontem facere', meanings: ['eine Brücke bauen', 'eine Brücke errichten', 'die Brücke bauen', 'die Brücke errichten'], explanation: 'Das Objekt pontem legt die Bedeutung bauen oder errichten nahe. Die allgemeine Bedeutung tun reicht hier nicht aus.' },
-  { id: 'bridge-to', mission: 'Die Brücke sichern', passage: bridge, lemma: 'ad', target: 'ad flūmen', meanings: ['zum Fluss', 'an den Fluss', 'zu dem Fluss'], explanation: 'Die Bewegung zum Fluss wird mit ad und Akkusativ ausgedrückt.', construction: { question: 'Welchen Kasus verlangt ad?', answers: ['Akkusativ'] } },
-  { id: 'bridge-defend', mission: 'Die Brücke sichern', passage: bridge, lemma: 'dēfendere', target: 'Pontem ab hostibus dēfendunt.', meanings: ['sie verteidigen die Brücke gegen die Feinde', 'sie verteidigen die Brücke vor den Feinden', 'sie schützen die Brücke vor den Feinden'], explanation: 'Bei dēfendere bezeichnet ab mit Ablativ hier die Gegner, vor denen etwas verteidigt wird.' },
-  { id: 'peace-ask', mission: 'Eine Friedensgesandtschaft', passage: peace, lemma: 'petere', target: 'pācem petunt', meanings: ['sie bitten um Frieden', 'sie verlangen Frieden', 'sie ersuchen um Frieden'], explanation: 'Mit pācem bedeutet petere hier um Frieden bitten oder Frieden verlangen; angreifen passt nicht.' },
-  { id: 'peace-plan', mission: 'Eine Friedensgesandtschaft', passage: peace, lemma: 'cōnsilium', target: 'cōnsilium capit', meanings: ['er fasst einen Plan', 'er fasst einen Beschluss', 'er trifft eine Entscheidung'], explanation: 'Die Verbindung cōnsilium capere bedeutet einen Plan oder Beschluss fassen. Beratung nehmen wäre hier unpassend.' },
-  { id: 'peace-answer', mission: 'Eine Friedensgesandtschaft', passage: peace, lemma: 'respondēre', target: 'lēgātīs respondet', meanings: ['er antwortet den Gesandten', 'er antwortet den Abgesandten', 'antwortet den Gesandten'], explanation: 'lēgātīs ist Dativ: respondēre bezeichnet hier jemandem antworten.', construction: { question: 'In welchem Kasus steht die Person, der geantwortet wird?', answers: ['Dativ'] } },
-  { id: 'trust-with', mission: 'Vertrauen in der Stadt', passage: trust, lemma: 'cum', partOfSpeech: 'Präposition', target: 'cum amīcīs', meanings: ['mit Freunden', 'mit den Freunden', 'zusammen mit Freunden', 'zusammen mit den Freunden'], explanation: 'Vor amīcīs steht cum als Präposition mit Ablativ. Die Konjunktionsbedeutungen weil oder obwohl passen hier nicht.', construction: { question: 'Welchen Kasus verlangt cum als Präposition?', answers: ['Ablativ'] } },
-  { id: 'trust-place', mission: 'Vertrauen in der Stadt', passage: trust, lemma: 'in', target: 'in urbe', meanings: ['in der Stadt', 'innerhalb der Stadt'], explanation: 'manēre bezeichnet das Bleiben an einem Ort. Deshalb steht in mit Ablativ, nicht mit Richtungsakkusativ.', construction: { question: 'Welcher Kasus steht hier nach in?', answers: ['Ablativ'] } },
-  { id: 'trust-believe', mission: 'Vertrauen in der Stadt', passage: trust, lemma: 'crēdere', target: 'amīcīs crēdit', meanings: ['er glaubt den Freunden', 'er vertraut den Freunden', 'er glaubt seinen Freunden', 'er vertraut seinen Freunden'], explanation: 'crēdere mit einer Person im Dativ bedeutet jemandem glauben oder vertrauen.', construction: { question: 'Welchen Kasus hat amīcīs hier?', answers: ['Dativ'] } },
-  { id: 'debate-speak', mission: 'Eine Debatte im Senat', passage: debate, lemma: 'dīcere', target: 'dē lēge dīcit', meanings: ['er spricht über das Gesetz', 'er redet über das Gesetz'], explanation: 'dē mit Ablativ gibt das Thema an. dīcere bedeutet hier über etwas sprechen.' },
-  { id: 'debate-trust', mission: 'Eine Debatte im Senat', passage: debate, lemma: 'fidēs', target: 'fidem servant', meanings: ['sie halten die Treue', 'sie bewahren die Treue', 'sie halten ihr Wort', 'sie halten Wort'], explanation: 'fidem servāre bedeutet Treue oder sein Wort halten. fidēs besitzt mehrere kontextabhängige Bedeutungen.' },
-  { id: 'debate-law', mission: 'Eine Debatte im Senat', passage: debate, lemma: 'lēx', target: 'novam lēgem', meanings: ['ein neues Gesetz', 'das neue Gesetz'], explanation: 'Im politischen Zusammenhang ist lēx hier ein Gesetz. Die ebenfalls hinterlegte Bedeutung Bedingung passt nicht.' },
-];
-
 export interface HuntCase {
   id: string; lemma: string; claim: string; verdict: 'Fehler enthalten' | 'Alles richtig';
   partOfSpeech?: string;

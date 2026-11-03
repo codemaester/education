@@ -1,9 +1,9 @@
 import { shuffle, vocabulary, type TrainerWord } from './latin.ts';
-import { detectiveCases, missionCases, huntCases, thematicGroups, wordFamilies, formationGroups } from '../content/latin/activities.ts';
-import { confusableLemmas, detectiveDistractors, missionDistractors, overlappingMeanings } from '../content/latin/choice-distractors.ts';
+import { detectiveCases, huntCases, thematicGroups, wordFamilies, formationGroups } from '../content/latin/activities.ts';
+import { confusableLemmas, detectiveDistractors, overlappingMeanings } from '../content/latin/choice-distractors.ts';
 import lessonSource from '../content/latin/lessons.json' with { type: 'json' };
 
-export type Mode = 'matching' | 'workshop' | 'detective' | 'mission' | 'hunt' | 'parcours';
+export type Mode = 'matching' | 'workshop' | 'detective' | 'flashcards' | 'hunt' | 'parcours';
 export type AnswerFormat = 'input' | 'selection';
 export type Dimension = 'meaning' | 'forms' | 'grammar' | 'context';
 export const modes: { id: Mode; label: string; description: string; details: string[] }[] = [
@@ -22,10 +22,10 @@ export const modes: { id: Mode; label: string; description: string; details: str
     'Du kannst selbst eingeben oder auswählen: zwölf mögliche Infinitive und jeweils zehn Optionen für Übersetzung und Stammformen. Ähnliche Stämme sowie Unterschiede in Person, Tempus und Aktiv oder Passiv verlangen genaues Hinsehen. Hinweise lassen sich aufdecken.',
     'Die Rückmeldung erklärt, wie die Form zur Stammformenreihe gehört und welche Bedeutung im Satz passt. So übst du das Wiedererkennen der Vokabeln, die dir in der Lektüre begegnen.',
   ] },
-  { id: 'mission', label: 'Bedeutungs-Mission', description: 'Erschließe passende Bedeutungen und Konstruktionen in kurzen lateinischen Texten.', details: [
-    'Kurze lateinische Übungstexte führen dich zum Brückenbau, zu einer Friedensgesandtschaft oder in eine Senatsdebatte. Übersetze jeweils die hervorgehobene Wortgruppe so, dass sie zum Zusammenhang passt.',
-    'Bei passenden Aufgaben bestimmst du zusätzlich den verlangten Kasus oder ergänzt einen Perfektstamm. Entscheidend ist die Bedeutung im Text: Nicht jede Wörterbuchbedeutung passt zu jeder Verwendung.',
-    'Du kannst selbst übersetzen oder aus zehn Vorschlägen auswählen. Nicht passende Wortbedeutungen und veränderte Bezüge fordern genaues Lesen. Die Auflösung erklärt die Textsignale; beim Eingeben kannst du unbekannte Formulierungen selbst bewerten.',
+  { id: 'flashcards', label: 'Vokabelkarten', description: 'Dreh die Karte um, prüfe dein Wissen und wiederhole, was noch nicht sitzt.', details: [
+    'Auf der Vorderseite steht eine lateinische Vokabel. Überlege dir die deutsche Bedeutung und die Stammformen, bevor du die Karte umdrehst.',
+    'Auf der Rückseite findest du alle deutschen Bedeutungen und die hinterlegten lateinischen Stammformen oder Zusatzangaben. Entscheide selbst: „Richtig gewusst“ oder „Noch üben“.',
+    'Richtig gewusste Karten legst du ab. Alle anderen kommen in der nächsten Runde erneut dran. Du bist fertig, sobald du jede Karte einmal als richtig bewertet hast – ohne Zeitlimit.',
   ] },
   { id: 'hunt', label: 'Fehlerjagd und Verwechslungsduell', description: 'Entdecke Verwechslungen bei Formen und Bedeutungen. Danach prüfst du dein Wissen erneut.', details: [
     'Prüfe eine Formenreihe oder eine Aussage zu Bedeutung, Genus oder Kasus. Sie kann einen Fehler enthalten oder vollständig richtig sein. Entscheide dich und gib die passende Angabe an.',
@@ -44,8 +44,8 @@ export interface LearningField {
   dimension: Dimension; skill: string; choices?: string[];
 }
 export interface Exercise {
-  id: string; wordId: string; mode: Exclude<Mode, 'matching'>; title: string; prompt: string;
-  context?: string; target?: string; explanation: string; hints: string[]; fields: LearningField[];
+  id: string; wordId: string; mode: Exclude<Mode, 'matching' | 'flashcards'>; title: string; prompt: string;
+  context?: string; explanation: string; hints: string[]; fields: LearningField[];
   provided?: string[]; tiles?: string[]; retry?: boolean; answerFormat?: AnswerFormat;
 }
 export interface SkillProgress { attempts: number; correct: number; streak: number; lastReviewed: number; nextDue: number; }
@@ -124,7 +124,6 @@ const infinitive = (w: TrainerWord) => w.partsOfSpeech.includes('Verb') && (/(?:
 export function eligibleForMode(word: TrainerWord, mode: Mode): boolean {
   if (mode === 'workshop') return infinitive(word) && formFields(word).length > 0;
   if (mode === 'detective') return word.partsOfSpeech.includes('Verb') && detectiveCases.some(c => c.lemma === word.latin);
-  if (mode === 'mission') return missionCases.some(c => c.lemma === word.latin && (!c.partOfSpeech || word.partsOfSpeech.includes(c.partOfSpeech)));
   if (mode === 'hunt') return huntCases.some(c => c.lemma === word.latin && (!c.partOfSpeech || word.partsOfSpeech.includes(c.partOfSpeech)));
   return true;
 }
@@ -223,7 +222,7 @@ function recallExercise(word: TrainerWord, mode: Exercise['mode'], id: string, t
     hints: [word.partsOfSpeech.join(' · '), ...word.usages.flatMap(u => u.hinweis ? [u.hinweis] : [])],
     fields: [meaningField(word), ...(grammar ? additionalFields(word) : [])] };
 }
-function buildInputExercises(mode: Exclude<Mode, 'matching'>, pool: readonly TrainerWord[], total: number, support: boolean, random: () => number): Exercise[] {
+function buildInputExercises(mode: Exclude<Mode, 'matching' | 'flashcards'>, pool: readonly TrainerWord[], total: number, support: boolean, random: () => number): Exercise[] {
   const available = pool.filter(w => eligibleForMode(w, mode));
   if (!Number.isInteger(total) || total < 1 || total > available.length) throw new Error(`Wähle 1 bis ${available.length} Wörter für diesen Modus und dieses Paket.`);
   const chosen = shuffle(available, random).slice(0, total);
@@ -239,13 +238,6 @@ function buildInputExercises(mode: Exclude<Mode, 'matching'>, pool: readonly Tra
     });
     return [...first, ...second, ...third];
   }
-  if (mode === 'mission') return missionCases.filter(c => chosen.some(w => w.latin === c.lemma && (!c.partOfSpeech || w.partsOfSpeech.includes(c.partOfSpeech)))).map(c => {
-    const word = chosen.find(w => w.latin === c.lemma)!;
-    const fields: LearningField[] = [{ key: 'context', label: `Übersetze „${c.target}“ ins Deutsche.`, answers: c.meanings, kind: 'german', dimension: 'context', skill: `context_${c.id.replaceAll('-', '_')}` }];
-    if (c.construction) fields.push({ key: 'construction', label: c.construction.question, answers: c.construction.answers, kind: 'choice', dimension: 'grammar', skill: `construction_${c.id.replaceAll('-', '_')}`, choices: ['Akkusativ', 'Dativ', 'Ablativ'] });
-    fields.push(...formFields(word).filter(f => f.key === 'perfekt_1sg'));
-    return { id: c.id, wordId: word.id, mode, title: c.mission, prompt: c.target, context: c.passage, target: c.target, explanation: c.explanation, hints: ['Achte auf die Wörter vor und nach dem Zielwort.'], fields };
-  });
   return chosen.flatMap(word => {
     if (mode === 'workshop') {
       const all = formFields(word);
@@ -293,8 +285,7 @@ function selectionExercise(exercise: Exercise, random: () => number): Exercise {
     const accepted = new Set(field.answers.map(key));
     let candidates: string[];
     if (field.dimension === 'context') {
-      candidates = exercise.mode === 'detective' ? detectiveDistractors[word.latin] ?? []
-        : missionDistractors[exercise.id.replace(/:retry$/, '')] ?? [];
+      candidates = detectiveDistractors[word.latin] ?? [];
     } else {
       // Meanings that are shared with a source entry exclude all its synonyms.
       // A different lemma alone does not make its translation a wrong answer.
@@ -342,15 +333,14 @@ function selectionExercise(exercise: Exercise, random: () => number): Exercise {
     // Keep the closest confusions, then vary the remaining plausible options.
     const distractors = [...distinct.slice(0, 4), ...shuffle(distinct.slice(4, 32), random)]
       .slice(0, count - 1);
-    const label = field.key === 'context' ? `Welche Übersetzung passt zu „${exercise.target}“?`
-      : field.label.replace(/^Nenne /, 'Wähle ').replace(/ \(mit Komma getrennt\)/, '');
+    const label = field.label.replace(/^Nenne /, 'Wähle ').replace(/ \(mit Komma getrennt\)/, '');
     return { ...field, label, choices: shuffle([field.answers[0], ...distractors], random) };
   });
   const title = exercise.title === 'Verwechslungsduell · Jetzt frei abrufen' ? 'Verwechslungsduell · Die passende Angabe wählen' : exercise.title;
   return { ...exercise, answerFormat: 'selection', title, tiles: undefined, fields };
 }
 
-export function buildExercises(mode: Exclude<Mode, 'matching'>, pool: readonly TrainerWord[], total: number, support = false,
+export function buildExercises(mode: Exclude<Mode, 'matching' | 'flashcards'>, pool: readonly TrainerWord[], total: number, support = false,
   random: () => number = Math.random, answerFormat: AnswerFormat = 'input'): Exercise[] {
   const exercises = buildInputExercises(mode, pool, total, support && answerFormat === 'input', random);
   return answerFormat === 'selection' ? exercises.map(exercise => selectionExercise(exercise, random)) : exercises;

@@ -16,7 +16,7 @@ export async function testLatinSelection(browser, origin, screenshots) {
     await page.goto(origin + '/sprachen/latein/vokabeltrainer/');
     await page.evaluate(() => document.fonts.ready);
     const root = page.locator('[data-latin-trainer]');
-    for (const mode of ['workshop', 'detective', 'mission', 'hunt', 'parcours']) {
+    for (const mode of ['workshop', 'detective', 'hunt', 'parcours']) {
       await root.locator(`.latin-mode-tile:has(input[value="${mode}"])`).click();
       if (mode === 'workshop') assert.equal(await root.locator('#answer-format').inputValue(), 'input', 'typing remains the default');
       await root.locator('#answer-format').selectOption('selection');
@@ -111,6 +111,6 @@ export async function testLatinSelection(browser, origin, screenshots) {
     assert.ok(await root.locator('[data-answer-fields] textarea').isVisible(), 'returning to typing restores free German answers');
     assert.deepEqual(errors, []);
     await context.close();
-    console.log(`Latin selection ${width}px: all five variants, keyboard/touch, grading, bounded retries, supported progress and restart passed`);
+    console.log(`Latin selection ${width}px: all four variants, keyboard/touch, grading, bounded retries, supported progress and restart passed`);
   }
 }

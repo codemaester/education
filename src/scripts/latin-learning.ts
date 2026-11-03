@@ -1,3 +1,4 @@
+import { initFlashcards } from './latin-flashcards';
 import { vocabulary, type TrainerWord } from '../data/latin';
 import { buildExercises, checkAnswer, decodeProgress, defaultFilters, dimensions, filterWords,
   PROGRESS_KEY, progressSummary, recordProgress, retryExercise, wordById, wordTypesForMode,
@@ -42,7 +43,11 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   let activeLatinInput: HTMLInputElement | null = null;
   let totals: Record<Dimension, { correct: number; total: number }>;
   let mistakes: Set<string>;
-  let running: { mode: Exclude<Mode, 'matching'>; pool: TrainerWord[]; total: number; support: boolean; answerFormat: AnswerFormat } | null = null;
+  let running: { mode: Exclude<Mode, 'matching' | 'flashcards'>; pool: TrainerWord[]; total: number; support: boolean; answerFormat: AnswerFormat } | null = null;
+
+  const flashcards = initFlashcards(root, edit, (id, correct) => {
+    progress = recordProgress(progress, id, 'meaning', correct); save();
+  });
 
   const mode = () => selectedModeInput().value as Mode;
   const filters = (): Filters => ({ packageId: packInput.value, partOfSpeech: posInput.value, lesson: null, weakness: weaknessInput.value });
@@ -171,8 +176,8 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     totalInput.max = String(count);
     if (clamp) totalInput.value = String(Math.max(1, Math.min(Number(totalInput.value) || 12, count)));
     el('[data-matching-settings]').hidden = mode() !== 'matching';
-    el('[data-answer-format-settings]').hidden = mode() === 'matching';
-    answerFormatInput.disabled = mode() === 'matching';
+    el('[data-answer-format-settings]').hidden = ['matching', 'flashcards'].includes(mode());
+    answerFormatInput.disabled = ['matching', 'flashcards'].includes(mode());
     el('[data-workshop-settings]').hidden = mode() !== 'workshop' || answerFormatInput.value === 'selection';
     supportInput.disabled = mode() !== 'workshop' || answerFormatInput.value === 'selection';
     el('[data-pool-size]').dataset.empty = String(!count);
@@ -387,6 +392,12 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   next.addEventListener('click', () => { if (!committed) return; index++; if (index === queue.length) finish(); else render(); });
   function start(selectedMode: Exclude<Mode, 'matching'>, selectedPool: TrainerWord[], total: number, support: boolean,
     answerFormat = answerFormatInput.value as AnswerFormat): void {
+    flashcards.stop();
+    if (selectedMode === 'flashcards') {
+      el<HTMLFieldSetElement>('[data-settings]').disabled = true; el('[data-config]').hidden = true;
+      el('[data-result]').hidden = true; el('[data-workspace]').hidden = true; summary.hidden = true; activity.hidden = true;
+      flashcards.start(selectedPool, total); return;
+    }
     running = { mode: selectedMode, pool: selectedPool, total, support, answerFormat };
     queue = buildExercises(selectedMode, selectedPool, total, support, Math.random, answerFormat); index = 0;
     totals = { meaning: { correct: 0, total: 0 }, forms: { correct: 0, total: 0 }, grammar: { correct: 0, total: 0 }, context: { correct: 0, total: 0 } }; mistakes = new Set();
@@ -407,7 +418,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   refresh(); showProgress();
   return {
     mode, pool, ready, focusSelection, support: () => supportInput.checked, start,
-    stop: () => { activity.hidden = true; summary.hidden = true; refresh(); },
+    stop: () => { flashcards.stop(); activity.hidden = true; summary.hidden = true; refresh(); },
     recordMatching: (id: string, correct: boolean) => { progress = recordProgress(progress, id, 'meaning', correct, Date.now(), true); save(); },
   };
 }

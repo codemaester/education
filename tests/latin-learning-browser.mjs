@@ -8,7 +8,7 @@ const route = '/sprachen/latein/vokabeltrainer/';
 const stripMacrons = text => text.normalize('NFD').replace(/\u0304/g, '').normalize('NFC');
 const generalWordTypes = ['Verb', 'Substantiv', 'Adjektiv', 'Pronomen', 'Adverb', 'Präposition', 'Konjunktion'];
 const wordTypesByMode = { matching: generalWordTypes, workshop: ['Verb'], detective: ['Verb'],
-  mission: ['Verb', 'Substantiv', 'Präposition'], hunt: ['Verb', 'Substantiv', 'Adjektiv', 'Präposition'], parcours: generalWordTypes };
+  flashcards: generalWordTypes, hunt: ['Verb', 'Substantiv', 'Adjektiv', 'Präposition'], parcours: generalWordTypes };
 
 export async function testLatinLearning(browser, origin, screenshots) {
   const capture = screenshots || '.impeccable/review';
@@ -93,7 +93,7 @@ export async function testLatinLearning(browser, origin, screenshots) {
     assert.equal(await root.locator('#learning-weakness').inputValue(), '');
     await root.locator('#word-type').selectOption('Substantiv');
 
-    for (const mode of ['workshop', 'detective', 'mission', 'hunt', 'parcours']) {
+    for (const mode of ['workshop', 'detective', 'hunt', 'parcours']) {
       await root.locator('[data-change-mode]').click();
       assert.equal(await root.locator('.latin-mode-tile:visible').count(), 6);
       assert.ok(await root.locator('[data-training-options]').isHidden());
@@ -184,7 +184,7 @@ export async function testLatinLearning(browser, origin, screenshots) {
     // choices survive. This prevents invisible filters from emptying a task bank.
     await root.locator('#word-type').selectOption('Pronomen');
     await root.locator('[data-change-mode]').click();
-    await root.locator('.latin-mode-tile:has(input[value="mission"])').click();
+    await root.locator('.latin-mode-tile:has(input[value="hunt"])').click();
     assert.equal(await root.locator('#word-type').inputValue(), '');
     await root.locator('#word-type').selectOption('Substantiv');
     await root.locator('[data-change-mode]').click();
@@ -204,7 +204,7 @@ export async function testLatinLearning(browser, origin, screenshots) {
     assert.equal(await page.evaluate(key => localStorage.getItem(key), PROGRESS_KEY), null);
     assert.deepEqual(errors, [], `${width}px: advanced trainer browser errors`);
     await context.close();
-    console.log(`Latin advanced ${width}px: five modes, filters, tiles, retries, self-assessment, independent progress, reload and reset passed`);
+    console.log(`Latin advanced ${width}px: four exercise modes, filters, tiles, retries, self-assessment, independent progress, reload and reset passed`);
   }
   for (const problem of ['blocked', 'corrupt']) {
     const page = await browser.newPage();
@@ -257,7 +257,7 @@ async function testModeTransition(browser, origin) {
     // cannot reveal configuration for an abandoned selection.
     const interrupted = await root.evaluate(node => {
       node.querySelector('[data-change-mode]').click();
-      node.querySelector('.latin-mode-tile:has(input[value="mission"])').click();
+      node.querySelector('.latin-mode-tile:has(input[value="hunt"])').click();
       const old = node.getAnimations({ subtree: true });
       old.forEach(animation => animation.pause());
       node.querySelector('[data-change-mode]').click();

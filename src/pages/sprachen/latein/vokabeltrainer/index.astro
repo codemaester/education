@@ -7,12 +7,12 @@ import { Image } from 'astro:assets';
 import matchingArt from '../../../../assets/latin-vocabulary-painted.png';
 import workshopArt from '../../../../assets/latin-mode-workshop.png';
 import detectiveArt from '../../../../assets/latin-mode-detective.png';
-import missionArt from '../../../../assets/latin-mode-mission.png';
+import flashcardsArt from '../../../../assets/latin-mode-flashcards.svg';
 import huntArt from '../../../../assets/latin-mode-hunt.png';
 import parcoursArt from '../../../../assets/latin-mode-parcours.png';
 import '../../../../styles/latin.css';
 const baseUrl = import.meta.env.BASE_URL;
-const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detectiveArt, mission: missionArt, hunt: huntArt, parcours: parcoursArt };
+const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detectiveArt, flashcards: flashcardsArt, hunt: huntArt, parcours: parcoursArt };
 ---
 <BaseLayout title="Latein-Vokabeltrainer" description="Latein für Fortgeschrittene: Bedeutungen, Stammformen und Wörter im Kontext in sechs Trainingsmodi üben." pageClass="latin-page">
   <div class="page-shell latin-shell">
@@ -31,7 +31,7 @@ const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detec
               {modes.map(mode => <label class="latin-mode-tile">
                 <input type="radio" name="trainingMode" id={`training-mode-${mode.id}`} value={mode.id} aria-labelledby={`mode-title-${mode.id}`} aria-describedby={`mode-description-${mode.id}`} />
                 <span class="latin-mode-content">
-                  <Image class="latin-mode-image" src={modeArt[mode.id]} alt="" widths={[320, 640, 1024]} sizes="(max-width: 600px) 100vw, 50vw" format="webp" quality={85} loading={mode.id === 'matching' ? 'eager' : 'lazy'} />
+                  <Image class="latin-mode-image" src={modeArt[mode.id]} alt="" widths={[320, 640, 1024]} sizes="(max-width: 600px) 100vw, 50vw" format={mode.id === 'flashcards' ? 'svg' : 'webp'} quality={85} loading={mode.id === 'matching' ? 'eager' : 'lazy'} />
                   <span class="latin-mode-copy"><span class="latin-mode-title" id={`mode-title-${mode.id}`} tabindex="-1" role="heading" aria-level="3">{mode.label}</span><span class="latin-mode-description" id={`mode-description-${mode.id}`}>{mode.description}</span><span class="latin-mode-details" id={`mode-details-${mode.id}`} hidden>{mode.details.map(paragraph => <span>{paragraph}</span>)}</span></span>
                 </span>
               </label>)}
@@ -62,6 +62,24 @@ const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detec
         <p id="config-error" class="latin-error" role="alert" hidden></p>
       </form>
       <noscript><p>Für das Vokabeltraining brauchst du JavaScript. Aktiviere es in deinem Browser und lade die Seite erneut.</p></noscript>
+      <section data-flashcards hidden aria-labelledby="flashcards-title">
+        <div class="latin-progress"><div><h3 id="flashcards-title" tabindex="-1">Vokabelkarten</h3><p data-flashcards-count></p></div><button class="button button-secondary" type="button" data-flashcards-abort>Training abbrechen</button></div>
+        <progress data-flashcards-progress value="0" max="1" aria-label="Richtig gewusste Karten"></progress>
+        <div data-flashcards-play>
+          <p class="latin-instruction" id="flashcards-help">Erinnere dich an Bedeutung und Stammformen. Dreh die Karte um und vergleiche deine Antwort.</p>
+          <div class="latin-flashcard-stage">
+            <button type="button" class="latin-flashcard" data-flashcard aria-labelledby="flashcard-front" aria-pressed="false" aria-describedby="flashcards-help">
+              <span class="latin-flashcard-inner">
+                <span class="latin-flashcard-face latin-flashcard-front" data-flashcard-front id="flashcard-front"><span class="latin-flashcard-label">Latein</span><span class="latin-flashcard-word" data-flashcard-word lang="la"></span><span class="latin-flashcard-cue">Zum Umdrehen anklicken ↻</span></span>
+                <span class="latin-flashcard-face latin-flashcard-back" data-flashcard-back id="flashcard-back" aria-hidden="true"><span class="latin-flashcard-label">Deutsch &amp; Stammformen</span><span class="latin-flashcard-meaning" data-flashcard-meaning></span><span class="latin-flashcard-forms" data-flashcard-forms></span><span class="latin-flashcard-cue">Gewusst? Bewerte deine Antwort unten.</span></span>
+              </span>
+            </button>
+          </div>
+          <div class="latin-actions latin-flashcard-ratings" data-flashcard-ratings hidden><button class="button button-secondary" type="button" data-flashcard-wrong>Noch üben</button><button class="button" type="button" data-flashcard-correct>Richtig gewusst</button></div>
+        </div>
+        <p data-flashcards-status role="status" aria-live="polite" aria-atomic="true"></p>
+        <div class="latin-result" data-flashcards-result hidden><h3 data-flashcards-result-title tabindex="-1">Alle Karten geschafft.</h3><p data-flashcards-result-text></p><p>Wiederhole die Wörter später noch einmal, damit sie im Gedächtnis bleiben.</p><div class="latin-actions"><button class="button" type="button" data-flashcards-restart>Erneut trainieren</button><button class="button button-secondary" type="button" data-flashcards-edit>Einstellungen ändern</button></div></div>
+      </section>
       <section class="latin-activity" data-activity hidden aria-labelledby="activity-title">
         <div class="latin-progress"><div><h3 id="activity-title" data-activity-title tabindex="-1"></h3><p data-activity-count></p></div><button class="button button-secondary" type="button" data-activity-abort>Training abbrechen</button></div>
         <progress data-activity-progress value="0" max="1" aria-label="Bearbeitete Aufgaben"></progress>
