@@ -22,7 +22,7 @@ export async function testLatinFlashcards(browser, origin, screenshots) {
       const word = vocabulary.find(w => w.latin === latin);
       assert.ok(word);
       assert.equal(await root.locator('[data-flashcard-back]').getAttribute('aria-hidden'), 'true');
-      assert.ok(await root.locator('[data-flashcard-ratings]').isHidden());
+      assert.ok(await root.locator('[data-flashcard-ratings]').isVisible());
       const card = root.locator('[data-flashcard]');
       assert.equal(await card.getAttribute('aria-labelledby'), 'flashcard-front');
       if (width !== 390) assert.equal(await card.locator('.latin-flashcard-inner').evaluate(el => getComputedStyle(el).transitionDuration), '0s');
@@ -34,7 +34,7 @@ export async function testLatinFlashcards(browser, origin, screenshots) {
       for (const detail of flashcardDetails(word)) assert.ok((await root.locator('[data-flashcard-forms]').textContent()).includes(detail.value));
       if (attempts === 0) {
         await page.keyboard.press('Enter');
-        assert.ok(await root.locator('[data-flashcard-ratings]').isHidden());
+        assert.ok(await root.locator('[data-flashcard-ratings]').isVisible());
         await page.keyboard.press('Enter');
         if (width === 390) {
           assert.notEqual(await card.locator('.latin-flashcard-inner').evaluate(el => getComputedStyle(el).transitionDuration), '0s');
@@ -53,6 +53,11 @@ export async function testLatinFlashcards(browser, origin, screenshots) {
     assert.match(await root.locator('[data-flashcards-result-text]').textContent(), /3 Karten in 3 Runden/);
     await root.locator('[data-flashcards-restart]').click();
     assert.equal(await root.locator('[data-flashcards-progress]').getAttribute('value'), '0');
+    await root.locator('[data-flashcard-correct]').click();
+    assert.equal(await root.locator('[data-flashcards-progress]').getAttribute('value'), '1');
+    await root.locator('[data-flashcard-wrong]').click();
+    assert.equal(await root.locator('[data-flashcards-progress]').getAttribute('value'), '1');
+    assert.equal(await root.locator('[data-flashcards-status]').count(), 0);
     await root.locator('[data-flashcards-abort]').click();
     assert.ok(await root.locator('[data-config]').isVisible());
     await root.locator('[data-change-mode]').click();

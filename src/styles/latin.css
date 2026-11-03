@@ -155,7 +155,6 @@
 .latin-flashcard-forms > span { display: grid; gap: .2rem; }
 .latin-flashcard-forms small { font-family: var(--font-body); font-size: .7rem; color: #685d4d; }
 .latin-flashcard-ratings { justify-content: center; }
-[data-flashcards-status] { min-height: 1.5em; font-size: .875rem; color: var(--color-muted); }
-@media (prefers-reduced-motion: no-preference) { .latin-flashcard-inner { transition: transform 550ms cubic-bezier(.2, .7, .2, 1); } }
+@media (prefers-reduced-motion: no-preference) { .latin-flashcard-inner { transition: transform 1000ms cubic-bezier(.45, 0, .55, 1); will-change: transform; } }
 .latin-flashcard.is-resetting .latin-flashcard-inner { transition: none; }
 @media (max-width: 440px) { .latin-flashcard-face { padding: 1.25rem .9rem; } .latin-flashcard-ratings > button { flex: 1 1 auto; } }

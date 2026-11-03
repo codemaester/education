@@ -63,7 +63,7 @@ const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detec
       </form>
       <noscript><p>Für das Vokabeltraining brauchst du JavaScript. Aktiviere es in deinem Browser und lade die Seite erneut.</p></noscript>
       <section data-flashcards hidden aria-labelledby="flashcards-title">
-        <div class="latin-progress"><div><h3 id="flashcards-title" tabindex="-1">Vokabelkarten</h3><p data-flashcards-count></p></div><button class="button button-secondary" type="button" data-flashcards-abort>Training abbrechen</button></div>
+        <div class="latin-progress"><div><h3 id="flashcards-title" tabindex="-1">Vokabelkarten</h3><p data-flashcards-count role="status" aria-live="polite" aria-atomic="true"></p></div><button class="button button-secondary" type="button" data-flashcards-abort>Training abbrechen</button></div>
         <progress data-flashcards-progress value="0" max="1" aria-label="Richtig gewusste Karten"></progress>
         <div data-flashcards-play>
           <p class="latin-instruction" id="flashcards-help">Erinnere dich an Bedeutung und Stammformen. Dreh die Karte um und vergleiche deine Antwort.</p>
@@ -75,9 +75,8 @@ const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detec
               </span>
             </button>
           </div>
-          <div class="latin-actions latin-flashcard-ratings" data-flashcard-ratings hidden><button class="button button-secondary" type="button" data-flashcard-wrong>Noch üben</button><button class="button" type="button" data-flashcard-correct>Richtig gewusst</button></div>
+          <div class="latin-actions latin-flashcard-ratings" data-flashcard-ratings><button class="button button-secondary" type="button" data-flashcard-wrong>Noch üben</button><button class="button" type="button" data-flashcard-correct>Richtig gewusst</button></div>
         </div>
-        <p data-flashcards-status role="status" aria-live="polite" aria-atomic="true"></p>
         <div class="latin-result" data-flashcards-result hidden><h3 data-flashcards-result-title tabindex="-1">Alle Karten geschafft.</h3><p data-flashcards-result-text></p><p>Wiederhole die Wörter später noch einmal, damit sie im Gedächtnis bleiben.</p><div class="latin-actions"><button class="button" type="button" data-flashcards-restart>Erneut trainieren</button><button class="button button-secondary" type="button" data-flashcards-edit>Einstellungen ändern</button></div></div>
       </section>
       <section class="latin-activity" data-activity hidden aria-labelledby="activity-title">

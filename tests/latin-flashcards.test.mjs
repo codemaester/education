@@ -3,11 +3,12 @@ import { test } from 'node:test';
 import { vocabulary } from '../src/data/latin.ts';
 import { createFlashcards, flipFlashcard, rateFlashcard, flashcardDetails } from '../src/data/latin-flashcards.ts';
 const word = latin => vocabulary.find(w => w.latin === latin);
-test('cards require reveal and repeat only failures across as many rounds as needed', () => {
+test('cards allow self-assessment on either side and repeat only failures across as many rounds as needed', () => {
   const pool = [word('ferre'), word('urbs'), word('ad')];
   let state = createFlashcards(pool, 3, () => .99);
   assert.deepEqual(state.cards, pool);
-  assert.equal(rateFlashcard(state, true), state);
+  assert.equal(rateFlashcard(state, true).solved, 1);
+  assert.equal(state.solved, 0);
   state = flipFlashcard(flipFlashcard(state));
   assert.equal(state.flipped, false);
   state = rateFlashcard(flipFlashcard(state), false);
@@ -34,9 +35,9 @@ test('one-card decks repeat and complete, with validated counts and a copied shu
   assert.equal(new Set(selection.cards.map(w => w.id)).size, 20);
   assert.deepEqual(vocabulary.map(w => w.id), before);
   let state = createFlashcards([word('esse')], 1);
-  state = rateFlashcard(flipFlashcard(state), false);
+  state = rateFlashcard(state, false);
   assert.equal(state.round, 2);
-  state = rateFlashcard(flipFlashcard(state), true);
+  state = rateFlashcard(state, true);
   assert.equal(state.solved, state.total);
 });
 test('solutions preserve source forms, variants, deponents and sparse grammar', () => {

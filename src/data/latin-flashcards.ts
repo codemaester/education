@@ -19,7 +19,7 @@ export function flipFlashcard(session: FlashcardSession): FlashcardSession {
   return session.solved === session.total ? session : { ...session, flipped: !session.flipped };
 }
 export function rateFlashcard(session: FlashcardSession, correct: boolean): FlashcardSession {
-  if (!session.flipped || session.solved === session.total) return session;
+  if (session.solved === session.total) return session;
   const pending = correct ? session.pending : [...session.pending, session.cards[session.index]];
   const next = { ...session, pending, index: session.index + 1, solved: session.solved + Number(correct), attempts: session.attempts + 1, flipped: false };
   if (next.index === session.cards.length && pending.length) {

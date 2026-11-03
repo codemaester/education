@@ -5,8 +5,6 @@ export function initFlashcards(root: HTMLElement, edit: () => void, record: (id:
   const el = <T extends HTMLElement>(selector: string) => root.querySelector<T>(selector)!;
   const section = el('[data-flashcards]');
   const card = el<HTMLButtonElement>('[data-flashcard]');
-  const ratings = el('[data-flashcard-ratings]');
-  const status = el('[data-flashcards-status]');
   let state: FlashcardSession | null = null;
   let settings: { pool: TrainerWord[]; total: number } | null = null;
   function render(): void {
@@ -39,7 +37,6 @@ export function initFlashcards(root: HTMLElement, edit: () => void, record: (id:
       const value = document.createElement('span'); value.textContent = detail.value; value.lang = detail.latin ? 'la' : 'de';
       row.append(label, value); return row;
     }));
-    ratings.hidden = true;
     card.focus({ preventScroll: true });
   }
   card.addEventListener('click', () => {
@@ -50,24 +47,20 @@ export function initFlashcards(root: HTMLElement, edit: () => void, record: (id:
     card.setAttribute('aria-labelledby', state.flipped ? 'flashcard-back' : 'flashcard-front');
     el('[data-flashcard-front]').setAttribute('aria-hidden', String(state.flipped));
     el('[data-flashcard-back]').setAttribute('aria-hidden', String(!state.flipped));
-    ratings.hidden = !state.flipped;
   });
   function rate(correct: boolean): void {
-    if (!state?.flipped) return;
+    if (!state || state.solved === state.total) return;
     const previous = state;
     const word = previous.cards[previous.index];
     state = rateFlashcard(previous, correct);
     record(word.id, correct);
     render();
-    status.textContent = state.solved === state.total ? 'Alle Karten einmal richtig gewusst. Training abgeschlossen.'
-      : state.round > previous.round ? `Runde ${previous.round} abgeschlossen. In Runde ${state.round} wiederholst du ${state.cards.length} ${state.cards.length === 1 ? 'Karte' : 'Karten'}.`
-      : correct ? `${word.latin}: geschafft und abgelegt.` : `${word.latin}: für die nächste Runde vorgemerkt.`;
   }
   el('[data-flashcard-correct]').addEventListener('click', () => rate(true));
   el('[data-flashcard-wrong]').addEventListener('click', () => rate(false));
   function start(pool: TrainerWord[], total: number): void {
     settings = { pool, total }; state = createFlashcards(pool, total);
-    section.hidden = false; status.textContent = ''; render();
+    section.hidden = false; render();
   }
   el('[data-flashcards-restart]').addEventListener('click', () => { if (settings) start(settings.pool, settings.total); });
   el('[data-flashcards-abort]').addEventListener('click', edit);
