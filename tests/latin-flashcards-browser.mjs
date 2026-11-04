@@ -12,12 +12,12 @@ export async function testLatinFlashcards(browser, origin, screenshots) {
     await root.locator('.latin-mode-tile:has(input[value="flashcards"])').click();
     await root.locator('[data-training-options]').waitFor({ state: 'visible' });
     assert.ok(await root.locator('[data-answer-format-settings]').isHidden());
-    await root.locator('#total-words').fill('3');
+    await root.locator('#total-words').fill('5');
     await root.getByRole('button', { name: 'Training starten' }).click();
     const firstRound = [], secondRound = [];
     let attempts = 0;
     while (await root.locator('[data-flashcards-result]').isHidden()) {
-      assert.ok(attempts < 10, 'deck must terminate after all cards are correct');
+      assert.ok(attempts < 12, 'deck must terminate after all cards are correct');
       const latin = await root.locator('[data-flashcard-word]').textContent();
       const word = vocabulary.find(w => w.latin === latin);
       assert.ok(word);
@@ -41,16 +41,16 @@ export async function testLatinFlashcards(browser, origin, screenshots) {
         }
         if (screenshots) { await page.waitForTimeout(600); await page.screenshot({ path: `${screenshots}/flashcards-back-${width}.png`, fullPage: true }); }
       }
-      if (attempts < 3) firstRound.push(latin); else if (attempts < 5) secondRound.push(latin);
-      const correct = ![0, 1, 3].includes(attempts);
+      if (attempts < 5) firstRound.push(latin); else if (attempts < 7) secondRound.push(latin);
+      const correct = ![0, 1, 5].includes(attempts);
       await root.locator(correct ? '[data-flashcard-correct]' : '[data-flashcard-wrong]').click();
       attempts++;
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${width}px overflow`);
     }
-    assert.equal(attempts, 6);
+    assert.equal(attempts, 8);
     assert.deepEqual(secondRound, firstRound.slice(0, 2));
-    assert.equal(await root.locator('[data-flashcards-progress]').getAttribute('value'), '3');
-    assert.match(await root.locator('[data-flashcards-result-text]').textContent(), /3 Karten in 3 Runden/);
+    assert.equal(await root.locator('[data-flashcards-progress]').getAttribute('value'), '5');
+    assert.match(await root.locator('[data-flashcards-result-text]').textContent(), /5 Karten in 3 Runden/);
     await root.locator('[data-flashcards-restart]').click();
     assert.equal(await root.locator('[data-flashcards-progress]').getAttribute('value'), '0');
     await root.locator('[data-flashcard-correct]').click();
@@ -60,6 +60,16 @@ export async function testLatinFlashcards(browser, origin, screenshots) {
     assert.equal(await root.locator('[data-flashcards-status]').count(), 0);
     await root.locator('[data-flashcards-abort]').click();
     assert.ok(await root.locator('[data-config]').isVisible());
+    await root.locator('#learning-package').selectOption('confusions');
+    await root.locator('#word-type').selectOption('Adjektiv');
+    assert.equal(await root.locator('#total-words').inputValue(), '5');
+    assert.match(await root.locator('[data-total-help]').textContent(), /nur ein passendes Wort/);
+    await root.getByRole('button', { name: 'Training starten' }).click();
+    assert.equal(await root.locator('[data-flashcards-progress]').getAttribute('max'), '1');
+    await root.locator('[data-flashcard-correct]').click();
+    assert.ok(await root.locator('[data-flashcards-result]').isVisible());
+    await root.locator('[data-flashcards-edit]').click();
+    await root.locator('[data-clear-filters]').click();
     await root.locator('[data-change-mode]').click();
     await root.locator('.latin-mode-tile:has(input[value="workshop"])').click();
     await root.locator('[data-training-options]').waitFor({ state: 'visible' });

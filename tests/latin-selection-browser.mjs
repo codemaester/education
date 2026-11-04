@@ -18,20 +18,19 @@ export async function testLatinSelection(browser, origin, screenshots) {
     const root = page.locator('[data-latin-trainer]');
     for (const mode of ['workshop', 'detective', 'hunt', 'parcours']) {
       await root.locator(`.latin-mode-tile:has(input[value="${mode}"])`).click();
-      if (mode === 'workshop') assert.equal(await root.locator('#answer-format').inputValue(), 'input', 'typing remains the default');
-      await root.locator('#answer-format').selectOption('selection');
-      assert.ok(await root.locator('[data-workshop-settings]').isHidden());
-      await root.locator('#total-words').fill('2');
+      assert.ok(await root.locator('#answer-format').isChecked(), 'predefined answers are the default');
+      assert.equal(await root.locator('#form-support').count(), 0);
+      await root.locator('#total-words').fill('5');
       const seed = 93561;
       const random = rng(seed);
       const pool = filterWords(vocabulary, mode, defaultFilters(), emptyProgress());
-      const expected = buildExercises(mode, pool, 2, false, random, 'selection');
+      const expected = buildExercises(mode, pool, Math.min(5, pool.length), random, 'selection');
       await page.evaluate(seed => { Math.random = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32); }, seed);
       await root.getByRole('button', { name: 'Training starten' }).click();
       let index = 0;
       let retryCount = 0;
       while (await root.locator('[data-activity]').isVisible()) {
-        assert.ok(index < 30, 'even repeated errors must end the session');
+        assert.ok(index < 40, 'even repeated errors must end the session');
         const task = expected[index]; assert.ok(task, `${mode}: expected task ${index}`);
         if (task.retry) retryCount++;
         assert.equal(await root.locator('[data-activity-prompt]').textContent(), task.prompt);
@@ -97,16 +96,16 @@ export async function testLatinSelection(browser, origin, screenshots) {
       await root.locator('[data-activity-restart]').click();
       assert.ok(await root.locator('[data-answer-help]').isVisible(), 'restart retains selection');
       await root.locator('[data-activity-abort]').click();
-      assert.equal(await root.locator('#answer-format').inputValue(), 'selection');
+      assert.ok(await root.locator('#answer-format').isChecked());
       await root.locator('[data-change-mode]').click();
     }
     await root.locator('.latin-mode-tile:has(input[value="matching"])').click();
     assert.ok(await root.locator('[data-answer-format-settings]').isHidden());
     await root.locator('[data-change-mode]').click();
     await root.locator('.latin-mode-tile:has(input[value="workshop"])').click();
-    await root.locator('#answer-format').selectOption('input');
-    assert.ok(await root.locator('#form-support').isVisible());
-    await root.locator('#total-words').fill('1');
+    await root.locator('#answer-format').uncheck();
+    assert.equal(await root.locator('#form-support').count(), 0);
+    await root.locator('#total-words').fill('5');
     await root.getByRole('button', { name: 'Training starten' }).click();
     assert.ok(await root.locator('[data-answer-fields] textarea').isVisible(), 'returning to typing restores free German answers');
     assert.deepEqual(errors, []);

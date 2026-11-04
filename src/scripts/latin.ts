@@ -5,7 +5,7 @@ export function initLatinTrainer(root: HTMLElement): void {
   const element = <T extends HTMLElement>(selector: string) => root.querySelector<T>(selector)!;
   const form = element<HTMLFormElement>('[data-config]');
   const settings = element<HTMLFieldSetElement>('[data-settings]');
-  const roundSize = element<HTMLInputElement>('#round-size');
+  const roundSize = () => root.querySelector<HTMLInputElement>('input[name="roundSize"]:checked')!;
   const total = element<HTMLInputElement>('#total-words');
   const error = element('#config-error');
   const workspace = element('[data-workspace]');
@@ -14,7 +14,7 @@ export function initLatinTrainer(root: HTMLElement): void {
   const next = element<HTMLButtonElement>('[data-next]');
   let state: Session | null = null;
   let incorrect: Record<Side, string | null> = { left: null, right: null };
-  let config: TrainingConfig = { roundSize: 5, total: 20 };
+  let config: TrainingConfig = { roundSize: 5, total: 5 };
   const learning = initLearning(root, edit);
 
   function update(): void {
@@ -98,23 +98,23 @@ export function initLatinTrainer(root: HTMLElement): void {
   form.addEventListener('submit', event => {
     event.preventDefault();
     if (!learning.ready()) return;
-    const proposed = { roundSize: roundSize.valueAsNumber, total: total.valueAsNumber };
     const available = learning.pool().length;
+    const proposed = { roundSize: Number(roundSize().value), total: Math.min(total.valueAsNumber, available) };
     const message = available === 0 ? 'Keine passenden Wörter. Wähle ein anderes Paket oder lockere die Filter.'
       : configError({ ...proposed, roundSize: learning.mode() === 'matching' ? proposed.roundSize : 5 }, available);
     error.hidden = !message;
     error.textContent = message ?? '';
-    roundSize.removeAttribute('aria-invalid');
+    roundSize().removeAttribute('aria-invalid');
     total.removeAttribute('aria-invalid');
     if (message) {
-      const invalid = learning.mode() === 'matching' && configError({ roundSize: proposed.roundSize, total: 1 }, Math.max(1, available)) ? roundSize : total;
+      const invalid = learning.mode() === 'matching' && configError({ roundSize: proposed.roundSize, total: 1 }, Math.max(1, available)) ? roundSize() : total;
       invalid.setAttribute('aria-invalid', 'true');
       invalid.focus();
       return;
     }
     config = proposed;
     const mode = learning.mode();
-    if (mode !== 'matching') { learning.start(mode, learning.pool(), proposed.total, learning.support()); return; }
+    if (mode !== 'matching') { learning.start(mode, learning.pool(), proposed.total); return; }
     start();
   });
   workspace.addEventListener('click', event => {

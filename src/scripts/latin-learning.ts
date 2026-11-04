@@ -19,8 +19,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   const posInput = el<HTMLSelectElement>('#word-type');
   let configuredWordTypeMode: Mode | null = null;
   const weaknessInput = el<HTMLSelectElement>('#learning-weakness');
-  const supportInput = el<HTMLInputElement>('#form-support');
-  const answerFormatInput = el<HTMLSelectElement>('#answer-format');
+  const answerFormatInput = el<HTMLInputElement>('#answer-format');
   const totalInput = el<HTMLInputElement>('#total-words');
   const activity = el('[data-activity]');
   const activityForm = el<HTMLFormElement>('[data-answer-form]');
@@ -40,10 +39,9 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   let hinted = false;
   let selfAssessed = new Set<number>();
   let hintIndex = 0;
-  let activeLatinInput: HTMLInputElement | null = null;
   let totals: Record<Dimension, { correct: number; total: number }>;
   let mistakes: Set<string>;
-  let running: { mode: Exclude<Mode, 'matching' | 'flashcards'>; pool: TrainerWord[]; total: number; support: boolean; answerFormat: AnswerFormat } | null = null;
+  let running: { mode: Exclude<Mode, 'matching' | 'flashcards'>; pool: TrainerWord[]; total: number; answerFormat: AnswerFormat } | null = null;
 
   const flashcards = initFlashcards(root, edit, (id, correct) => {
     progress = recordProgress(progress, id, 'meaning', correct); save();
@@ -84,8 +82,8 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     root.dataset.modeOpening = 'true';
     changeMode.hidden = false;
     el('#mode-choice-help').hidden = true;
-    totalInput.value = input.value === 'matching' ? '20' : input.value === 'workshop' ? '6' : '12';
-    refresh(true);
+    answerFormatInput.checked = true;
+    refresh();
     tile.scrollIntoView({ block: 'start', behavior: 'instant' });
     const reveal = () => {
       if (selectionVersion !== version || !input.checked) return;
@@ -151,7 +149,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     catch { storageAvailable = false; }
     showProgress();
   }
-  function refresh(clamp = false): void {
+  function refresh(): void {
     const wordTypes = wordTypesForMode(mode());
     const fixedWordType = wordTypes.length === 1;
     if (configuredWordTypeMode !== mode()) {
@@ -172,14 +170,17 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     el('[data-pool-size]').textContent = count
       ? `${count} passende Wörter · ${packInput.selectedOptions[0].textContent}`
       : 'Keine passenden Wörter. Wähle ein anderes Paket oder lockere die Filter. Persönliche Fehlerpakete füllen sich erst beim Üben.';
-    el('[data-total-help]').textContent = `1 bis ${count} verschiedene Wörter`;
-    totalInput.max = String(count);
-    if (clamp) totalInput.value = String(Math.max(1, Math.min(Number(totalInput.value) || 12, count)));
+    const requested = totalInput.valueAsNumber;
+    const actual = Math.min(requested, count);
+    el<HTMLOutputElement>('[data-total-output]').value = String(requested);
+    totalInput.setAttribute('aria-valuetext', count && actual < requested ? `${requested} ausgewählt, ${actual} ${actual === 1 ? 'Wort' : 'Wörter'} verfügbar` : `${requested} Wörter`);
+    el('[data-total-help]').textContent = count && actual < requested
+      ? actual === 1 ? 'Dein Lernpaket enthält nur ein passendes Wort. Du übst dieses Wort.'
+        : `Dein Lernpaket enthält nur ${actual} passende Wörter. Du übst alle ${actual}.`
+      : '5 bis 30 Wörter in Fünferschritten';
     el('[data-matching-settings]').hidden = mode() !== 'matching';
     el('[data-answer-format-settings]').hidden = ['matching', 'flashcards'].includes(mode());
     answerFormatInput.disabled = ['matching', 'flashcards'].includes(mode());
-    el('[data-workshop-settings]').hidden = mode() !== 'workshop' || answerFormatInput.value === 'selection';
-    supportInput.disabled = mode() !== 'workshop' || answerFormatInput.value === 'selection';
     el('[data-pool-size]').dataset.empty = String(!count);
     el('#config-error').hidden = true; el('#config-error').textContent = '';
     totalInput.removeAttribute('aria-invalid');
@@ -189,11 +190,11 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     packInput.value = packageId;
     posInput.value = '';
     weaknessInput.value = weakness;
-    totalInput.value = nextMode === 'matching' ? '20' : nextMode === 'workshop' ? '6' : '12';
-    refresh(true);
+    refresh();
     openMode(modeInputs.find(input => input.value === nextMode)!, false);
   }
-  for (const input of [packInput, posInput, weaknessInput]) input.addEventListener('change', () => refresh(true));
+  for (const input of [packInput, posInput, weaknessInput]) input.addEventListener('change', () => refresh());
+  totalInput.addEventListener('input', () => refresh());
   answerFormatInput.addEventListener('change', () => refresh());
   modeInputs.forEach(input => {
     input.addEventListener('change', () => openMode(input));
@@ -201,7 +202,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     input.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); openMode(input); } });
   });
   el('[data-clear-filters]').addEventListener('click', () => {
-    const defaults = defaultFilters(); packInput.value = defaults.packageId; posInput.value = ''; weaknessInput.value = ''; refresh(true);
+    const defaults = defaultFilters(); packInput.value = defaults.packageId; posInput.value = ''; weaknessInput.value = ''; refresh();
   });
   let resetPending = false;
   el('[data-reset-progress]').addEventListener('click', () => {
@@ -210,7 +211,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
       resetPending = true; button.textContent = 'Lernstand wirklich löschen'; el('[data-cancel-reset]').hidden = false; return;
     }
     try { localStorage.removeItem(PROGRESS_KEY); } catch { storageAvailable = false; }
-    progress = decodeProgress(null); resetPending = false; button.textContent = 'Lernstand löschen'; el('[data-cancel-reset]').hidden = true; showProgress(); refresh(true);
+    progress = decodeProgress(null); resetPending = false; button.textContent = 'Lernstand löschen'; el('[data-cancel-reset]').hidden = true; showProgress(); refresh();
   });
   el('[data-cancel-reset]').addEventListener('click', () => {
     resetPending = false; el('[data-reset-progress]').textContent = 'Lernstand löschen'; el('[data-cancel-reset]').hidden = true;
@@ -218,7 +219,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   function current(): Exercise { return queue[index]; }
   function render(): void {
     const exercise = current();
-    statuses = null; committed = false; hinted = false; hintIndex = 0; activeLatinInput = null; selfAssessed = new Set();
+    statuses = null; committed = false; hinted = false; hintIndex = 0; selfAssessed = new Set();
     check.hidden = false; next.hidden = true; report.replaceChildren(); report.hidden = true;
     el('[data-activity-title]').textContent = exercise.title;
     el('[data-activity-count]').textContent = `Aufgabe ${index + 1} von ${queue.length} · ohne Zeitlimit`;
@@ -231,7 +232,6 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     el('[data-answer-help]').hidden = exercise.answerFormat !== 'selection';
     el('[data-activity-hints]').replaceChildren();
     el<HTMLButtonElement>('[data-hint]').disabled = exercise.hints.length === 0;
-    el('[data-tiles]').replaceChildren(); el('[data-tile-target]').textContent = '';
     fields.dataset.answerFormat = exercise.answerFormat ?? 'input';
     fields.replaceChildren(...exercise.fields.map((field, n) => {
       if (exercise.answerFormat === 'selection') {
@@ -265,7 +265,6 @@ export function initLearning(root: HTMLElement, edit: () => void) {
         control.lang = field.kind === 'latin' ? 'la' : 'de'; control.setAttribute('autocapitalize', 'none');
         if (control instanceof HTMLInputElement) {
           control.type = 'text';
-          if (field.kind === 'latin') control.addEventListener('focus', () => { activeLatinInput = control; updateTiles(); });
         } else control.rows = 3;
       } else {
         const placeholder = document.createElement('option'); placeholder.value = ''; placeholder.textContent = 'Bitte wählen';
@@ -275,26 +274,8 @@ export function initLearning(root: HTMLElement, edit: () => void) {
       control.addEventListener('input', () => { if (!statuses) { control.removeAttribute('aria-invalid'); response.textContent = ''; } });
       label.append(text, control, response); return label;
     }));
-    if (exercise.tiles?.length) {
-      activeLatinInput = fields.querySelector<HTMLInputElement>('input[lang="la"]');
-      el('[data-tiles]').append(...exercise.tiles.map(tile => {
-        const button = document.createElement('button'); button.type = 'button'; button.className = 'button button-secondary'; button.textContent = tile;
-        button.setAttribute('aria-pressed', 'false'); button.addEventListener('click', () => {
-          if (!activeLatinInput || statuses) return;
-          activeLatinInput.value = activeLatinInput.value === tile ? '' : tile;
-          hinted = true; updateTiles(); activeLatinInput.focus();
-        }); return button;
-      }));
-      updateTiles();
-    }
     activityForm.reset();
     el('[data-activity-title]').focus();
-  }
-  function updateTiles(): void {
-    if (!current().tiles?.length) return;
-    const field = current().fields.find(f => f.key === activeLatinInput?.name);
-    el('[data-tile-target]').textContent = `Baustein einsetzen für: ${field?.label ?? 'Wähle ein lateinisches Eingabefeld'}. Erneutes Klicken hebt die Auswahl auf.`;
-    el('[data-tiles]').querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(activeLatinInput?.value === button.textContent)));
   }
   function controlAt(n: number): HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement { return el(`#latin-answer-${n}`); }
   function commit(): void {
@@ -341,7 +322,6 @@ export function initLearning(root: HTMLElement, edit: () => void) {
       response.textContent = status === 'correct' ? 'Richtig.' : status === 'review' ? 'Vergleiche deine Formulierung unten mit der Lösung.' : `Noch üben. Lösung: ${field.answers.join(' / ')}`;
     });
     check.hidden = true;
-    el('[data-tiles]').querySelectorAll<HTMLButtonElement>('button').forEach(b => { b.disabled = true; });
     el<HTMLButtonElement>('[data-hint]').disabled = true;
     report.hidden = false;
     const explanation = document.createElement('p'); explanation.textContent = exercise.explanation;
@@ -390,23 +370,23 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     el('[data-activity-result-title]').focus();
   }
   next.addEventListener('click', () => { if (!committed) return; index++; if (index === queue.length) finish(); else render(); });
-  function start(selectedMode: Exclude<Mode, 'matching'>, selectedPool: TrainerWord[], total: number, support: boolean,
-    answerFormat = answerFormatInput.value as AnswerFormat): void {
+  function start(selectedMode: Exclude<Mode, 'matching'>, selectedPool: TrainerWord[], total: number,
+    answerFormat: AnswerFormat = answerFormatInput.checked ? 'selection' : 'input'): void {
     flashcards.stop();
     if (selectedMode === 'flashcards') {
       el<HTMLFieldSetElement>('[data-settings]').disabled = true; el('[data-config]').hidden = true;
       el('[data-result]').hidden = true; el('[data-workspace]').hidden = true; summary.hidden = true; activity.hidden = true;
       flashcards.start(selectedPool, total); return;
     }
-    running = { mode: selectedMode, pool: selectedPool, total, support, answerFormat };
-    queue = buildExercises(selectedMode, selectedPool, total, support, Math.random, answerFormat); index = 0;
+    running = { mode: selectedMode, pool: selectedPool, total, answerFormat };
+    queue = buildExercises(selectedMode, selectedPool, total, Math.random, answerFormat); index = 0;
     totals = { meaning: { correct: 0, total: 0 }, forms: { correct: 0, total: 0 }, grammar: { correct: 0, total: 0 }, context: { correct: 0, total: 0 } }; mistakes = new Set();
     el<HTMLFieldSetElement>('[data-settings]').disabled = true; el('[data-config]').hidden = true;
     el('[data-result]').hidden = true; el('[data-workspace]').hidden = true; summary.hidden = true; activity.hidden = false; render();
   }
   el('[data-activity-abort]').addEventListener('click', edit);
   el('[data-activity-edit]').addEventListener('click', edit);
-  el('[data-activity-restart]').addEventListener('click', () => { if (running) start(running.mode, running.pool, running.total, running.support, running.answerFormat); });
+  el('[data-activity-restart]').addEventListener('click', () => { if (running) start(running.mode, running.pool, running.total, running.answerFormat); });
   el('[data-mixed-review]').addEventListener('click', () => configure('parcours'));
   el('[data-followup]').addEventListener('click', () => {
     const packageId = packInput.value;
@@ -417,7 +397,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   });
   refresh(); showProgress();
   return {
-    mode, pool, ready, focusSelection, support: () => supportInput.checked, start,
+    mode, pool, ready, focusSelection, start,
     stop: () => { flashcards.stop(); activity.hidden = true; summary.hidden = true; refresh(); },
     recordMatching: (id: string, correct: boolean) => { progress = recordProgress(progress, id, 'meaning', correct, Date.now(), true); save(); },
   };

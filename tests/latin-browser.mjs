@@ -7,7 +7,7 @@ const words = adaptVocabulary(JSON.parse(readFileSync(new URL('../src/content/la
 const rng = seed => () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32);
 // Use a real long, multi-use entry in every device's first round.
 let fixtureSeed = 1;
-while (!createSession(words, { roundSize: 5, total: 7 }, rng(fixtureSeed)).rounds[0].left.some(word => word.latin === 'cum')) fixtureSeed++;
+while (!createSession(words, { roundSize: 8, total: 10 }, rng(fixtureSeed)).rounds[0].left.some(word => word.latin === 'cum')) fixtureSeed++;
 
 export async function testLatin(browser, origin, screenshots) {
   const route = '/sprachen/latein/vokabeltrainer/';
@@ -30,21 +30,30 @@ export async function testLatin(browser, origin, screenshots) {
     assert.equal(await page.locator('h1').count(), 1);
     assert.ok(await root.locator('[data-training-options]').isHidden());
     await root.locator('.latin-mode-tile:has(input[value="matching"])').click();
-    assert.equal(await root.locator('#round-size').inputValue(), '5');
-    assert.equal(await root.locator('#total-words').inputValue(), '20');
+    assert.equal(await root.locator('input[name="roundSize"]:checked').inputValue(), '5');
+    assert.equal(await root.locator('#total-words').inputValue(), '5');
     if ([1440, 390, 320].includes(width)) await capturePage('latin-settings');
-    for (const [selector, value] of [['#round-size', '1'], ['#round-size', '2.5'], ['#round-size', '11'], ['#total-words', ''], ['#total-words', '0'], ['#total-words', '956']]) {
-      await root.locator('#round-size').fill('5');
-      await root.locator('#total-words').fill('7');
-      await root.locator(selector).fill(value);
+    const slider = root.locator('#total-words');
+    assert.equal(await slider.getAttribute('type'), 'range');
+    assert.equal(await slider.getAttribute('min'), '5');
+    assert.equal(await slider.getAttribute('max'), '30');
+    assert.equal(await slider.getAttribute('step'), '5');
+    await slider.focus(); await page.keyboard.press('End');
+    assert.equal(await root.locator('[data-total-output]').textContent(), '30');
+    for (const size of [5, 8, 10]) {
+      await root.locator(`input[name="roundSize"][value="${size}"]`).check();
       await start.click();
-      assert.ok(await root.locator('#config-error').isVisible());
-      assert.ok(await root.locator('[data-workspace]').isHidden());
-      assert.equal(await root.locator(selector).getAttribute('aria-invalid'), 'true');
+      assert.equal(await root.locator('[data-left] [data-card]').count(), size);
+      await root.locator('[data-abort]').click();
     }
-    await root.locator('#total-words').fill('7');
+    await slider.focus(); await page.keyboard.press('Home');
+    assert.equal(await slider.inputValue(), '5');
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await root.locator('[data-total-output]').textContent(), '10');
+    await root.locator('input[name="roundSize"][value="8"]').check();
+    await page.evaluate(seed => { Math.random = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32); }, fixtureSeed);
     await start.click();
-    assert.equal(await root.locator('[data-left] [data-card]').count(), 5);
+    assert.equal(await root.locator('[data-left] [data-card]').count(), 8);
     assert.ok(await root.locator('[data-settings]').evaluate(fieldset => fieldset.disabled));
     assert.ok(await root.locator('[data-config]').isHidden());
     const latinBox = await root.locator('[data-left]').boundingBox();
@@ -63,7 +72,7 @@ export async function testLatin(browser, origin, screenshots) {
     assert.equal(await left(other).getAttribute('aria-pressed'), 'true');
     await right(first).click();
     assert.match(await status.textContent(), /passt noch nicht/);
-    assert.match(await root.locator('[data-progress]').textContent(), /0 von 7 gelöst · 1 Fehlversuche/);
+    assert.match(await root.locator('[data-progress]').textContent(), /0 von 10 gelöst · 1 Fehlversuche/);
     assert.equal(await root.locator('[aria-pressed="true"]').count(), 0);
     assert.equal(await root.locator('[data-incorrect="true"]').count(), 2);
     assert.match(await left(other).textContent(), /Passt noch nicht/);
@@ -81,7 +90,7 @@ export async function testLatin(browser, origin, screenshots) {
     assert.equal(await left(first).getAttribute('aria-disabled'), 'true');
     assert.match(await left(first).textContent(), /Richtig zugeordnet/);
     await left(first).dispatchEvent('click');
-    assert.match(await root.locator('[data-progress]').textContent(), /1 von 7 gelöst/);
+    assert.match(await root.locator('[data-progress]').textContent(), /1 von 10 gelöst/);
     const cum = words.find(word => word.latin === 'cum');
     assert.equal(await right(cum.id).locator('span').textContent(), cum.meanings.join('; '));
     const clipped = await root.locator('[data-card], [data-card] span, h2, input, button').evaluateAll(nodes => nodes.filter(node => node.clientWidth && node.scrollWidth > node.clientWidth + 1).map(node => node.textContent));
@@ -99,27 +108,29 @@ export async function testLatin(browser, origin, screenshots) {
       round++;
       assert.equal(await root.locator('[data-left] [data-card]').count(), 2);
     }
-    assert.equal(await root.locator('[data-result-completed]').textContent(), '7');
-    assert.equal(await root.locator('[data-result-attempts]').textContent(), '8');
+    assert.equal(await root.locator('[data-result-completed]').textContent(), '10');
+    assert.equal(await root.locator('[data-result-attempts]').textContent(), '11');
     assert.equal(await root.locator('[data-result-errors]').textContent(), '1');
     assert.equal(await page.evaluate(() => document.activeElement.id), 'result-title');
     if ([1440, 390].includes(width)) await capturePage('latin-result');
     await root.locator('[data-restart]').click();
-    assert.match(await root.locator('[data-progress]').textContent(), /0 von 7 gelöst · 0 Fehlversuche/);
+    assert.match(await root.locator('[data-progress]').textContent(), /0 von 10 gelöst · 0 Fehlversuche/);
     await root.locator('[data-abort]').click();
-    assert.equal(await root.locator('#total-words').inputValue(), '7');
+    assert.equal(await root.locator('#total-words').inputValue(), '10');
     assert.ok(await root.locator('[data-settings]').evaluate(fieldset => !fieldset.disabled));
-    await root.locator('#total-words').fill('1');
+    await root.locator('input[name="roundSize"][value="5"]').check();
+    await root.locator('#total-words').fill('5');
     await start.click();
-    const only = await root.locator('[data-left] [data-card]').getAttribute('data-id');
-    await left(only).click(); await right(only).click();
-    assert.equal(await root.locator('[data-result-attempts]').textContent(), '1');
+    for (const id of await root.locator('[data-left] [data-card]').evaluateAll(nodes => nodes.map(node => node.dataset.id))) {
+      await left(id).click(); await right(id).click();
+    }
+    assert.equal(await root.locator('[data-result-attempts]').textContent(), '5');
     await root.locator('[data-edit]').click();
-    await root.locator('#round-size').fill('10');
-    await root.locator('#total-words').fill('955');
+    await root.locator('input[name="roundSize"][value="10"]').check();
+    await root.locator('#total-words').fill('30');
     await start.click();
     assert.equal(await root.locator('[data-left] [data-card]').count(), 10);
-    assert.equal(await root.locator('[data-round-title]').textContent(), 'Runde 1 von 96');
+    assert.equal(await root.locator('[data-round-title]').textContent(), 'Runde 1 von 3');
     const topIds = await root.locator('[data-left] [data-card]').evaluateAll(nodes => nodes.map(node => node.dataset.id));
     const wrongId = topIds.find(id => words.find(word => word.id === id).signature !== words.find(word => word.id === topIds[0]).signature);
     await left(topIds[0]).click();
@@ -139,7 +150,7 @@ export async function testLatin(browser, origin, screenshots) {
     assert.ok(page.url().endsWith(route), `Latin ${width}: reload stays on trainer`);
     assert.ok(await root.locator('[data-training-options]').isHidden());
     await root.locator('.latin-mode-tile:has(input[value="matching"])').click();
-    assert.equal(await root.locator('#total-words').inputValue(), '20');
+    assert.equal(await root.locator('#total-words').inputValue(), '5');
     assert.ok(await root.locator('[data-workspace]').isHidden());
     assert.deepEqual(errors, [], `Latin ${width}: no browser or network errors`);
     await page.close();

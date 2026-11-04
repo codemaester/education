@@ -9,12 +9,12 @@ export type Dimension = 'meaning' | 'forms' | 'grammar' | 'context';
 export const modes: { id: Mode; label: string; description: string; details: string[] }[] = [
   { id: 'matching', label: 'Wörter zuordnen', description: 'Verbinde lateinische Wörter mit ihren deutschen Bedeutungen.', details: [
     'Links stehen lateinische Wörter, rechts ihre deutschen Bedeutungen. Wähle die passenden Paare aus. Richtige Zuordnungen bleiben markiert; bei einem Fehler kannst du es erneut versuchen.',
-    'Du bestimmst, wie viele Paare gleichzeitig erscheinen und wie viele Wörter du insgesamt übst. Nach jeder vollständig gelösten Runde geht es mit „Nächste Runde“ weiter.',
+    'Wähle Leicht mit fünf, Mittel mit acht oder Schwer mit zehn Paaren pro Runde. Mit dem Schieberegler bestimmst du die Wortanzahl. Nach jeder vollständig gelösten Runde geht es mit „Nächste Runde“ weiter.',
     'Dieser Modus eignet sich zum Aufwärmen und Wiedererkennen. Stammformen werden hier nicht abgefragt; dafür stehen dir die Werkstatt und der Formen-Detektiv zur Verfügung.',
   ] },
   { id: 'workshop', label: 'Stammformen-Werkstatt', description: 'Ergänze fehlende Stammformen und rufe die deutsche Grundbedeutung ab.', details: [
     'Ausgehend von einem lateinischen Infinitiv ergänzt du wechselnde Lücken in der Stammformenreihe: Präsens, Perfekt und – soweit hinterlegt – das Supinum auf -um. Zusätzlich nennst du eine deutsche Grundbedeutung.',
-    'Wähle zwischen „Selbst eingeben“ und „Auswählen“. Bei der Auswahl entscheidest du dich für jede Lücke und die Bedeutung aus jeweils zehn Optionen. Beim Eingeben sind optional Formenbausteine verfügbar; Längenzeichen musst du nicht eingeben.',
+    'Mit „Vorgegeben“ wählst du jede fehlende Form und die Bedeutung aus jeweils zehn Optionen. Schalte auf „Frei“, um selbst zu antworten. Längenzeichen musst du dabei nicht eingeben.',
     'Bedeutungen und einzelne Formen werden getrennt bewertet. Unsichere Angaben kommen später noch einmal vor. Deponentien erhalten passende Aufgaben; fehlende Daten werden nicht als Fehler gewertet.',
   ] },
   { id: 'detective', label: 'Formen-Detektiv', description: 'Erkenne Wortformen im Satz und finde Grundform und Übersetzung.', details: [
@@ -46,7 +46,7 @@ export interface LearningField {
 export interface Exercise {
   id: string; wordId: string; mode: Exclude<Mode, 'matching' | 'flashcards'>; title: string; prompt: string;
   context?: string; explanation: string; hints: string[]; fields: LearningField[];
-  provided?: string[]; tiles?: string[]; retry?: boolean; answerFormat?: AnswerFormat;
+  provided?: string[]; retry?: boolean; answerFormat?: AnswerFormat;
 }
 export interface SkillProgress { attempts: number; correct: number; streak: number; lastReviewed: number; nextDue: number; }
 export interface Progress { version: 1; words: Record<string, Record<string, SkillProgress>>; }
@@ -222,7 +222,7 @@ function recallExercise(word: TrainerWord, mode: Exercise['mode'], id: string, t
     hints: [word.partsOfSpeech.join(' · '), ...word.usages.flatMap(u => u.hinweis ? [u.hinweis] : [])],
     fields: [meaningField(word), ...(grammar ? additionalFields(word) : [])] };
 }
-function buildInputExercises(mode: Exclude<Mode, 'matching' | 'flashcards'>, pool: readonly TrainerWord[], total: number, support: boolean, random: () => number): Exercise[] {
+function buildInputExercises(mode: Exclude<Mode, 'matching' | 'flashcards'>, pool: readonly TrainerWord[], total: number, random: () => number): Exercise[] {
   const available = pool.filter(w => eligibleForMode(w, mode));
   if (!Number.isInteger(total) || total < 1 || total > available.length) throw new Error(`Wähle 1 bis ${available.length} Wörter für diesen Modus und dieses Paket.`);
   const chosen = shuffle(available, random).slice(0, total);
@@ -244,8 +244,7 @@ function buildInputExercises(mode: Exclude<Mode, 'matching' | 'flashcards'>, poo
       const missing = shuffle(all, random).slice(0, Math.min(2, all.length));
       const provided = all.filter(f => !missing.includes(f)).map(f => `${f.label}: ${f.answers[0]}`);
       const exercise = recallExercise(word, mode, `${word.id}:workshop`, 'Stammformen-Werkstatt');
-      return [{ ...exercise, fields: [...missing, meaningField(word)], provided,
-        tiles: support ? shuffle([...new Set(missing.flatMap(f => f.answers))], random) : undefined }];
+      return [{ ...exercise, fields: [...missing, meaningField(word)], provided }];
     }
     if (mode === 'detective') {
       const c = detectiveCases.find(c => c.lemma === word.latin)!;
@@ -337,18 +336,18 @@ function selectionExercise(exercise: Exercise, random: () => number): Exercise {
     return { ...field, label, choices: shuffle([field.answers[0], ...distractors], random) };
   });
   const title = exercise.title === 'Verwechslungsduell · Jetzt frei abrufen' ? 'Verwechslungsduell · Die passende Angabe wählen' : exercise.title;
-  return { ...exercise, answerFormat: 'selection', title, tiles: undefined, fields };
+  return { ...exercise, answerFormat: 'selection', title, fields };
 }
 
-export function buildExercises(mode: Exclude<Mode, 'matching' | 'flashcards'>, pool: readonly TrainerWord[], total: number, support = false,
-  random: () => number = Math.random, answerFormat: AnswerFormat = 'input'): Exercise[] {
-  const exercises = buildInputExercises(mode, pool, total, support && answerFormat === 'input', random);
-  return answerFormat === 'selection' ? exercises.map(exercise => selectionExercise(exercise, random)) : exercises;
+export function buildExercises(mode: Exclude<Mode, 'matching' | 'flashcards'>, pool: readonly TrainerWord[], total: number,
+  random: () => number = Math.random, answerFormat: AnswerFormat = 'selection'): Exercise[] {
+  const exercises = buildInputExercises(mode, pool, total, random);
+  return answerFormat === 'selection' ? exercises.map(exercise => selectionExercise(exercise, random)) : exercises.map(exercise => ({ ...exercise, answerFormat }));
 }
 
 export function retryExercise(exercise: Exercise, failedKeys: string[], random: () => number = Math.random): Exercise {
   const retry = { ...exercise, id: `${exercise.id}:retry`, title: exercise.answerFormat === 'selection'
-    ? 'Erneute Auswahl · Noch einmal entscheiden' : 'Erneuter Abruf · Noch einmal ohne Hilfe', provided: undefined, tiles: undefined, retry: true,
+    ? 'Erneute Auswahl · Noch einmal entscheiden' : 'Erneuter Abruf · Noch einmal ohne Hilfe', provided: undefined, retry: true,
     fields: exercise.fields.filter(f => failedKeys.includes(f.key)) };
   return exercise.answerFormat === 'selection' ? selectionExercise(retry, random) : retry;
 }

@@ -104,7 +104,7 @@ test('four exercise modes use only Latin prompts and known grammatical forms', (
   for (const { id: mode } of modes.filter(m => !['matching', 'flashcards'].includes(m.id))) {
     const pool = vocabulary.filter(w => eligibleForMode(w, mode));
     assert.ok(pool.length > 0);
-    const exercises = buildExercises(mode, pool, Math.min(6, pool.length), false, random());
+    const exercises = buildExercises(mode, pool, Math.min(6, pool.length), random(), 'input');
     assert.ok(exercises.length >= 6, mode);
     for (const exercise of exercises) {
       assert.ok(exercise.prompt); assert.ok(exercise.fields.length);
@@ -115,21 +115,20 @@ test('four exercise modes use only Latin prompts and known grammatical forms', (
         assert.equal(checkAnswer(f, f.answers[0]), 'correct');
       }
     }
-    assert.deepEqual(exercises, buildExercises(mode, pool, Math.min(6, pool.length), false, random()));
-    assert.throws(() => buildExercises(mode, pool, 0));
-    assert.throws(() => buildExercises(mode, pool, pool.length + 1));
-    assert.throws(() => buildExercises(mode, pool, 1.5));
+    assert.deepEqual(exercises, buildExercises(mode, pool, Math.min(6, pool.length), random(), 'input'));
+    assert.throws(() => buildExercises(mode, pool, 0, undefined, 'input'));
+    assert.throws(() => buildExercises(mode, pool, pool.length + 1, undefined, 'input'));
+    assert.throws(() => buildExercises(mode, pool, 1.5, undefined, 'input'));
   }
   assert.deepEqual(vocabulary, before);
 });
 
-test('workshop varies gaps, offers optional tiles, and never demands missing or impossible forms', () => {
+test('workshop varies gaps and never demands missing or impossible forms', () => {
   const pool = [word('ferre'), word('esse'), word('sequī'), word('amāre')];
-  const exercises = buildExercises('workshop', pool, 4, true, random());
+  const exercises = buildExercises('workshop', pool, 4, random(), 'input');
   for (const exercise of exercises) {
     const w = vocabulary.find(w => w.id === exercise.wordId);
     for (const f of exercise.fields.filter(f => f.kind === 'latin')) assert.ok(grammarValues(w, f.key, 'Verb').includes(f.answers[0]));
-    assert.ok(exercise.tiles.length);
     assert.ok(exercise.fields.some(f => f.dimension === 'meaning'));
     if (w.latin === 'esse') {
       assert.ok(!exercise.fields.some(f => f.key === 'supinum'));
@@ -140,8 +139,8 @@ test('workshop varies gaps, offers optional tiles, and never demands missing or 
   assert.equal(formFields(word('amāre')).length, 1);
   const seen = new Set();
   for (let seed = 1; seed < 10; seed++) {
-    const task = buildExercises('workshop', [word('ferre')], 1, false, () => seed / 10)[0];
-    seen.add(task.fields.map(f => f.key).join(',')); assert.equal(task.tiles, undefined);
+    const task = buildExercises('workshop', [word('ferre')], 1, () => seed / 10, 'input')[0];
+    seen.add(task.fields.map(f => f.key).join(','));
   }
   assert.ok(seen.size > 1);
   assert.equal(eligibleForMode(word('est'), 'workshop'), false);
@@ -161,7 +160,7 @@ test('Latin input accepts absent macrons and source variants but rejects wrong f
 });
 
 test('German synonyms can be self-assessed', () => {
-  const meaning = buildExercises('parcours', [word('amīcus')], 1)[0].fields[0];
+  const meaning = buildExercises('parcours', [word('amīcus')], 1, undefined, 'input')[0].fields[0];
   assert.equal(checkAnswer(meaning, 'Freund'), 'correct');
   assert.equal(checkAnswer(meaning, 'ein Freund.'), 'correct');
   assert.equal(checkAnswer(meaning, 'ein guter Gefährte'), 'review');
@@ -170,7 +169,7 @@ test('German synonyms can be self-assessed', () => {
 
 test('parcours has ordered stages and word-type-specific additional questions', () => {
   const selected = [word('ferre'), word('urbs'), word('pulcher'), word('ad')];
-  const tasks = buildExercises('parcours', selected, 4, false, random());
+  const tasks = buildExercises('parcours', selected, 4, random(), 'input');
   assert.ok(tasks.slice(0, 4).every(e => e.title.startsWith('Etappe 1') && e.fields.length === 1));
   assert.ok(tasks.slice(4, 8).every(e => e.title.startsWith('Etappe 2')));
   assert.ok(tasks.slice(8).every(e => e.title.startsWith('Etappe 3')));
@@ -178,10 +177,10 @@ test('parcours has ordered stages and word-type-specific additional questions', 
   assert.ok(additionalFields(word('pulcher')).some(f => f.key === 'nominativ_weiblich'));
   assert.deepEqual(additionalFields(word('ad')).map(f => f.key), ['construction']);
   assert.deepEqual(additionalFields(word('cum')), [], 'different constructions are not merged into one unqualified case question');
-  const hunt = buildExercises('hunt', [word('tollere')], 1);
+  const hunt = buildExercises('hunt', [word('tollere')], 1, undefined, 'input');
   assert.equal(hunt.length, 2); assert.match(hunt[1].title, /frei abrufen/);
   const retry = retryExercise(hunt[1], ['perfekt_1sg']);
-  assert.ok(retry.retry); assert.equal(retry.tiles, undefined); assert.deepEqual(retry.fields.map(f => f.key), ['perfekt_1sg']);
+  assert.ok(retry.retry); assert.deepEqual(retry.fields.map(f => f.key), ['perfekt_1sg']);
 });
 
 test('progress schedules each skill independently and immediate repetitions never inflate mastery', () => {

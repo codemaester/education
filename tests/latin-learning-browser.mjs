@@ -108,23 +108,22 @@ export async function testLatinLearning(browser, origin, screenshots) {
         await root.locator('[data-clear-filters]').click();
         assert.equal(await root.locator('#word-type').inputValue(), 'Verb', 'reset retains the mandatory verb category');
       }
-      assert.equal(await root.locator('#round-size').isVisible(), false);
-      const available = filterWords(vocabulary, mode, defaultFilters(), emptyProgress());
-      assert.equal(await root.locator('#total-words').inputValue(), String(Math.min(mode === 'workshop' ? 6 : 12, available.length)));
+      assert.equal(await root.locator('[data-matching-settings]').isVisible(), false);
+      assert.equal(await root.locator('#total-words').inputValue(), '5');
       const seed = 13579;
       await page.evaluate(seed => { Math.random = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32); }, seed);
-      await root.locator('#total-words').fill('2');
-      const support = mode === 'workshop';
-      if (support) await root.locator('#form-support').check();
+      await root.locator('#total-words').fill('5');
+      assert.ok(await root.locator('#answer-format').isChecked());
+      await root.locator('#answer-format').uncheck();
       const pool = filterWords(vocabulary, mode, defaultFilters(), emptyProgress());
-      const expected = buildExercises(mode, pool, 2, support, rng(seed));
+      const expected = buildExercises(mode, pool, Math.min(5, pool.length), rng(seed), 'input');
       await root.getByRole('button', { name: 'Training starten' }).click();
       assert.ok(await root.locator('[data-config]').isHidden());
       let index = 0;
       let wrongOnce = mode === 'workshop';
       let reviewOnce = mode === 'parcours';
       while (await root.locator('[data-activity]').isVisible()) {
-        assert.ok(index < 30, 'session remains bounded');
+        assert.ok(index < 40, 'session remains bounded');
         const task = expected[index];
         assert.ok(task, `${mode}: unexpected exercise ${index}`);
         assert.equal(await root.locator('[data-activity-prompt]').textContent(), task.prompt);
@@ -132,13 +131,6 @@ export async function testLatinLearning(browser, origin, screenshots) {
         await root.locator('[data-check-answer]').click();
         assert.equal(await page.evaluate(key => localStorage.getItem(key), PROGRESS_KEY), before, 'blank answers never update progress');
         assert.equal(await root.locator('[data-activity-next]').isVisible(), false);
-        if (support && task.tiles?.length) {
-          const input = root.locator('[data-answer-fields] input[lang="la"]').first();
-          await input.focus();
-          const tile = root.locator('[data-tiles] button').first();
-          await tile.click(); assert.equal(await input.inputValue(), await tile.textContent());
-          await tile.click(); assert.equal(await input.inputValue(), '');
-        }
         if (mode === 'detective' && index === 0) {
           await root.locator('[data-hint]').click(); assert.ok((await root.locator('[data-activity-hints]').textContent()).length);
         }
@@ -204,7 +196,7 @@ export async function testLatinLearning(browser, origin, screenshots) {
     assert.equal(await page.evaluate(key => localStorage.getItem(key), PROGRESS_KEY), null);
     assert.deepEqual(errors, [], `${width}px: advanced trainer browser errors`);
     await context.close();
-    console.log(`Latin advanced ${width}px: four exercise modes, filters, tiles, retries, self-assessment, independent progress, reload and reset passed`);
+    console.log(`Latin advanced ${width}px: four exercise modes, filters, retries, self-assessment, independent progress, reload and reset passed`);
   }
   for (const problem of ['blocked', 'corrupt']) {
     const page = await browser.newPage();
@@ -216,7 +208,7 @@ export async function testLatinLearning(browser, origin, screenshots) {
     const root = page.locator('[data-latin-trainer]');
     if (problem === 'blocked') assert.match(await root.locator('[data-storage-note]').textContent(), /nicht verfügbar/);
     await root.locator('.latin-mode-tile:has(input[value="workshop"])').click();
-    await root.locator('#total-words').fill('1');
+    await root.locator('#total-words').fill('5');
     await root.getByRole('button', { name: 'Training starten' }).click();
     await root.locator('[data-reveal]').click();
     assert.ok(await root.locator('[data-activity-next]').isVisible());

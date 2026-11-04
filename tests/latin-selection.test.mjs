@@ -10,7 +10,7 @@ const rng = (seed = 7251) => () => ((seed = (seed * 1664525 + 1013904223) >>> 0)
 const word = lemma => {
   const result = vocabulary.find(w => w.latin === lemma); assert.ok(result, lemma); return result;
 };
-const exercises = (mode, pool, total = pool.length, seed = 7251) => buildExercises(mode, pool, total, true, rng(seed), 'selection');
+const exercises = (mode, pool, total = pool.length, seed = 7251) => buildExercises(mode, pool, total, rng(seed), 'selection');
 const normalize = (field, value) => field.kind === 'latin' ? normalizeLatin(value)
   : normalizeGerman(value.replace(/\s*\(.*?\)/g, '').trim());
 
@@ -21,7 +21,7 @@ test('all four selection variants have distinct options and exactly one correct 
     const tasks = exercises(mode, pool, Math.min(pool.length, mode === 'workshop' ? 20 : 30));
     assert.deepEqual(tasks, exercises(mode, pool, Math.min(pool.length, mode === 'workshop' ? 20 : 30)));
     for (const task of tasks) {
-      assert.equal(task.answerFormat, 'selection'); assert.equal(task.tiles, undefined);
+      assert.equal(task.answerFormat, 'selection');
       for (const field of task.fields) {
         assert.ok(field.choices.length >= 2, `${mode}/${field.key} needs alternatives`);
         assert.equal(new Set(field.choices.map(value => normalize(field, value))).size, field.choices.length);
@@ -129,9 +129,10 @@ test('selection retries remain bounded, change their options and preserve skill 
   assert.equal(assisted.words[id].meaning.nextDue, progress.words[id].meaning.nextDue);
 });
 
-test('input remains the default, including German self-assessment and existing workshop support', () => {
-  const task = buildExercises('workshop', [word('ferre')], 1, true, rng())[0];
-  assert.equal(task.answerFormat, undefined); assert.ok(task.tiles.length);
+test('selection is the default and free answers still support German self-assessment', () => {
+  assert.equal(buildExercises('workshop', [word('ferre')], 1, rng())[0].answerFormat, 'selection');
+  const task = buildExercises('workshop', [word('ferre')], 1, rng(), 'input')[0];
+  assert.equal(task.answerFormat, 'input');
   const meaning = task.fields.find(f => f.kind === 'german');
   assert.equal(meaning.choices, undefined); assert.equal(checkAnswer(meaning, 'Eine andere Umschreibung'), 'review');
   assert.equal(retryExercise(task, ['meaning']).fields[0].choices, undefined);
