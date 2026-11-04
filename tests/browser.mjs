@@ -9,6 +9,7 @@ import { testLatinFlashcards } from './latin-flashcards-browser.mjs';
 import { testLatin } from './latin-browser.mjs';
 import { testLatinLearning } from './latin-learning-browser.mjs';
 import { testLatinSelection } from './latin-selection-browser.mjs';
+import { testLatinUsability } from './latin-usability-browser.mjs';
 
 // Serve the actual Pages build, including nested index.html routes.
 const root = resolve('dist');
@@ -29,6 +30,7 @@ if (screenshots) await mkdir(screenshots, { recursive: true });
 let browser;
 try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_EXECUTABLE_PATH || undefined });
+  await testLatinUsability(browser, origin, screenshots);
   await testLatinFlashcards(browser, origin, screenshots);
   await testLatin(browser, origin, screenshots);
   await testLatinLearning(browser, origin, screenshots);

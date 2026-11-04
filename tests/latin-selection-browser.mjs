@@ -45,7 +45,10 @@ export async function testLatinSelection(browser, origin, screenshots) {
         assert.equal(await root.locator('.latin-answer-option').first().evaluate(button => button === document.activeElement), true);
         const failedKeys = [];
         for (const [n, field] of task.fields.entries()) {
+          if (n > 0) await root.locator('[data-field-next]').click();
           const group = root.locator('.latin-selection-field').nth(n);
+          assert.ok(await group.isVisible());
+          assert.equal(await root.locator('.latin-selection-field:visible').count(), 1, 'only the current answer group is shown');
           assert.equal(await group.locator('legend').textContent(), field.label);
           assert.deepEqual(await group.locator('button').allTextContents(), field.choices);
           if (index === 0 && n === 0) {
@@ -71,6 +74,13 @@ export async function testLatinSelection(browser, origin, screenshots) {
             await option.click();
           }
           if (wrong) failedKeys.push(field.key);
+        }
+        if (task.fields.length > 1) {
+          const lastValue = await root.locator(`#latin-answer-${task.fields.length - 1}`).inputValue();
+          await root.locator('[data-field-previous]').click();
+          await root.locator('[data-field-next]').click();
+          assert.equal(await root.locator(`#latin-answer-${task.fields.length - 1}`).inputValue(), lastValue, 'field navigation preserves selections');
+          assert.match(await root.locator('[data-field-status]').textContent(), new RegExp(`${task.fields.length} von ${task.fields.length} ausgewählt`));
         }
         if (index === 0 && width !== 320) {
           await root.locator('[data-activity-title]').scrollIntoViewIfNeeded();

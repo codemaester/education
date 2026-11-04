@@ -27,6 +27,7 @@ const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detec
             <legend>Trainingsmodus</legend>
             <p id="mode-choice-help" class="latin-mode-help">Wähle, wie du heute trainieren möchtest.</p>
             <button class="button button-secondary latin-change-mode" type="button" data-change-mode hidden><Icon name="arrow" size={16} />Anderen Modus wählen</button>
+            <button class="button button-secondary latin-skip-settings" type="button" data-skip-settings hidden disabled>Zu den Einstellungen <Icon name="arrow" size={16} /></button>
             <div class="latin-mode-grid">
               {modes.map(mode => <label class="latin-mode-tile">
                 <input type="radio" name="trainingMode" id={`training-mode-${mode.id}`} value={mode.id} aria-labelledby={`mode-title-${mode.id}`} aria-describedby={`mode-description-${mode.id}`} />
@@ -38,16 +39,16 @@ const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detec
             </div>
           </fieldset>
           <fieldset class="latin-training-options" data-training-options disabled hidden>
-          <legend><span class="latin-config-heading"><span>Training konfigurieren</span><span data-answer-format-settings hidden><label class="latin-answer-switch"><span>Frei</span><input id="answer-format" type="checkbox" role="switch" checked aria-label="Vorgegebene Antworten" aria-describedby="answer-format-help" /><span class="latin-switch-track" aria-hidden="true"></span><span>Vorgegeben</span></label><span id="answer-format-help" class="visually-hidden">Aus: Antworten frei eingeben. An: Aus vorgegebenen Antworten auswählen.</span></span></span></legend>
+          <legend><span class="latin-config-heading"><span data-config-title tabindex="-1">Training konfigurieren</span><span data-answer-format-settings hidden><label class="latin-answer-switch"><span>Frei</span><input id="answer-format" type="checkbox" role="switch" checked aria-label="Vorgegebene Antworten" aria-describedby="answer-format-help" /><span class="latin-switch-track" aria-hidden="true"></span><span>Vorgegeben</span></label><span id="answer-format-help" class="visually-hidden">Aus: Antworten frei eingeben. An: Aus vorgegebenen Antworten auswählen.</span></span></span></legend>
           <div class="latin-configuration">
             <label for="learning-package">Lernpaket<select id="learning-package">{[...new Set(packages.map(pack => pack.group))].map(group => <optgroup label={group}>{packages.filter(pack => pack.group === group).map(pack => <option value={pack.id}>{pack.label}</option>)}</optgroup>)}</select></label>
             <label for="word-type">Wortart<select id="word-type" aria-describedby="word-type-note"><option value="">Alle Wortarten</option>{commonWordTypes.map(option => <option value={option.value}>{option.label}</option>)}</select><span class="latin-config-help" id="word-type-note" data-word-type-note hidden></span></label>
-              <label for="learning-weakness">Persönlicher Lernbedarf<select id="learning-weakness"><option value="">Alle passenden Wörter</option><option value="due">Jetzt zur Wiederholung fällig</option><option value="weak">Unsichere Angaben</option><option value="meaning">Bedeutung unsicher</option><option value="perfekt_1sg">Perfektstamm unsicher</option><option value="geschlecht">Genus unsicher</option></select></label>
+              <label for="learning-weakness">Persönlicher Lernbedarf<select id="learning-weakness"><option value="">Alle passenden Wörter</option><option value="due">Jetzt zur Wiederholung fällig</option><option value="weak">Angaben mit Fehlern</option><option value="unconfirmed">Noch nicht frei bestätigt</option><option value="meaning">Bedeutung mit Fehlern</option><option value="perfekt_1sg">Perfektstamm mit Fehlern</option><option value="geschlecht">Genus mit Fehlern</option></select></label>
             <div class="latin-filter-actions"><button class="button button-secondary" type="button" data-clear-filters>Filter zurücksetzen</button></div>
           </div>
           <p class="latin-pool-size" data-pool-size role="status" aria-live="polite"></p>
           <div class="latin-settings">
-            <fieldset class="latin-difficulty" data-matching-settings><legend>Schwierigkeit · Paare pro Runde</legend><div class="latin-difficulty-options">{[{ label: 'Leicht', value: 5 }, { label: 'Mittel', value: 8 }, { label: 'Schwer', value: 10 }].map(level => <label><input type="radio" name="roundSize" value={level.value} checked={level.value === 5} /><span><strong>{level.label}</strong><small>{level.value} Paare</small></span></label>)}</div></fieldset>
+            <fieldset class="latin-difficulty" data-matching-settings aria-describedby="matching-size-help"><legend>Schwierigkeit · Paare pro Runde</legend><div class="latin-difficulty-options">{[{ label: 'Leicht', value: 5 }, { label: 'Mittel', value: 8 }, { label: 'Schwer', value: 10 }].map(level => <label><input type="radio" name="roundSize" value={level.value} checked={level.value === 5} /><span><strong>{level.label}</strong><small>maximal {level.value} Paare</small></span></label>)}</div><p id="matching-size-help" class="latin-config-help" data-matching-size-help role="status"></p></fieldset>
             <label for="total-words" class="latin-word-count"><span class="latin-range-heading">Vokabeln insgesamt <output for="total-words" data-total-output>5</output></span><input id="total-words" name="total" type="range" min="5" max="30" step="5" value="5" aria-describedby="total-help config-error" /><span class="latin-range-ticks" aria-hidden="true">{[5, 10, 15, 20, 25, 30].map(value => <span>{value}</span>)}</span><span id="total-help" data-total-help>5 bis 30 Wörter in Fünferschritten</span></label>
             <button class="button" type="submit">Training starten <Icon name="arrow" size={18} /></button>
           </div>
@@ -81,11 +82,13 @@ const modeArt = { matching: matchingArt, workshop: workshopArt, detective: detec
         <div class="latin-progress"><div><h3 id="activity-title" data-activity-title tabindex="-1"></h3><p data-activity-count></p></div><button class="button button-secondary" type="button" data-activity-abort>Training abbrechen</button></div>
         <progress data-activity-progress value="0" max="1" aria-label="Bearbeitete Aufgaben"></progress>
         <p class="latin-passage" data-activity-context lang="la" hidden></p>
-        <p class="latin-prompt" data-activity-prompt lang="la"></p>
+        <p class="latin-prompt" data-activity-prompt lang="la" tabindex="-1"></p>
         <p class="latin-provided" data-provided-forms hidden></p>
-        <p class="latin-instruction" data-answer-help hidden>Wähle pro Feld eine Antwort. Erneutes Anklicken hebt die Auswahl auf. Erst „Antwort prüfen“ wertet aus. Auswählen zählt als Üben mit Hilfe.</p>
+        <p class="latin-instruction" data-answer-help hidden>Wähle pro Feld eine Antwort. Erneutes Anklicken hebt die Auswahl auf. Du kannst zwischen den Feldern wechseln; deine Auswahl bleibt erhalten. Erst „Antwort prüfen“ wertet alle Felder aus. Auswählen zählt als Üben mit Hilfe.</p>
         <form data-answer-form novalidate>
+          <div class="latin-field-heading" data-field-heading hidden><p data-field-status role="status" aria-live="polite" aria-atomic="true"></p><button class="button button-secondary" type="button" data-show-prompt>Aufgabe ansehen</button></div>
           <div class="latin-answer-fields" data-answer-fields></div>
+          <nav class="latin-field-navigation" data-field-navigation aria-label="Antwortfelder" hidden><button class="button button-secondary" type="button" data-field-previous>Vorheriges Feld</button><button class="button button-secondary" type="button" data-field-next>Nächstes Feld</button></nav>
           <div class="latin-actions"><button class="button" type="submit" data-check-answer>Antwort prüfen</button><button class="button button-secondary" type="button" data-hint>Hinweis aufdecken</button><button class="button button-secondary" type="button" data-reveal>Lösung aufdecken</button></div>
         </form>
         <div class="latin-hints" data-activity-hints role="status" aria-live="polite"></div>

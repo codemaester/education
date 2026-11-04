@@ -12,6 +12,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   const modeTiles = [...root.querySelectorAll<HTMLElement>('.latin-mode-tile')];
   const trainingOptions = el<HTMLFieldSetElement>('[data-training-options]');
   const changeMode = el<HTMLButtonElement>('[data-change-mode]');
+  const skipSettings = el<HTMLButtonElement>('[data-skip-settings]');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let selectionVersion = 0;
   let selectionAnimations: Animation[] = [];
@@ -24,6 +25,9 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   const activity = el('[data-activity]');
   const activityForm = el<HTMLFormElement>('[data-answer-form]');
   const fields = el('[data-answer-fields]');
+  const fieldHeading = el('[data-field-heading]');
+  const fieldNavigation = el('[data-field-navigation]');
+  let fieldIndex = 0;
   const next = el<HTMLButtonElement>('[data-activity-next]');
   const check = el<HTMLButtonElement>('[data-check-answer]');
   const report = el('[data-answer-report]');
@@ -81,14 +85,16 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     modePicker.dataset.expanded = 'true';
     root.dataset.modeOpening = 'true';
     changeMode.hidden = false;
+    skipSettings.hidden = false; skipSettings.disabled = true;
     el('#mode-choice-help').hidden = true;
     answerFormatInput.checked = true;
     refresh();
-    tile.scrollIntoView({ block: 'start', behavior: 'instant' });
+    modePicker.scrollIntoView({ block: 'start', behavior: 'instant' });
     const reveal = () => {
       if (selectionVersion !== version || !input.checked) return;
       root.dataset.modeOpening = 'false';
       trainingOptions.hidden = false; trainingOptions.disabled = false;
+      skipSettings.disabled = false;
       focusSelection();
     };
     if (!animate || reducedMotion.matches || typeof tile.animate !== 'function' || before.width === 0) { reveal(); return; }
@@ -112,6 +118,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     root.dataset.modeOpening = 'false';
     trainingOptions.hidden = true; trainingOptions.disabled = true;
     modePicker.dataset.expanded = 'false'; changeMode.hidden = true;
+    skipSettings.hidden = true; skipSettings.disabled = true;
     el('#mode-choice-help').hidden = false;
     modeTiles.forEach(tile => {
       tile.hidden = false; delete tile.dataset.expanded;
@@ -124,14 +131,19 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     previous.focus();
   }
   changeMode.addEventListener('click', closeMode);
+  skipSettings.addEventListener('click', () => {
+    if (!ready()) return;
+    const title = el('[data-config-title]');
+    title.focus(); title.scrollIntoView({ block: 'start', behavior: 'instant' });
+  });
   reducedMotion.addEventListener('change', () => {
     if (reducedMotion.matches) selectionAnimations.forEach(animation => animation.finish());
   });
   function showProgress(): void {
     const s = progressSummary(progress);
-    el('[data-learning-summary]').textContent = `${s.practiced} Wörter geübt · ${s.due} zur Wiederholung fällig · ${s.weak} mit unsicheren Angaben`;
+    el('[data-learning-summary]').textContent = `${s.practiced} Wörter geübt · ${s.due} zur Wiederholung fällig · ${s.weak} mit Fehlern · ${s.unconfirmed} noch nicht frei bestätigt`;
     el('[data-storage-note]').textContent = storageAvailable
-      ? 'Dein Lernstand bleibt in diesem Browser. Kein Konto, keine Übertragung. Bedeutungen und einzelne Formen werden getrennt wiederholt.'
+      ? 'Dein Lernstand bleibt in diesem Browser. Kein Konto, keine Übertragung. Bedeutungen und einzelne Formen werden getrennt wiederholt. Richtige Antworten mit Hilfe zählen als geübt; frei bestätigtes Wissen und Fehler werden getrennt angezeigt.'
       : 'Die Browserspeicherung ist nicht verfügbar. Du kannst weiterlernen; dein Lernstand gilt für diese geöffnete Seite.';
     const due = el('[data-due-list]');
     const upcoming = Object.entries(progress.words).flatMap(([id, skills]) => Object.entries(skills).map(([skill, p]) => ({ id, skill, ...p }))).sort((a, b) => a.nextDue - b.nextDue).slice(0, 5);
@@ -139,7 +151,9 @@ export function initLearning(root: HTMLElement, edit: () => void) {
       const li = document.createElement('li');
       const word = wordById(p.id);
       const label = p.skill === 'meaning' ? 'Bedeutung' : p.skill === 'perfekt_1sg' ? 'Perfektstamm' : p.skill === 'geschlecht' ? 'Genus' : p.skill.startsWith('context') || p.skill === 'form_meaning' ? 'Kontext' : 'Form / Zusatzangabe';
-      li.textContent = `${word?.latin ?? p.id} · ${label} · ${p.nextDue <= Date.now() ? 'jetzt fällig' : new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(p.nextDue)}`;
+      const result = p.lastResult === 'assisted' ? 'mit Hilfe richtig' : p.streak > 0 ? 'frei bestätigt'
+        : p.lastResult === 'incorrect' || p.lastResult === undefined && p.correct < p.attempts ? 'noch Fehler' : 'freie Bestätigung offen';
+      li.textContent = `${word?.latin ?? p.id} · ${label} · ${result} · ${p.nextDue <= Date.now() ? 'jetzt fällig' : new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(p.nextDue)}`;
       return li;
     }));
     el<HTMLButtonElement>('[data-reset-progress]').disabled = s.practiced === 0;
@@ -179,6 +193,11 @@ export function initLearning(root: HTMLElement, edit: () => void) {
         : `Dein Lernpaket enthält nur ${actual} passende Wörter. Du übst alle ${actual}.`
       : '5 bis 30 Wörter in Fünferschritten';
     el('[data-matching-settings]').hidden = mode() !== 'matching';
+    const roundSize = Number(root.querySelector<HTMLInputElement>('input[name="roundSize"]:checked')!.value);
+    const firstRound = Math.min(roundSize, actual);
+    el('[data-matching-size-help]').textContent = actual === 0 ? 'Keine Wörter verfügbar. Lockere die Filter.'
+      : actual < roundSize ? `Du übst insgesamt ${actual} ${actual === 1 ? 'Wort' : 'Wörter'}: In dieser Runde sind es ${firstRound} ${firstRound === 1 ? 'Paar' : 'Paare'} statt maximal ${roundSize}.`
+      : `Erste Runde: ${firstRound} Paare · insgesamt ${actual} Wörter. Die letzte Runde kann kleiner sein.`;
     el('[data-answer-format-settings]').hidden = ['matching', 'flashcards'].includes(mode());
     answerFormatInput.disabled = ['matching', 'flashcards'].includes(mode());
     el('[data-pool-size]').dataset.empty = String(!count);
@@ -195,6 +214,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
   }
   for (const input of [packInput, posInput, weaknessInput]) input.addEventListener('change', () => refresh());
   totalInput.addEventListener('input', () => refresh());
+  root.querySelectorAll<HTMLInputElement>('input[name="roundSize"]').forEach(input => input.addEventListener('change', refresh));
   answerFormatInput.addEventListener('change', () => refresh());
   modeInputs.forEach(input => {
     input.addEventListener('change', () => openMode(input));
@@ -217,6 +237,29 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     resetPending = false; el('[data-reset-progress]').textContent = 'Lernstand löschen'; el('[data-cancel-reset]').hidden = true;
   });
   function current(): Exercise { return queue[index]; }
+  function showField(n: number, focus = false): void {
+    const groups = [...fields.querySelectorAll<HTMLFieldSetElement>('.latin-selection-field')];
+    const paged = groups.length > 1;
+    fieldIndex = Math.max(0, Math.min(n, groups.length - 1));
+    groups.forEach((group, i) => { group.hidden = paged && i !== fieldIndex; });
+    fieldHeading.hidden = fieldNavigation.hidden = !paged;
+    if (!paged) return;
+    const answered = groups.filter(group => group.querySelector<HTMLInputElement>('input')!.value).length;
+    el('[data-field-status]').textContent = `Feld ${fieldIndex + 1} von ${groups.length} · ${answered} von ${groups.length} ausgewählt`;
+    el<HTMLButtonElement>('[data-field-previous]').disabled = fieldIndex === 0;
+    el<HTMLButtonElement>('[data-field-next]').disabled = fieldIndex === groups.length - 1;
+    if (focus) {
+      const legend = groups[fieldIndex].querySelector('legend')!;
+      legend.focus(); fieldHeading.scrollIntoView({ block: 'start', behavior: 'instant' });
+    }
+  }
+  el('[data-field-previous]').addEventListener('click', () => showField(fieldIndex - 1, true));
+  el('[data-field-next]').addEventListener('click', () => showField(fieldIndex + 1, true));
+  el('[data-show-prompt]').addEventListener('click', () => {
+    const prompt = el('[data-activity-prompt]');
+    prompt.focus(); el('[data-activity-context]').hidden ? prompt.scrollIntoView({ block: 'start', behavior: 'instant' })
+      : el('[data-activity-context]').scrollIntoView({ block: 'start', behavior: 'instant' });
+  });
   function render(): void {
     const exercise = current();
     statuses = null; committed = false; hinted = false; hintIndex = 0; selfAssessed = new Set();
@@ -237,7 +280,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
       if (exercise.answerFormat === 'selection') {
         const group = document.createElement('fieldset'); group.className = 'latin-answer-field latin-selection-field';
         group.setAttribute('aria-describedby', `latin-response-${n}`);
-        const legend = document.createElement('legend'); legend.textContent = field.label;
+        const legend = document.createElement('legend'); legend.textContent = field.label; legend.tabIndex = -1;
         const value = document.createElement('input'); value.type = 'hidden'; value.id = `latin-answer-${n}`; value.name = field.key;
         const options = document.createElement('div'); options.className = 'latin-answer-options';
         const response = document.createElement('small'); response.id = `latin-response-${n}`;
@@ -249,6 +292,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
             value.value = value.value === choice ? '' : choice;
             options.querySelectorAll('button').forEach(option => option.setAttribute('aria-pressed', String(option.textContent === value.value)));
             group.removeAttribute('aria-invalid'); response.textContent = '';
+            showField(fieldIndex);
           });
           return button;
         }));
@@ -275,6 +319,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
       label.append(text, control, response); return label;
     }));
     activityForm.reset();
+    showField(0);
     el('[data-activity-title]').focus();
   }
   function controlAt(n: number): HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement { return el(`#latin-answer-${n}`); }
@@ -297,6 +342,7 @@ export function initLearning(root: HTMLElement, edit: () => void) {
     const exercise = current();
     const emptyIndex = exercise.fields.findIndex((_, n) => !controlAt(n).value.trim());
     if (emptyIndex >= 0) {
+      if (exercise.answerFormat === 'selection') showField(emptyIndex);
       el(`#latin-response-${emptyIndex}`).textContent = exercise.answerFormat === 'selection'
         ? 'Bitte wähle eine Antwort oder „Lösung aufdecken“.' : 'Bitte antworte oder wähle „Lösung aufdecken“.';
       const control = controlAt(emptyIndex);

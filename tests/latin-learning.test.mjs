@@ -197,10 +197,35 @@ test('progress schedules each skill independently and immediate repetitions neve
   assert.equal(p.words[word('ferre').id].meaning.nextDue, now + 4 * 86_400_000);
   const assisted = recordProgress(emptyProgress(), word('ferre').id, 'meaning', true, now, true);
   assert.equal(assisted.words[word('ferre').id].meaning.streak, 0);
-  assert.deepEqual(progressSummary(p, now + 700_000), { practiced: 1, due: 1, weak: 1 });
+  assert.deepEqual(progressSummary(p, now + 700_000), { practiced: 1, due: 1, weak: 1, unconfirmed: 0 });
   assert.deepEqual(filterWords(vocabulary, 'workshop', { ...defaultFilters(), weakness: 'perfekt_1sg' }, p).map(w => w.id), [word('ferre').id]);
   assert.deepEqual(decodeProgress(JSON.stringify(p)), p);
   for (const raw of [null, '{', 'null', '[]', '{}', '{"version":2,"words":{}}']) assert.deepEqual(decodeProgress(raw), emptyProgress());
   assert.deepEqual(decodeProgress(JSON.stringify({ version: 1, words: { [word('ferre').id]: { meaning: { attempts: -1 } }, '__proto__': {} } })), emptyProgress());
   assert.deepEqual(decodeProgress(JSON.stringify({ version: 1, words: { v000001: { constructor: { attempts: 1, correct: 1, streak: 1, lastReviewed: now, nextDue: now } } } })), emptyProgress());
+});
+
+test('correct supported practice is distinct from errors, including stored and older progress', () => {
+  const id = word('ferre').id;
+  const now = 1_800_000_000_000;
+  let p = recordProgress(emptyProgress(), id, 'meaning', true, now, true);
+  assert.deepEqual(progressSummary(p, now), { practiced: 1, due: 0, weak: 0, unconfirmed: 1 });
+  assert.equal(filterWords(vocabulary, 'workshop', { ...defaultFilters(), weakness: 'weak' }, p).length, 0);
+  assert.deepEqual(filterWords(vocabulary, 'workshop', { ...defaultFilters(), weakness: 'unconfirmed' }, p).map(w => w.id), [id]);
+  assert.deepEqual(decodeProgress(JSON.stringify(p)), p);
+  p = recordProgress(p, id, 'meaning', false, now + 1000);
+  assert.equal(progressSummary(p).weak, 1);
+  assert.equal(progressSummary(p).unconfirmed, 0);
+  p = recordProgress(p, id, 'meaning', true, now + 2000, true);
+  assert.equal(progressSummary(p).weak, 0);
+  assert.equal(progressSummary(p).unconfirmed, 1);
+  const legacy = structuredClone(p);
+  delete legacy.words[id].meaning.lastResult;
+  const restored = decodeProgress(JSON.stringify(legacy));
+  assert.equal(restored.words[id].meaning.attempts, 3, 'older records retain all attempts and due dates');
+  assert.equal(restored.words[id].meaning.nextDue, p.words[id].meaning.nextDue);
+  assert.equal(progressSummary(restored).weak, 1, 'ambiguous older failures remain conservative');
+  p = recordProgress(p, id, 'meaning', true, now + 86_400_000);
+  assert.equal(progressSummary(p).unconfirmed, 0);
+  assert.equal(progressSummary(p).weak, 0);
 });

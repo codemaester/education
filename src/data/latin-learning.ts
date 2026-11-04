@@ -48,7 +48,10 @@ export interface Exercise {
   context?: string; explanation: string; hints: string[]; fields: LearningField[];
   provided?: string[]; retry?: boolean; answerFormat?: AnswerFormat;
 }
-export interface SkillProgress { attempts: number; correct: number; streak: number; lastReviewed: number; nextDue: number; }
+export interface SkillProgress {
+  attempts: number; correct: number; streak: number; lastReviewed: number; nextDue: number;
+  lastResult?: 'correct' | 'assisted' | 'incorrect';
+}
 export interface Progress { version: 1; words: Record<string, Record<string, SkillProgress>>; }
 export const PROGRESS_KEY = 'education.latin.progress.v1';
 export const emptyProgress = (): Progress => ({ version: 1, words: {} });
@@ -70,7 +73,10 @@ export function decodeProgress(raw: string | null): Progress {
         const p = candidate as SkillProgress;
         if (p && [p.attempts, p.correct, p.streak, p.lastReviewed, p.nextDue].every(n => Number.isSafeInteger(n) && n >= 0)
           && p.correct <= p.attempts && p.streak <= intervals.length && p.attempts <= 1_000_000
-          && p.lastReviewed <= 8_640_000_000_000_000 && p.nextDue <= 8_640_000_000_000_000) valid[skill] = { attempts: p.attempts, correct: p.correct, streak: p.streak, lastReviewed: p.lastReviewed, nextDue: p.nextDue };
+          && p.lastReviewed <= 8_640_000_000_000_000 && p.nextDue <= 8_640_000_000_000_000) valid[skill] = {
+            attempts: p.attempts, correct: p.correct, streak: p.streak, lastReviewed: p.lastReviewed, nextDue: p.nextDue,
+            ...(['correct', 'assisted', 'incorrect'].includes(p.lastResult ?? '') ? { lastResult: p.lastResult } : {}),
+          };
       }
       if (Object.keys(valid).length) words[id] = valid;
     }
@@ -88,13 +94,18 @@ export function recordProgress(progress: Progress, wordId: string, skill: string
     : previous && elapsed < DAY / 2 ? previous.nextDue : now + intervals[Math.max(0, streak - 1)] * DAY;
   return { version: 1, words: { ...progress.words, [wordId]: { ...progress.words[wordId], [skill]: {
     attempts: (previous?.attempts ?? 0) + 1, correct: (previous?.correct ?? 0) + Number(correct), streak,
-    lastReviewed: now, nextDue,
+    lastReviewed: now, nextDue, lastResult: correct ? assisted ? 'assisted' : 'correct' : 'incorrect',
   } } } };
 }
-export function progressSummary(progress: Progress, now = Date.now()): { practiced: number; due: number; weak: number } {
+/** Older records have no last result; retain their conservative error signal. */
+function hasErrors(p: SkillProgress): boolean {
+  return p.streak === 0 && (p.lastResult === 'incorrect' || p.lastResult === undefined && p.correct < p.attempts);
+}
+export function progressSummary(progress: Progress, now = Date.now()): { practiced: number; due: number; weak: number; unconfirmed: number } {
   const values = Object.values(progress.words);
   return { practiced: values.length, due: values.filter(skills => Object.values(skills).some(p => p.nextDue <= now)).length,
-    weak: values.filter(skills => Object.values(skills).some(p => p.streak === 0)).length };
+    weak: values.filter(skills => Object.values(skills).some(hasErrors)).length,
+    unconfirmed: values.filter(skills => Object.values(skills).some(p => p.streak === 0 && !hasErrors(p))).length };
 }
 
 export function grammarValues(word: TrainerWord, key: string, partOfSpeech?: string): string[] {
@@ -166,7 +177,9 @@ export function filterWords(pool: readonly TrainerWord[], mode: Mode, filters: F
     && (!filters.partOfSpeech || w.partsOfSpeech.includes(filters.partOfSpeech))
     && (filters.lesson === null || lessonsFor(w).includes(filters.lesson))
     && (!filters.weakness || Object.entries(progress.words[w.id] ?? {}).some(([skill, p]) =>
-      filters.weakness === 'due' ? p.nextDue <= now : (filters.weakness === 'weak' || skill === filters.weakness) && p.streak === 0)));
+      filters.weakness === 'due' ? p.nextDue <= now
+        : filters.weakness === 'unconfirmed' ? p.streak === 0 && !hasErrors(p)
+        : (filters.weakness === 'weak' || skill === filters.weakness) && hasErrors(p))));
 }
 
 export function normalizeLatin(value: string): string {
