@@ -4,6 +4,9 @@
 .latin-intro em { color: var(--color-terracotta-dark); }
 .latin-intro p:last-child { margin: 0; font-size: .875rem; }
 .latin-trainer { background: var(--color-surface); border-top: 1px solid var(--color-rule); border-bottom: 1px solid var(--color-rule); padding: clamp(1rem, 3vw, 2.5rem) min(2.5rem, 4vw); overflow-wrap: anywhere; }
+/* Inherit through labels and transparent inputs too: native tap overlays can
+   briefly flash over a whole custom control. Keep the existing focus states. */
+.latin-trainer { -webkit-tap-highlight-color: transparent; }
 .latin-trainer legend { max-width: 100%; }
 .latin-trainer .button { max-width: 100%; min-width: 0; white-space: normal; }
 .latin-trainer h2 { font-size: 2rem; }
@@ -30,7 +33,9 @@
 .latin-word { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; width: 100%; min-height: 72px; border: 1px solid var(--color-rule); border-radius: var(--radius-small); background: var(--color-paper); text-align: left; padding: .8rem 1rem; overflow-wrap: anywhere; line-height: 1.55; }
 .latin-word small { font-size: .7rem; font-weight: 600; }
 .latin-word small:empty { display: none; }
-.latin-word:hover { background: var(--color-sage-light); }
+.latin-word:hover:not([aria-pressed='true']):not([data-solved='true']) { background: var(--color-sage-light); }
+/* Change foreground and background together: crossfading their inverse colors
+   makes the middle of a selection transition almost unreadable. */
 .latin-word[aria-pressed='true'] { background: var(--color-forest); color: var(--color-paper); border-color: var(--color-forest); }
 .latin-word[data-solved='true'] { color: var(--color-correct); background: var(--color-sage-light); border-color: var(--color-sage); cursor: default; }
 .latin-word[data-incorrect='true'] { color: var(--color-incorrect); border-color: var(--color-incorrect); }
@@ -46,7 +51,6 @@
 .latin-actions { display: flex; flex-wrap: wrap; gap: 1rem; }
 @media (max-width: 740px) { .latin-intro { grid-template-columns: 1fr; gap: 1.5rem; margin-top: .75rem; } }
 @media (max-width: 440px) { .latin-word { padding: .65rem .5rem; font-size: .875rem; } .latin-word small { font-size: .65rem; } }
-@media (prefers-reduced-motion: no-preference) { .latin-word { transition: background-color 160ms ease-out, color 160ms ease-out; } }
 
 .latin-configuration { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem 2rem; }
 .latin-configuration label, .latin-answer-field { display: grid; gap: .5rem; min-width: 0; font-weight: 600; }
@@ -116,7 +120,7 @@
 .latin-selection-field legend { padding: 0 0 .75rem; font-weight: 600; }
 .latin-answer-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
 .latin-answer-option { width: 100%; min-width: 0; min-height: 48px; padding: .65rem .85rem; border: 1px solid var(--color-rule); border-radius: var(--radius-small); background: var(--color-paper); color: var(--color-forest); font: inherit; font-size: .9rem; font-weight: 400; line-height: 1.55; text-align: left; overflow-wrap: anywhere; cursor: pointer; }
-.latin-answer-option:hover:not(:disabled) { background: var(--color-sage-light); }
+.latin-answer-option:hover:not(:disabled):not([aria-pressed='true']) { background: var(--color-sage-light); }
 .latin-answer-option[aria-pressed='true'] { background: var(--color-forest); color: var(--color-paper); border-color: var(--color-forest); }
 .latin-selection-field[aria-invalid='true'] .latin-answer-options { outline: 1px solid var(--color-incorrect); outline-offset: 3px; }
 .latin-selection-field:disabled .latin-answer-option { opacity: 1; cursor: default; }
