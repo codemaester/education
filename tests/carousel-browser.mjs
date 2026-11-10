@@ -140,7 +140,7 @@ export async function testCarousel(browser, origin, screenshots) {
     assert.equal(await root.locator('[data-active] img').count(), 1, 'second course uses an illustration');
     await root.locator('[data-slide-choice="0"]').click();
     assert.equal(await root.locator('[data-active] .button').getAttribute('href'), `/${entries[0].href}`);
-    const imageName = { latin: 'latin-vocabulary-painted', 'sqrt-two': 'sqrt-two-editorial', museum: 'infinity-museum', optics: 'optics-editorial' }[entries[0].cover];
+    const imageName = { 'square-trainer': 'square-trainer-painted', latin: 'latin-vocabulary-painted', 'sqrt-two': 'sqrt-two-editorial', museum: 'infinity-museum', optics: 'optics-editorial' }[entries[0].cover];
     assert.equal(await root.locator(`[data-active] img[src*="${imageName}"]`).count(), 1, 'newest course uses its configured illustration');
     if (width <= 740) {
       const visual = await root.locator('[data-active] .featured-visual').boundingBox();
