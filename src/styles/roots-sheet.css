@@ -1,0 +1,37 @@
+.rs-shell { width: min(920px,calc(100% - 2rem)); margin: 2rem auto; }
+.rs-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; font-size: .85rem; }
+.rs-page { background: var(--color-surface); padding: clamp(1rem,5vw,3rem); margin: 0 0 2rem; }
+.rs-page header p { font-size: .75rem; color: var(--color-muted); }
+.rs-page h1 { font-size: clamp(2.5rem,6vw,3.5rem); }
+.rs-page h1 em { color: var(--color-terracotta-dark); }
+.rs-page h2 { font-size: 1.8rem; margin-top: 1.7rem; }
+.rs-page h3 { font-size: 1rem; }
+.rs-page p, .rs-page li { font-size: .9rem; }
+.rs-page .rs-small { font-size: .8rem; }
+.rs-squares { display: grid; grid-template-columns: repeat(4,1fr); gap: .3rem .8rem; font-size: .85rem; padding: 1rem 0; border-block: 1px solid var(--color-rule); }
+.rs-formula { font: 450 1.35rem/1.6 var(--font-display); padding: .5rem 0; border-block: 1px solid var(--color-rule); margin: .8rem 0; overflow-wrap: anywhere; }
+.rs-page table { border-collapse: collapse; width: 100%; font-size: .8rem; margin: 1rem 0; }
+.rs-page th, .rs-page td { text-align: left; padding: .5rem; border-bottom: 1px solid var(--color-rule); }
+.rs-page ol { padding-left: 1.3rem; }
+.rs-page .rs-source { font-size: .7rem; border-top: 1px solid var(--color-rule); padding-top: .7rem; overflow-wrap: anywhere; }
+@media(max-width:500px) { .rs-squares { grid-template-columns: repeat(2,1fr); } .rs-page th, .rs-page td { padding: .3rem; font-size: .72rem; overflow-wrap: anywhere; } }
+@page { size: A4; margin: 13mm; }
+@media print {
+  .rs-actions, .rs-shell > noscript { display: none; }
+  .rs-shell { width: 100%; margin: 0; }
+  .rs-page { padding: 0; margin: 0; background: white; color: black; }
+  .rs-page + .rs-page { break-before: page; }
+  .rs-page header p { font-size: 8pt; color: black; }
+  .rs-page h1 { font-size: 29pt; margin-bottom: 4mm; }
+  .rs-page h1 em { color: black; }
+  .rs-page h2 { font-size: 16pt; margin: 5mm 0 2mm; break-after: avoid; }
+  .rs-page h3 { font-size: 11pt; margin: 3mm 0 2mm; break-after: avoid; }
+  .rs-page p, .rs-page li { font-size: 10pt; line-height: 1.4; margin-bottom: 2mm; }
+  .rs-page .rs-small { font-size: 9pt; }
+  .rs-squares { grid-template-columns: repeat(4,1fr); font-size: 9pt; padding: 2mm 0; border-color: black; }
+  .rs-formula { font-size: 13pt; line-height: 1.4; padding: 2mm 0; margin: 3mm 0; border-color: black; }
+  .rs-block { break-inside: avoid; }
+  .rs-page table { font-size: 9pt; margin: 3mm 0; }
+  .rs-page td, .rs-page th { padding: 2mm; font-size: 9pt; border-color: black; }
+  .rs-page .rs-source { font-size: 7pt; margin-top: 4mm; }
+}

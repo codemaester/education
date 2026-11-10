@@ -8,6 +8,7 @@
     "check": "astro check",
     "test:unit": "node --test tests/*.test.cjs tests/*.test.mjs",
     "test:browser": "node tests/browser.mjs",
+    "test:roots": "node tests/roots-browser.mjs",
     "build": "astro check && astro build",
     "preview": "astro preview"
   },

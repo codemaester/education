@@ -1,3 +1,4 @@
+import { testRootsLesson } from './roots-browser.mjs';
 import { testSquareTrainer } from './square-trainer-browser.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
@@ -33,6 +34,7 @@ let browser;
 try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_EXECUTABLE_PATH || undefined });
   await testSquareTrainer(browser, origin, screenshots);
+  await testRootsLesson(browser, origin, screenshots);
   await testLatinContrast(browser, origin);
   await testLatinUsability(browser, origin, screenshots);
   await testLatinFlashcards(browser, origin, screenshots);

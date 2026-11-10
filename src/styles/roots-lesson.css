@@ -1,0 +1,77 @@
+.rl-course-nav { position: sticky; top: 0; z-index: 20; display: flex; gap: 1rem; align-items: start; padding: .7rem; background: var(--color-paper); border-block: 1px solid var(--color-rule); }
+.rl-course-nav details { flex: 1; min-width: 0; }
+.rl-course-nav summary { padding: .7rem .3rem; font-size: .85rem; font-weight: 700; }
+.rl-course-nav summary span { display: inline; font-weight: 400; color: var(--color-muted); margin-left: 1.2rem; }
+.rl-menu-links { display: grid; grid-template-columns: repeat(3,1fr); gap: .25rem; max-height: 55vh; overflow: auto; padding: .5rem 0; }
+.rl-menu-links a { font-size: .8rem; padding: .65rem; text-decoration: none; border-radius: 4px; }
+.rl-menu-links a:hover, .rl-menu-links a[aria-current] { background: var(--color-sage-light); font-weight: 700; }
+.rl-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; padding-top: 3rem; }
+.rl-intro h2 { font-size: 2rem; }
+.rl-intro p, .rl-intro ol { font-size: .9rem; }
+.rl-intro ol { margin: 0; padding-left: 1.2rem; }
+.rl-intro li { padding: .3rem; }
+.rl-chapter, #gesamtabfrage, #lernzettel, #quellen, #trainer, #verstehen, #nachschlagen { scroll-margin-top: 6rem; }
+.rl-chapter { border-top: 1px solid var(--color-rule); margin-top: 4rem; }
+.rl-question { font: 450 clamp(1.35rem,2.6vw,1.9rem)/1.4 var(--font-display); max-width: 52rem; }
+.rl-goal { font-size: .85rem; color: var(--color-muted); max-width: 54rem; }
+.rl-reading { max-width: 55rem; }
+.rl-reading p { max-width: 52rem; }
+.rl-rule { background: var(--color-sage-light); border-left: 3px solid var(--color-forest); padding: 1rem 1.25rem; font-size: clamp(1.1rem,2.5vw,1.5rem); margin: 1.5rem 0; overflow-wrap: anywhere; }
+.rl-rule small { font: 400 .8rem/1.6 var(--font-body); }
+.rl-example { background: var(--color-surface); padding: 1.5rem 2rem; border: 1px solid var(--color-rule); border-radius: 8px; margin-top: 1.5rem; }
+.rl-example h3 { margin: 0 0 1rem; }
+.rl-example ol { padding-left: 1.2rem; margin: 0; }
+.rl-example li { padding: .35rem 0 .35rem .5rem; overflow-wrap: anywhere; }
+.rl-warning { border-left: 3px solid var(--color-terracotta-dark); padding: .5rem 1.2rem; margin: 1.5rem 0; font-size: .9rem; }
+.rl-warning p { margin: .4rem 0 0; }
+.rl-explorer { padding: 1.5rem 2rem; border-radius: 8px; background: #eee8dc; margin: 1.5rem 0 2rem; }
+.rl-explorer h3 { margin: 0 0 .75rem; }
+.rl-explorer > p { font-size: .9rem; }
+.rl-explorer select { display: block; border: 1px solid #89998d; color: var(--color-forest); background: var(--color-surface); border-radius: 4px; padding: .65rem; min-width: 100px; min-height: 44px; margin-top: .5rem; }
+.rl-explorer label { display: block; font-size: .8rem; font-weight: 600; }
+.rl-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem 2rem; }
+.rl-controls input { display: block; width: min(220px,100%); min-height: 44px; }
+.rl-explorer .rl-live-formula { font: 450 clamp(1.25rem,3vw,1.8rem)/1.7 var(--font-display); padding-top: .8rem; overflow-wrap: anywhere; }
+.rl-factor-diagram { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.rl-factor-diagram span:not(:nth-child(2)) { background: var(--color-forest); color: var(--color-paper); border-radius: 6px; padding: 1rem 1.5rem; font-size: 1.2rem; }
+.rl-intervals { margin-top: 1rem; }
+.rl-intervals p { border-left: 3px solid var(--color-forest); padding: .6rem .8rem; font-size: 1.1rem; background: var(--color-surface); margin-bottom: .6rem; }
+.rl-intervals small { display: block; font-size: .75rem; overflow-wrap: anywhere; }
+.rl-quiz { padding: 1.5rem 2rem; border: 1px solid var(--color-rule); border-radius: 8px; background: var(--color-surface); }
+.rl-quiz h3 { margin-top: 0; }
+.rl-instructions { font-size: .8rem; color: var(--color-muted); }
+.rl-tasks { padding-left: 1.3rem; margin: 0; }
+.rl-tasks > li { border-top: 1px solid var(--color-rule); padding: 1.2rem 0; }
+.rl-prompt { margin-bottom: .7rem; font-weight: 600; font-size: .95rem; }
+.rl-answer-fields { display: flex; flex-wrap: wrap; gap: .6rem 1rem; }
+.rl-answer-fields label { display: block; font-size: .75rem; max-width: 100%; }
+.rl-answer-fields input { display: block; width: 170px; max-width: 100%; min-height: 48px; padding: .6rem; font-size: 1rem; border: 1px solid #89998d; border-radius: 5px; background: var(--color-paper); color: var(--color-forest); margin-top: .3rem; }
+.rl-answer-fields input[aria-invalid='true'] { border: 2px solid var(--color-incorrect); }
+.rl-task-feedback { margin: .6rem 0 0; font-size: .85rem; }
+[data-result='correct'] .rl-task-feedback { color: var(--color-correct); }
+[data-result='incorrect'] .rl-task-feedback, [data-result='empty'] .rl-task-feedback { color: var(--color-incorrect); }
+.rl-solution { margin-top: .5rem; font-size: .8rem; }
+.rl-solution summary { padding-block: .6rem; min-height: 44px; text-decoration: underline; text-underline-offset: 3px; }
+.rl-solution p { margin-top: .5rem; }
+.rl-quiz-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1rem; }
+.rl-quiz-status { margin: 1rem 0 0; font-size: .85rem; font-weight: 600; }
+.rl-recommendations a { display: inline-block; padding: .5rem 1rem .5rem 0; font-size: .85rem; }
+.rl-recommendations p { margin: 1rem 0 0; }
+.rl-next { margin-top: 1.5rem; }
+.rl-sources { font-size: .8rem; }
+.rl-sources h2 { font-size: 2rem; }
+.rl-sources a { overflow-wrap: anywhere; }
+@media(max-width: 680px) {
+  .rl-course-nav { gap: .5rem; align-items: center; }
+  .rl-course-nav summary { font-size: .75rem; }
+  .rl-course-nav summary span { display: block; margin-left: 0; font-size: .65rem; }
+  .rl-course-nav > a { font-size: .7rem; padding: .5rem; }
+  .rl-menu-links { grid-template-columns: 1fr; }
+  .rl-intro { grid-template-columns: 1fr; gap: 1rem; padding-top: 2rem; }
+  .rl-example, .rl-explorer, .rl-quiz { padding: 1.2rem; }
+  .rl-chapter { margin-top: 2.5rem; }
+  .rl-rule small { display: block; }
+  .rl-answer-fields { flex-direction: column; }
+  .rl-factor-diagram span:not(:nth-child(2)) { padding: .7rem 1rem; }
+}
+@media print { .rl-course-nav { display: none; } .rl-quiz-actions, .rl-controls { display: none; } }

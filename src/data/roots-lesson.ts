@@ -1,0 +1,66 @@
+export interface RootChapter {
+  id: string; title: string; shortTitle: string; question: string; goal: string;
+  body: string; steps: string[]; mistake: string; summary: string; formula: string;
+}
+export const rootChapters: RootChapter[] = [
+  {
+    id: 'wurzelgesetze', title: 'Wurzelgesetze: Produkte und Quotienten', shortTitle: 'Wurzelgesetze',
+    question: 'Kannst du √18 · √2 berechnen, ohne die einzelnen Wurzeln zu runden?',
+    goal: 'Du multiplizierst und dividierst Quadratwurzeln und beachtest, wann die Regeln gelten.',
+    body: '<p>Die Zahl unter dem Wurzelzeichen heißt <strong>Radikand</strong>. Im Bereich der reellen Zahlen muss sie nichtnegativ sein. √a meint immer die nichtnegative Zahl, deren Quadrat a ist.</p><div class="rl-rule">√a · √b = √(a · b) <small>für a ≥ 0 und b ≥ 0</small><br>√a / √b = √(a / b) <small>für a ≥ 0 und b > 0</small></div><p>Du darfst die Regeln in beide Richtungen verwenden. Außerdem gilt (√a)² = a für a ≥ 0. Umgekehrt ist <strong>√(x²) = |x|</strong>: Der Betrag |x| ist der Abstand der Zahl von 0. Zum Beispiel ist √((−5)²) = 5.</p>',
+    steps: ['√18 · √2 = √(18 · 2) = √36 = 6.', '√75 / √3 = √(75 / 3) = √25 = 5.', 'Kontrolle: Die Ergebnisse sind nichtnegativ. Ein Nenner darf niemals 0 sein.'],
+    mistake: 'Über Summen und Differenzen darfst du die Wurzel nicht verteilen: √(9 + 16) = 5, aber √9 + √16 = 7. Auch √(−4) ist keine reelle Zahl.',
+    formula: '√a · √b = √(ab) ··· √a / √b = √(a/b)',
+    summary: 'Produkt: a,b ≥ 0. Quotient: a ≥ 0, b > 0. (√a)² = a für a ≥ 0; √(x²) = |x|. Kein entsprechendes Gesetz für Summen oder Differenzen.',
+  },
+  {
+    id: 'teilweises-wurzelziehen', title: 'Teilweises Wurzelziehen', shortTitle: 'Teilweise Wurzel ziehen',
+    question: 'Wie wird aus √72 ein einfacherer, aber immer noch exakter Ausdruck?',
+    goal: 'Du findest quadratische Faktoren und vereinfachst Wurzelterme vollständig.',
+    body: '<p>Zerlege den Radikanden in ein <strong>Produkt aus einer Quadratzahl und einem Rest</strong>. Aus der Quadratzahl kannst du die Wurzel ziehen. Der andere Faktor bleibt unter der Wurzel.</p><div class="rl-rule">√(a² · b) = a√b <small>für a ≥ 0, b ≥ 0</small></div><p>Am schnellsten geht es mit dem größten quadratischen Teiler. Vollständig vereinfacht ist ein Wurzelterm, wenn im Rest kein quadratischer Teiler größer als 1 steckt. Bei Variablen ohne Vorzeichenannahme gilt √(x²b) = |x|√b für b ≥ 0.</p>',
+    steps: ['72 = 36 · 2. Die 36 ist die größte Quadratzahl, die 72 teilt.', '√72 = √(36 · 2) = √36 · √2.', '√72 = 6√2. Der Rest 2 enthält keinen weiteren quadratischen Faktor.'],
+    mistake: '√72 = 3√8 ist zwar gleich viel, aber noch nicht vollständig vereinfacht: √8 = 2√2. Ziehe aus einem quadratischen Faktor seine Wurzel, nicht den Faktor selbst.',
+    formula: '√72 = √(36 · 2) = 6√2',
+    summary: 'Für a,b ≥ 0: √(a²b) = a√b. Größten quadratischen Teiler suchen, Radikanden als Produkt zerlegen, Wurzel aus dem Quadrat ziehen. Der Rest bleibt unter der Wurzel. Kontrolle: 6² · 2 = 72.',
+  },
+  {
+    id: 'faktoren-in-die-wurzel', title: 'Umgekehrt: Faktoren unter die Wurzel bringen', shortTitle: 'Faktor unter die Wurzel',
+    question: 'Welche einzelne Wurzel hat denselben Wert wie 3√5?',
+    goal: 'Du kehrst das teilweise Wurzelziehen um und beachtest das Vorzeichen.',
+    body: '<p>Ein nichtnegativer Vorfaktor kann unter das Wurzelzeichen wandern. Dabei musst du ihn <strong>quadrieren</strong>, denn a = √(a²) gilt für a ≥ 0.</p><div class="rl-rule">a√b = √(a² · b) <small>für a ≥ 0 und b ≥ 0</small></div><p>Das hilft beim Vergleichen positiver Wurzelterme: 3√5 = √45 ist kleiner als 4√3 = √48, weil 45 &lt; 48. Eine negative Zahl kannst du nicht als einzelne reelle Quadratwurzel schreiben. Das Minus bleibt außen: <strong>−3√5 = −√45</strong>.</p>',
+    steps: ['3√5 = √(3²) · √5.', 'Fasse die Wurzeln zusammen: √(3² · 5).', 'Quadriere zuerst: 3² · 5 = 9 · 5 = 45. Also 3√5 = √45.'],
+    mistake: '3√5 ist nicht √15. Der Vorfaktor wird quadriert! Ein Minus verschwindet nicht: −3√5 ≠ √45.',
+    formula: '3√5 = √(3² · 5) = √45',
+    summary: 'Für a,b ≥ 0: a√b = √(a²b). Nichtnegativen Vorfaktor quadrieren und mit dem Radikanden multiplizieren. Bei negativem Vorfaktor bleibt das Minus vor der Wurzel: −3√5 = −√45.',
+  },
+  {
+    id: 'wurzelsummen', title: 'Wurzeln in Summen zusammenfassen', shortTitle: 'Summen zusammenfassen',
+    question: 'Warum kannst du √8 + √18 zusammenfassen, aber √2 + √3 nicht?',
+    goal: 'Du vereinfachst zuerst und addierst oder subtrahierst dann gleichartige Wurzelterme.',
+    body: '<p>Wurzelterme sind <strong>gleichartig</strong>, wenn nach dem Vereinfachen derselbe Radikand übrig bleibt. Dann kannst du die Vorfaktoren zusammenfassen, wie bei 2x + 3x = 5x.</p><div class="rl-rule">a√r + b√r = (a + b)√r <small>für r ≥ 0 und reelle a,b</small></div><p>Vereinfache deshalb immer zuerst jede Wurzel. Beachte die Vorzeichen: 3√2 − 5√2 = −2√2. Unterschiedliche Wurzelreste bleiben getrennt: √2 + √3 ist bereits die exakte Summe.</p>',
+    steps: ['√8 + √18 = √(4 · 2) + √(9 · 2).', 'Ziehe teilweise die Wurzel: 2√2 + 3√2.', 'Fasse nur die Vorfaktoren zusammen: (2 + 3)√2 = 5√2.'],
+    mistake: 'Die Radikanden werden beim Addieren nicht addiert: √2 + √3 ≠ √5. Beim Subtrahieren gilt dieselbe Regel für gleichartige Terme.',
+    formula: '√8 + √18 = 2√2 + 3√2 = 5√2',
+    summary: 'Für r ≥ 0: a√r + b√r = (a + b)√r. Erst jede Wurzel vollständig vereinfachen, dann gleichartige Terme sammeln und ihre Vorfaktoren mit Vorzeichen addieren. Verschiedene Wurzelreste bleiben getrennt.',
+  },
+  {
+    id: 'intervallschachtelung', title: 'Näherungswerte durch Intervallschachtelung', shortTitle: 'Näherungswerte',
+    question: 'Wie kannst du √7 ohne Wurzeltaste immer genauer eingrenzen?',
+    goal: 'Du schachtelst Intervalle, prüfst ihre Grenzen durch Quadrieren und rundest erst am Ende.',
+    body: '<p>Für nichtnegative Zahlen erhält das Quadrieren die Reihenfolge. Gilt u² &lt; n &lt; o² mit 0 ≤ u &lt; o, dann gilt auch <strong>u &lt; √n &lt; o</strong>. Suche zuerst benachbarte ganze Zahlen, dann Zehntel, Hundertstel und so weiter. Jedes neue Intervall liegt im vorherigen.</p><div class="rl-rule">2,64 &lt; √7 &lt; 2,65<br><small>denn 2,64² = 6,9696 &lt; 7 &lt; 7,0225 = 2,65²</small></div><p>Das Eingrenzen ist noch kein Runden. Für zwei Nachkommastellen brauchst du die dritte Stelle oder den Vergleich mit der Rundungsgrenze. Aus 2,645 &lt; √7 &lt; 2,646 folgt <strong>√7 ≈ 2,65</strong>. Das Zeichen ≈ bedeutet „ungefähr gleich“. √7 bleibt der exakte Wert.</p>',
+    steps: ['2² = 4 und 3² = 9. Also 2 < √7 < 3.', '2,6² = 6,76 und 2,7² = 7,29. Also 2,6 < √7 < 2,7.', '2,64² = 6,9696 und 2,65² = 7,0225. Also 2,64 < √7 < 2,65.', 'Noch genauer: 2,645² = 6,996025 und 2,646² = 7,001316. Also 2,645 < √7 < 2,646.'],
+    mistake: 'Eine untere Grenze ist kein gerundeter Näherungswert. Schreibe √7 ≈ 2,65 und nicht √7 = 2,65. Sind die Quadrate beider Grenzen kleiner als 7, umschließt das Intervall √7 nicht.',
+    formula: '2 < √7 < 3 → 2,6 < √7 < 2,7 → 2,64 < √7 < 2,65',
+    summary: 'Nichtnegative Grenzen durch Quadrieren prüfen. Stelle für Stelle verfeinern; die neuen Intervalle liegen in den alten. Zum Runden eine weitere Stelle bestimmen. √7 ≈ 2,65 (zwei Nachkommastellen).',
+  },
+  {
+    id: 'wurzeln-von-wurzeln', title: 'Wurzeln von Wurzeln', shortTitle: 'Wurzel aus einer Wurzel',
+    question: 'Warum ist √(√81) gleich 3 und nicht 9?',
+    goal: 'Du rechnest verschachtelte Wurzeln von innen nach außen und erkennst die vierte Wurzel.',
+    body: '<p>Bei verschachtelten Wurzeln wendest du das Wurzelziehen <strong>mehrmals nacheinander</strong> an. Rechne von innen nach außen. Für a ≥ 0 gilt √(√a) = ⁴√a. Die vierte Wurzel ist die nichtnegative Zahl, deren vierte Potenz a ergibt.</p><div class="rl-rule">√(√a) = ⁴√a <small>für a ≥ 0</small></div><p>Wurzelexponenten werden multipliziert: zweimal die zweite Wurzel ergibt die vierte Wurzel. Zum Beispiel ist √(√16) = √4 = 2, denn 2⁴ = 16. Eine weitere äußere Quadratwurzel führt zur achten Wurzel.</p>',
+    steps: ['Innere Wurzel: √81 = 9.', 'Äußere Wurzel: √9 = 3.', 'Kontrolle: 3⁴ = 3 · 3 · 3 · 3 = 81. Also √(√81) = 3.'],
+    mistake: 'Zwei Wurzelzeichen heben sich nicht gegenseitig auf. Außerdem ist √(√a) etwas anderes als √a · √a = a für a ≥ 0.',
+    formula: '√(√81) = √9 = 3 = ⁴√81',
+    summary: 'Von innen nach außen rechnen. √(√a) = ⁴√a für a ≥ 0. Doppelte Quadratwurzel: Wurzelexponenten 2 · 2 = 4, nicht 2 + 2 als allgemeine Regel.',
+  },
+];

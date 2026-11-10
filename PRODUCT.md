@@ -50,9 +50,11 @@ wiederverwendbar sein. Icons und grafische Symbole unterstützen die Orientierun
   übernommen. Fächer ohne Lernseiten zeigen ihren noch leeren Inhaltsstand.
 - Weitere konkrete Lernthemen und Zielgruppen sind noch offen.
 
-Der Bereich „Quadratwurzeln: Die Basis sitzt“ startet unter
-`/mathematik/quadratwurzeln/` mit einem Quadratzahlen-Trainer für Klasse 9
-Gymnasium: freie Zahleneingabe, Quadrieren, Wurzelziehen und gemischte Runden
-für 1–20 sowie kleinere Teilbereiche. Falsche und aufgedeckte Aufgaben werden
-innerhalb der Runde erneut abgefragt. Siehe
-[Trainer-Dokumentation](documentation/QUADRATWURZELN.md).
+Die Lernseite „Quadratwurzeln: Sicher rechnen“ unter
+`/mathematik/quadratwurzeln/` verbindet den Quadratzahlen-Trainer (1–20) mit
+sechs Lernkapiteln für Klasse 9 Gymnasium: Wurzelgesetze, teilweises
+Wurzelziehen, Faktoren unter die Wurzel bringen, Wurzelsummen,
+Intervallschachtelung und Wurzeln von Wurzeln. Jedes Kapitel hat Erklärungen,
+interaktive Beispiele und fünf Aufgaben mit freier Zahleneingabe. Eine separate
+Gesamtabfrage mit zwölf Aufgaben und ein dreiseitiger A4-Lernzettel ergänzen
+den Lehrgang. Siehe [Dokumentation](documentation/QUADRATWURZELN.md).

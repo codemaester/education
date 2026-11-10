@@ -68,7 +68,7 @@ export async function testSquareTrainer(browser, origin, screenshots) {
   }
   const page = await browser.newPage({ javaScriptEnabled: false });
   await page.goto(origin + '/mathematik/quadratwurzeln/');
-  assert.ok(await page.locator('noscript').isVisible());
+  assert.ok(await page.locator('#trainer noscript').isVisible());
   await page.locator('.sq-reference summary').click();
   assert.equal(await page.locator('.sq-reference-grid > div').count(), 20);
   await page.close();

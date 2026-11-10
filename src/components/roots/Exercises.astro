@@ -1,0 +1,21 @@
+---
+import type { RootExercise } from '../../data/roots-exercises';
+interface Props { id: string; exercises: RootExercise[]; final?: boolean; }
+const { id, exercises, final = false } = Astro.props;
+---
+<form class="rl-quiz" id={id} data-root-quiz data-final={final ? 'true' : undefined} novalidate>
+  <h3>{final ? 'Dein Abschlusscheck' : 'Jetzt bist du dran'}</h3>
+  <p class="rl-instructions">{final ? '12 neue Aufgaben über alle sechs Kapitel. Werte deine Antworten gemeinsam aus.' : 'Rechne zuerst selbst. Prüfe deine Antworten oder öffne bei Bedarf die Musterlösung.'} Gib nur Zahlen ein; Komma und Punkt sind erlaubt. Bei a√b trägst du beide Zahlen ein – auch eine 1 als Vorfaktor. Vereinfache vollständig.</p>
+  <noscript><p>Die automatische Prüfung benötigt JavaScript. Vergleiche deine Rechnung mit den aufklappbaren Musterlösungen.</p></noscript>
+  <ol class="rl-tasks">
+    {exercises.map(exercise => <li data-exercise={exercise.id}>
+      <p class="rl-prompt">{exercise.prompt}</p>
+      <div class="rl-answer-fields">{exercise.fields.map((field, i) => <label for={`${exercise.id}-${i}`}>{field.label}<input id={`${exercise.id}-${i}`} name={`${exercise.id}-${i}`} type="text" inputmode={field.signed ? 'text' : 'decimal'} autocomplete="off" maxlength="18" aria-describedby={`${exercise.id}-feedback`} disabled /></label>)}</div>
+      <p class="rl-task-feedback" id={`${exercise.id}-feedback`} data-task-feedback></p>
+      <details class="rl-solution"><summary>Musterlösung anzeigen</summary><p><strong>{exercise.solution}</strong> — {exercise.explanation}</p></details>
+    </li>)}
+  </ol>
+  <div class="rl-quiz-actions"><button type="submit" class="button" disabled data-quiz-check>{final ? 'Gesamtabfrage auswerten' : 'Antworten prüfen'}</button><button type="button" class="button button-secondary" disabled data-quiz-reset>Neu versuchen</button></div>
+  <p data-quiz-status role="status" aria-live="polite" aria-atomic="true" class="rl-quiz-status"></p>
+  {final && <div class="rl-recommendations" data-recommendations></div>}
+</form>

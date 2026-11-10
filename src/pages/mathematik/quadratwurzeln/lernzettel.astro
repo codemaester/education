@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { rootChapters } from '../../../data/roots-lesson';
+import '../../../styles/roots-sheet.css';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Lernzettel · Quadratwurzeln" description="Druckbarer Lernzettel für Klasse 9: Wurzelgesetze, Wurzelterme, Intervallschachtelung, verschachtelte Wurzeln und Quadratzahlentabelle.">
+  <div class="rs-shell">
+    <nav class="rs-actions" aria-label="Lernzettel"><a href={`${base}mathematik/quadratwurzeln/`}>← Zurück zur Lernseite</a><button type="button" class="button" id="roots-print" disabled>Drucken / als PDF speichern</button></nav>
+    <noscript><p>Du kannst den Lernzettel über die normale Druckfunktion deines Browsers drucken.</p></noscript>
+    <article class="rs-sheet">
+      <section class="rs-page">
+        <header><p>Education · Mathematik · Klasse 9 Gymnasium · 1 / 3</p><h1>Quadratwurzeln.<br /><em>Dein Lernzettel.</em></h1></header>
+        <h2>Grundlagen · Was bedeutet √a?</h2><p>√a ist die <strong>nichtnegative Zahl</strong>, deren Quadrat a ergibt. In den reellen Zahlen ist √a nur für a ≥ 0 definiert. a heißt Radikand. √0 = 0. √144 = 12; die Gleichung x² = 144 hat dagegen zwei Lösungen: x = ±12.</p>
+        <h3>Die Quadratzahlen von 1 bis 20</h3><div class="rs-squares">{Array.from({length:20}, (_, i) => i+1).map(n => <span>{n}² = <strong>{n*n}</strong></span>)}</div><p class="rs-small">Jedes Zahlenpaar gilt auch rückwärts: 17² = 289 ⇔ √289 = 17.</p>
+        {rootChapters.slice(0,2).map((chapter, i) => <section class="rs-block"><h2>{i+1} · {chapter.shortTitle}</h2><p>{chapter.summary}</p><div class="rs-formula">{chapter.formula}</div><p class="rs-small"><strong>Achtung:</strong> {chapter.mistake}</p></section>)}
+        <div class="rs-formula">√(x²) = |x| · Beispiel: √((−5)²) = 5</div>
+      </section>
+      <section class="rs-page"><header><p>Education · Quadratwurzeln · 2 / 3</p><h2>Wurzelterme umformen</h2></header>
+        {rootChapters.slice(2,4).map((chapter, i) => <section class="rs-block"><h2>{i+3} · {chapter.shortTitle}</h2><p>{chapter.summary}</p><div class="rs-formula">{chapter.formula}</div><ol>{chapter.steps.map(step => <li>{step}</li>)}</ol><p class="rs-small"><strong>Achtung:</strong> {chapter.mistake}</p></section>)}
+        <h3>Eine Rechnung, mehrere Regeln</h3><div class="rs-formula">(√75 − 3√12) / √3<br />= (5√3 − 6√3) / √3<br />= −√3 / √3 = −1</div><p><strong>Reihenfolge:</strong> Wurzeln vereinfachen → gleichartige Terme zusammenfassen → Produkte und Quotienten berechnen. So vermeidest du unnötige Näherungswerte.</p>
+        <h3>Ungleichartige Terme</h3><p>√2 + √3 lässt sich nicht zu einer einzigen Quadratwurzel durch Addieren der Radikanden zusammenfassen. Der Term ist bereits exakt. Nur zum näherungsweisen Berechnen werden die einzelnen Werte gerundet – möglichst erst am Ende.</p>
+      </section>
+      <section class="rs-page"><header><p>Education · Quadratwurzeln · 3 / 3</p><h2>Näherungen & verschachtelte Wurzeln</h2></header>
+        <section class="rs-block"><h2>5 · Intervallschachtelung</h2><p>{rootChapters[4].summary}</p><p>Für 0 ≤ u &lt; o gilt: u² &lt; n &lt; o² ⇒ u &lt; √n &lt; o.</p><table><thead><tr><th>Intervall für √7</th><th>Kontrolle durch Quadrieren</th></tr></thead><tbody><tr><td>2 &lt; √7 &lt; 3</td><td>4 &lt; 7 &lt; 9</td></tr><tr><td>2,6 &lt; √7 &lt; 2,7</td><td>6,76 &lt; 7 &lt; 7,29</td></tr><tr><td>2,64 &lt; √7 &lt; 2,65</td><td>6,9696 &lt; 7 &lt; 7,0225</td></tr><tr><td>2,645 &lt; √7 &lt; 2,646</td><td>6,996025 &lt; 7 &lt; 7,001316</td></tr></tbody></table><p class="rs-small"><strong>Achtung:</strong> {rootChapters[4].mistake}</p></section>
+        <section class="rs-block"><h2>6 · Wurzeln von Wurzeln</h2><p>{rootChapters[5].summary}</p><div class="rs-formula">{rootChapters[5].formula}</div><p>⁴√a ist die nichtnegative Zahl, deren vierte Potenz a ist. Allgemein: √(√a) = ⁴√a für a ≥ 0.</p><p>Unterscheide: √(√16) = 2, aber √16 · √16 = 16.<br />Dreimal Wurzelziehen: √(√(√256)) = √(√16) = √4 = 2.</p></section>
+        <h3>Vor der Abgabe prüfen</h3><p>Stimmt der Definitionsbereich? Ist die Wurzel nichtnegativ? Ist der Wurzelrest vollständig vereinfacht? Sind Vorzeichen korrekt? Steht bei einer Näherung ≈ statt =?</p><p class="rs-source">Eigenständig erstellte Zusammenfassung. Fachliche Referenzen: ARD alpha, „Wurzelgesetze“; Landesbildungsserver Baden-Württemberg, „Näherungsverfahren“; Matheretter G21-2. Quellenlinks, Kapitelübungen und Gesamtabfrage: <a href={`${base}mathematik/quadratwurzeln/`}>edu.promptworks.eu/mathematik/quadratwurzeln/</a></p>
+      </section>
+    </article>
+  </div>
+</BaseLayout>
+<script>const button = document.querySelector<HTMLButtonElement>('#roots-print')!; button.disabled = false; button.addEventListener('click', () => window.print());</script>
