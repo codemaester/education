@@ -158,8 +158,9 @@ export async function testLatin(browser, origin, screenshots) {
   }
   const nav = await browser.newPage({ reducedMotion: 'reduce' });
   await nav.goto(origin + '/');
+  await nav.locator('[data-slide-choice][aria-label^="Sprachen:"]').click();
   await nav.locator('[data-active] .button').click();
-  assert.ok(nav.url().endsWith(route), 'newest carousel course leads to trainer');
+  assert.ok(nav.url().endsWith(route), 'Latin carousel course leads to trainer');
   await nav.goto(origin + '/');
   await nav.locator('.subject-entry[href="/faecher/sprachen/"]').click();
   await nav.locator('.course-list-entry').click();

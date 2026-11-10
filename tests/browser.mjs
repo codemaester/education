@@ -1,3 +1,4 @@
+import { testSquareTrainer } from './square-trainer-browser.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -31,6 +32,7 @@ if (screenshots) await mkdir(screenshots, { recursive: true });
 let browser;
 try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_EXECUTABLE_PATH || undefined });
+  await testSquareTrainer(browser, origin, screenshots);
   await testLatinContrast(browser, origin);
   await testLatinUsability(browser, origin, screenshots);
   await testLatinFlashcards(browser, origin, screenshots);
@@ -165,8 +167,8 @@ try {
     maths.on('pageerror', error => errors.push(error.message));
     maths.on('response', response => { if (response.url().startsWith(origin) && response.status() >= 400) errors.push(response.url()); });
     await maths.goto(origin + '/faecher/mathematik/');
-    assert.equal(await maths.locator('.course-list-entry').count(), 2);
-    assert.equal(await maths.locator('img[src*="sqrt-two-editorial"]').count(), 1);
+    assert.equal(await maths.locator('.course-list-entry').count(), 3);
+    assert.equal(await maths.locator('.course-list-entry[href="/mathematik/wurzel-2/"] img[src*="sqrt-two-editorial"]').count(), 1);
     await maths.locator('.course-list-entry[href="/mathematik/wurzel-2/"]').click();
     await maths.locator('[data-number="2"]').waitFor({ state: 'visible' });
     await maths.waitForFunction(() => !document.querySelector('[data-number="2"]').disabled);

@@ -26,7 +26,7 @@ test('consolidated vocabulary is complete, standalone, and preserves usages in t
   assert.ok(['mit', 'als', 'obwohl'].every(meaning => cum.meanings.includes(meaning)));
   assert.equal(new Set(cum.meanings).size, cum.meanings.length);
   assert.equal(coursesForSubject('sprachen')[0].cover, 'latin');
-  assert.equal(recentCourses(courses)[0].slug, 'latein-vokabeltrainer');
+  assert.ok(recentCourses(courses).some(course => course.slug === 'latein-vokabeltrainer'));
 });
 
 test('configuration rejects fractional, missing and out-of-range counts', () => {

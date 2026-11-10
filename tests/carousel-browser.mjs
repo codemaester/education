@@ -137,10 +137,11 @@ export async function testCarousel(browser, origin, screenshots) {
     const second = await stage.boundingBox();
     assert.equal(second.height, first.height, `Carousel ${width}: stable height`);
     assert.equal(await root.locator('[data-active] .button').getAttribute('href'), `/${entries[1].href}`);
-    assert.equal(await root.locator('[data-active] img').count(), 1, 'museum uses its own illustration');
+    assert.equal(await root.locator('[data-active] img').count(), 1, 'second course uses an illustration');
     await root.locator('[data-slide-choice="0"]').click();
     assert.equal(await root.locator('[data-active] .button').getAttribute('href'), `/${entries[0].href}`);
-    assert.equal(await root.locator('[data-active] img[src*="latin-vocabulary-painted"]').count(), 1, 'Latin uses its own painted word-pair cover');
+    const imageName = { latin: 'latin-vocabulary-painted', 'sqrt-two': 'sqrt-two-editorial', museum: 'infinity-museum', optics: 'optics-editorial' }[entries[0].cover];
+    assert.equal(await root.locator(`[data-active] img[src*="${imageName}"]`).count(), 1, 'newest course uses its configured illustration');
     if (width <= 740) {
       const visual = await root.locator('[data-active] .featured-visual').boundingBox();
       const caption = await root.locator('[data-active] .art-caption').boundingBox();
@@ -150,7 +151,7 @@ export async function testCarousel(browser, origin, screenshots) {
     const clipped = await root.locator('h2,button,.course-features li').evaluateAll(nodes => nodes.filter(node => node.scrollWidth > node.clientWidth + 1).map(node => node.textContent));
     assert.deepEqual(clipped, [], `Carousel ${width}: readable labels`);
     if (screenshots && [1440, 390].includes(width)) {
-      await root.screenshot({ path: `${screenshots}/carousel-latin-${width}.png` });
+      await root.screenshot({ path: `${screenshots}/carousel-first-${width}.png` });
       await root.locator('[data-slide-choice="1"]').click();
       await root.screenshot({ path: `${screenshots}/carousel-second-${width}.png` });
     }

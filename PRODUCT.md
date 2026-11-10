@@ -49,3 +49,10 @@ wiederverwendbar sein. Icons und grafische Symbole unterstützen die Orientierun
   bleibt unverändert. Mathematik ist aus der bereitgestellten `index 2.html`
   übernommen. Fächer ohne Lernseiten zeigen ihren noch leeren Inhaltsstand.
 - Weitere konkrete Lernthemen und Zielgruppen sind noch offen.
+
+Der Bereich „Quadratwurzeln: Die Basis sitzt“ startet unter
+`/mathematik/quadratwurzeln/` mit einem Quadratzahlen-Trainer für Klasse 9
+Gymnasium: freie Zahleneingabe, Quadrieren, Wurzelziehen und gemischte Runden
+für 1–20 sowie kleinere Teilbereiche. Falsche und aufgedeckte Aufgaben werden
+innerhalb der Runde erneut abgefragt. Siehe
+[Trainer-Dokumentation](documentation/QUADRATWURZELN.md).

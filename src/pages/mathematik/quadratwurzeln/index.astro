@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import '../../../styles/square-trainer.css';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Quadratwurzeln · Quadratzahlen-Trainer" description="Lerne die Quadratzahlen von 1 bis 20 auswendig. Interaktiver Trainer zum Quadrieren und Wurzelziehen für Klasse 9 am Gymnasium.">
+  <div class="page-shell sq-page">
+    <nav class="breadcrumb" aria-label="Brotkrumennavigation"><a href={base}>Startseite</a><span aria-hidden="true">/</span><a href={`${base}faecher/mathematik/`}>Mathematik</a><span aria-hidden="true">/</span><span aria-current="page">Quadratwurzeln</span></nav>
+    <header class="sq-hero">
+      <div><p class="sq-eyebrow">Mathematik · Klasse 9 · Gymnasium</p><h1>Quadratwurzeln.<br /><em>Die Basis sitzt.</em></h1><p>Von 1² bis 20² – und wieder zurück. Lerne die Quadratzahlen auswendig, damit du Wurzeln sicher im Kopf ziehst.</p><a class="text-link" href="#trainer">Direkt zum Trainer <span aria-hidden="true">↓</span></a></div>
+      <div class="sq-visual" aria-label="Quadrieren und Wurzelziehen sind Umkehroperationen: 12 zum Quadrat ist 144, die Quadratwurzel aus 144 ist 12."><span>quadrieren →</span><div><b>12<sup>2</sup></b><span>=</span><b>144</b></div><span>← Wurzel ziehen</span><div class="sq-grid" aria-hidden="true">{Array.from({length: 144}, () => <i />)}</div></div>
+    </header>
+    <nav class="sq-section-nav" aria-label="Bereiche"><a href="#trainer">01 · Trainieren</a><a href="#verstehen">02 · Verstehen</a><a href="#nachschlagen">03 · Nachschlagen</a></nav>
+    <section id="trainer" class="sq-section" aria-labelledby="trainer-title">
+      <div class="sq-heading"><div><p class="sq-eyebrow">01 / Dein Training</p><h2 id="trainer-title">Aus dem Kopf. Ins Feld.</h2></div><p>Ohne Zeitdruck. Ohne Auswahlantworten.<br />Was noch nicht sitzt, kommt wieder.</p></div>
+      <noscript><p>Bitte aktiviere JavaScript für den Trainer. Die Erklärungen und die Tabelle unten kannst du auch ohne JavaScript nutzen.</p></noscript>
+      <div class="sq-workspace" id="square-trainer" hidden>
+        <aside class="sq-settings">
+          <fieldset><legend>Was möchtest du üben?</legend><label><input type="radio" name="sq-mode" value="mixed" checked /> <span>Gemischt<small>Beide Richtungen</small></span><b aria-hidden="true">⇄</b></label><label><input type="radio" name="sq-mode" value="square" /> <span>Quadrieren<small>Zum Beispiel: 12² = ?</small></span><b aria-hidden="true">x²</b></label><label><input type="radio" name="sq-mode" value="root" /> <span>Wurzelziehen<small>Zum Beispiel: √144 = ?</small></span><b aria-hidden="true">√x</b></label></fieldset>
+          <label class="sq-range" for="sq-range">Zahlenbereich<select id="sq-range"><option value="all">1 bis 20 · alle Zahlen</option><option value="small">1 bis 10 · zum Einstieg</option><option value="large">11 bis 20 · für Fortgeschrittene</option></select></label>
+          <button class="button button-secondary" id="sq-restart" type="button">Neue Runde starten ↻</button><p class="sq-settings-note">Ändere die Einstellungen und starte eine neue Runde. Der bisherige Rundenstand wird dabei zurückgesetzt.</p>
+        </aside>
+        <div class="sq-practice">
+          <div class="sq-progress-label"><span id="sq-round-label">Gemischt · 1 bis 20</span><span id="sq-progress-text">0 / 40 sicher</span></div><progress id="sq-progress" value="0" max="40" aria-label="Sicher gelöste Aufgaben"></progress>
+          <div id="sq-question-area">
+            <div class="sq-task-meta"><span id="sq-kind">Quadrieren</span><span id="sq-repeat" hidden>↻ Wiederholung</span></div>
+            <form id="sq-form" novalidate>
+              <div class="sq-equation"><span id="sq-expression"></span><span aria-hidden="true">=</span><label class="visually-hidden" for="sq-answer" id="sq-answer-label">Deine Antwort</label><input id="sq-answer" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" enterkeyhint="done" aria-describedby="sq-feedback" /></div>
+              <p class="sq-input-hint">Dein Ergebnis eingeben</p>
+              <div id="sq-feedback" class="sq-feedback" role="status" aria-live="polite" aria-atomic="true"></div>
+              <button class="button sq-submit" id="sq-submit" type="submit">Antwort prüfen <span aria-hidden="true">↵</span></button>
+            </form>
+            <div class="sq-tools"><button type="button" id="sq-reveal">Ich weiß es noch nicht</button><button type="button" id="sq-keypad-toggle" aria-expanded="false" aria-controls="sq-keypad">Ziffernfeld anzeigen</button></div>
+            <div id="sq-keypad" class="sq-keypad" hidden aria-label="Zifferntastatur">{[1,2,3,4,5,6,7,8,9,0].map(n => <button type="button" data-digit={n}>{n}</button>)}<button type="button" id="sq-delete" aria-label="Letzte Ziffer löschen">⌫</button></div>
+          </div>
+          <div id="sq-summary" class="sq-summary" hidden tabindex="-1"><span class="sq-summary-symbol" aria-hidden="true">✓</span><h3>Die Runde sitzt!</h3><p id="sq-summary-text"></p><p>Übe bald noch einmal – regelmäßiges Abrufen macht die Zahlen vertraut.</p><button type="button" class="button" id="sq-again">Noch eine Runde</button></div>
+          <dl class="sq-stats"><div><dt>Direkt richtig</dt><dd id="sq-first">0</dd></div><div><dt>Fehler / aufgedeckt</dt><dd id="sq-misses">0</dd></div><div><dt>Aktuelle Serie</dt><dd id="sq-streak">0</dd></div></dl>
+          <p class="sq-session-note">Dein Stand gilt für diese Runde. Es wird nichts dauerhaft gespeichert.</p>
+        </div>
+      </div>
+    </section>
+    <section id="verstehen" class="sq-section" aria-labelledby="sq-understand-title"><p class="sq-eyebrow">02 / Kurz verstehen</p><h2 id="sq-understand-title">Hin und zurück.</h2><div class="sq-explanations"><article><span class="sq-step">x²</span><h3>Eine Zahl quadrieren</h3><p>Du multiplizierst die Zahl mit sich selbst. Die kleine 2 bedeutet also nicht „mal zwei“.</p><p class="sq-example">12² = 12 · 12 = <strong>144</strong></p></article><article><span class="sq-step">√x</span><h3>Die Quadratwurzel ziehen</h3><p>Du suchst die nichtnegative Zahl, deren Quadrat die Zahl unter der Wurzel ergibt.</p><p class="sq-example">√144 = <strong>12</strong>, denn 12² = 144.</p></article><article class="sq-remember"><h3>Gut zu wissen</h3><p>Auch (−12)² = 144. Aber <strong>√144 ist immer 12</strong>, nicht ±12. Das Wurzelzeichen meint die nichtnegative Wurzel.</p><p>Du brauchst hier nur die Multiplikation. Dein Ziel: alle 20 Zahlenpaare in beiden Richtungen sicher abrufen.</p></article></div></section>
+    <section id="nachschlagen" class="sq-section" aria-labelledby="sq-reference-title"><p class="sq-eyebrow">03 / Deine Merkhilfe</p><h2 id="sq-reference-title">20 Zahlen. Ein gutes Fundament.</h2><p>Erst nachdenken, dann nachschauen. Die Tabelle bleibt beim Training zunächst zugeklappt.</p><details class="sq-reference"><summary>Alle Quadratzahlen von 1 bis 20 anzeigen</summary><div class="sq-reference-grid">{Array.from({length:20}, (_, i) => i + 1).map(n => <div><span>{n}² = <strong>{n*n}</strong></span><span>√{n*n} = <strong>{n}</strong></span></div>)}</div></details></section>
+  </div>
+</BaseLayout>
+<script>import '../../../scripts/square-trainer';</script>
