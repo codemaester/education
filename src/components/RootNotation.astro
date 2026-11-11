@@ -1,0 +1,6 @@
+---
+import { renderRootHtml } from '../utils/root-notation';
+import '../styles/root-notation.css';
+const html = renderRootHtml(await Astro.slots.render('default'));
+---
+<Fragment set:html={html} />

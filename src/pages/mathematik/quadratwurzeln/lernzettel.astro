@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import RootNotation from '../../../components/RootNotation.astro';
 import { rootChapters } from '../../../data/roots-lesson';
 import '../../../styles/roots-sheet.css';
 const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout title="Lernzettel · Quadratwurzeln" description="Druckbarer Lernzettel für Klasse 9: Wurzelgesetze, Wurzelterme, Intervallschachtelung, verschachtelte Wurzeln und Quadratzahlentabelle.">
+  <RootNotation>
   <div class="rs-shell">
     <nav class="rs-actions" aria-label="Lernzettel"><a href={`${base}mathematik/quadratwurzeln/`}>← Zurück zur Lernseite</a><button type="button" class="button" id="roots-print" disabled>Drucken / als PDF speichern</button></nav>
     <noscript><p>Du kannst den Lernzettel über die normale Druckfunktion deines Browsers drucken.</p></noscript>
@@ -28,5 +30,6 @@ const base = import.meta.env.BASE_URL;
       </section>
     </article>
   </div>
+  </RootNotation>
 </BaseLayout>
 <script>const button = document.querySelector<HTMLButtonElement>('#roots-print')!; button.disabled = false; button.addEventListener('click', () => window.print());</script>

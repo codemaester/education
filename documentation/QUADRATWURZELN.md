@@ -77,6 +77,20 @@ Zusammenfassungen und Kernbeispiele konsistent. Der Druckbutton und die normale
 Browser-Druckfunktion funktionieren. Die Druckansicht ist weiß und auch in
 Graustufen lesbar.
 
+## Mathematische Darstellung
+
+Wurzeln werden auf Lernseite und Lernzettel als natives MathML dargestellt.
+`msqrt` zieht den Wurzelstrich über den gesamten Radikanden; verschachtelte
+Wurzeln skalieren in Höhe und Breite, vierte Wurzeln verwenden `mroot`.
+Die zur Abgrenzung im Quelltext verwendete Schreibweise `√(…)` erhält in der
+Anzeige keine zusätzlichen Klammern. Mathematisch notwendige Gruppierungen
+wie die Klammern in `√((−8)²)` bleiben erhalten.
+
+`RootNotation.astro` formatiert statische Inhalte bereits beim Build, sodass
+sie auch ohne JavaScript richtig erscheinen. `setRootText` verwendet dieselbe
+Darstellung für Trainer, Rückmeldungen und interaktive Beispiele. Die
+Aufgabenlogik und Antwortprüfung bleiben unabhängig von der Darstellung.
+
 ## Quellen und Medien
 
 Texte, Aufgaben und Werkzeuge sind eigenständig erstellt. Fachliche Referenzen:

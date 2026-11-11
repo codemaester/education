@@ -1,3 +1,4 @@
+import { setRootText } from '../utils/root-notation';
 import { createTasks, answerFor, expressionFor, isCorrect, repeatTask } from '../data/square-trainer';
 import type { Mode, Task } from '../data/square-trainer';
 
@@ -24,7 +25,7 @@ if (root) {
     }
     current = next;
     checked = false;
-    el('expression').textContent = expressionFor(current);
+    setRootText(el('expression'), expressionFor(current));
     el('kind').textContent = current.kind === 'square' ? 'Quadrieren' : 'Wurzelziehen';
     el('repeat').hidden = !current.repeated;
     el('answer-label').textContent = `Deine Antwort für ${expressionFor(current)}`;
@@ -69,9 +70,9 @@ if (root) {
     const correct = known && isCorrect(current, input.value);
     const explanation = `${current.n} · ${current.n} = ${current.n * current.n}.`;
     el('feedback').dataset.result = correct ? 'correct' : 'incorrect';
-    el('feedback').textContent = correct
+    setRootText(el('feedback'), correct
       ? `✓ Richtig! ${expressionFor(current)} = ${answerFor(current)}.`
-      : `${known ? 'Noch nicht ganz.' : 'Schau es dir in Ruhe an.'} ${expressionFor(current)} = ${answerFor(current)}. ${explanation} Diese Aufgabe kommt wieder.`;
+      : `${known ? 'Noch nicht ganz.' : 'Schau es dir in Ruhe an.'} ${expressionFor(current)} = ${answerFor(current)}. ${explanation} Diese Aufgabe kommt wieder.`);
     if (correct) {
       mastered++;
       if (!current.repeated) first++;

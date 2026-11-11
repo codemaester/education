@@ -1,3 +1,4 @@
+import { setRootText } from '../utils/root-notation';
 import { rootChapters } from '../data/roots-lesson';
 import { chapterExercises, finalExercises } from '../data/roots-exercises';
 import { numericAnswer, simplifyRadical, radicalText, rootInterval } from '../data/roots-math';
@@ -28,7 +29,7 @@ for (const form of document.querySelectorAll<HTMLFormElement>('[data-root-quiz]'
         if (input.value.trim() && !numericAnswer(input.value, exercise.fields[i].answer)) input.setAttribute('aria-invalid','true');
         else input.removeAttribute('aria-invalid');
       });
-      element.querySelector<HTMLElement>('[data-task-feedback]')!.textContent = state === 'correct' ? `✓ Richtig. ${exercise.explanation}` : state === 'revealed' ? 'Mit Musterlösung bearbeitet. Starte die Übungen neu, um dich ohne Hilfe zu prüfen.' : state === 'empty' ? 'Noch offen: Fülle alle Ergebnisfelder aus.' : 'Noch nicht richtig. Prüfe Rechenregel, Vorzeichen und vollständige Vereinfachung. Die Musterlösung hilft dir weiter.';
+      setRootText(element.querySelector<HTMLElement>('[data-task-feedback]')!, state === 'correct' ? `✓ Richtig. ${exercise.explanation}` : state === 'revealed' ? 'Mit Musterlösung bearbeitet. Starte die Übungen neu, um dich ohne Hilfe zu prüfen.' : state === 'empty' ? 'Noch offen: Fülle alle Ergebnisfelder aus.' : 'Noch nicht richtig. Prüfe Rechenregel, Vorzeichen und vollständige Vereinfachung. Die Musterlösung hilft dir weiter.');
       if (state !== 'correct') revisit.add(exercise.chapter);
     }
     countRevealed();
@@ -85,37 +86,37 @@ for (const explorer of document.querySelectorAll<HTMLElement>('[data-explorer]')
     switch (explorer.dataset.explorer) {
       case 'wurzelgesetze': {
         const a = value('a'), b = value('b'), simple = simplifyRadical(a*b);
-        output.textContent = `√${a} · √${b} = √${a*b} = ${radicalText(simple.factor, simple.rest)}`; break;
+        setRootText(output, `√${a} · √${b} = √${a*b} = ${radicalText(simple.factor, simple.rest)}`); break;
       }
       case 'teilweises-wurzelziehen': {
         const n = value('n'), {factor, rest} = simplifyRadical(n);
-        output.textContent = `√${n} = √(${factor*factor} · ${rest}) = ${radicalText(factor, rest)}`;
+        setRootText(output, `√${n} = √(${factor*factor} · ${rest}) = ${radicalText(factor, rest)}`);
         explorer.querySelector('[data-square-factor]')!.textContent = `${factor*factor} = ${factor}²`;
         explorer.querySelector('[data-rest-factor]')!.textContent = String(rest); break;
       }
       case 'faktoren-in-die-wurzel': {
         const a = value('a'), b = value('b');
-        output.textContent = `${a}√${b} = √(${a}² · ${b}) = √${a*a*b}`; break;
+        setRootText(output, `${a}√${b} = √(${a}² · ${b}) = √${a*a*b}`); break;
       }
       case 'wurzelsummen': {
         const a = value('a'), b = value('b');
-        output.textContent = `${a}√2 + (${b})√2 = (${a} + (${b}))√2 = ${radicalText(a+b,2)}`; break;
+        setRootText(output, `${a}√2 + (${b})√2 = (${a} + (${b}))√2 = ${radicalText(a+b,2)}`); break;
       }
       case 'intervallschachtelung': {
         const n = value('n'), rows = explorer.querySelector('[data-interval-rows]')!;
         rows.replaceChildren();
         for (let d = 0; d <= digits; d++) {
           const bounds = rootInterval(n,d), p = document.createElement('p'), small = document.createElement('small');
-          p.textContent = `${bounds.lower} < √${n} < ${bounds.upper}`;
+          setRootText(p, `${bounds.lower} < √${n} < ${bounds.upper}`);
           small.textContent = `denn ${bounds.lower}² = ${bounds.lowerSquare} < ${n} < ${bounds.upperSquare} = ${bounds.upper}²`;
           p.append(small); rows.append(p);
         }
-        output.textContent = `Intervallbreite: ${rootInterval(n,digits).width} · ${digits} Nachkommastellen`;
+        setRootText(output, `Intervallbreite: ${rootInterval(n,digits).width} · ${digits} Nachkommastellen`);
         explorer.querySelector<HTMLButtonElement>('[data-interval-step]')!.disabled = digits === 4; break;
       }
       case 'wurzeln-von-wurzeln': {
         const n = value('n'), inner = Math.sqrt(n), outer = Math.sqrt(inner);
-        output.textContent = `√(√${n}) = √${inner} = ${outer} · Kontrolle: ${outer}⁴ = ${n}`; break;
+        setRootText(output, `√(√${n}) = √${inner} = ${outer} · Kontrolle: ${outer}⁴ = ${n}`); break;
       }
     }
   };

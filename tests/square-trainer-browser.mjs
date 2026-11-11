@@ -11,7 +11,8 @@ export async function testSquareTrainer(browser, origin, screenshots) {
     const expr = page.locator('#sq-expression');
     const result = async () => {
       const text = await expr.textContent();
-      return text.startsWith('√') ? String(Math.sqrt(Number(text.slice(1)))) : String(Number(text.slice(0,-1)) ** 2);
+      const root = expr.locator('msqrt');
+      return await root.count() ? String(Math.sqrt(Number(await root.textContent()))) : String(Number(text.slice(0,-1)) ** 2);
     };
     assert.equal(await input.getAttribute('inputmode'), 'numeric');
     assert.equal(await page.locator('#sq-progress').getAttribute('max'), '40');
@@ -21,7 +22,7 @@ export async function testSquareTrainer(browser, origin, screenshots) {
     assert.equal(await page.locator('#sq-misses').textContent(), '0');
     await input.fill('abc');
     assert.equal(await input.inputValue(), '');
-    const missedExpression = await expr.textContent();
+    const missedExpression = await expr.innerHTML();
     await input.fill('0');
     await submit.click();
     assert.match(await page.locator('#sq-feedback').textContent(), /Diese Aufgabe kommt wieder/);
@@ -31,7 +32,7 @@ export async function testSquareTrainer(browser, origin, screenshots) {
     const seen = new Set([missedExpression]);
     let retries = 0;
     while (await page.locator('#sq-summary').isHidden()) {
-      seen.add(await expr.textContent());
+      seen.add(await expr.innerHTML());
       if (await page.locator('#sq-repeat').isVisible()) retries++;
       await input.fill(await result());
       await input.press('Enter');
@@ -45,7 +46,7 @@ export async function testSquareTrainer(browser, origin, screenshots) {
     await page.selectOption('#sq-range', 'large');
     await page.locator('#sq-restart').click();
     assert.equal(await page.locator('#sq-progress').getAttribute('max'), '10');
-    assert.match(await expr.textContent(), /^√/);
+    assert.equal(await expr.locator('msqrt').count(), 1);
     assert.equal(await page.locator('#sq-first').textContent(), '0');
     await page.locator('#sq-reveal').click();
     assert.match(await page.locator('#sq-feedback').textContent(), /Schau es dir/);

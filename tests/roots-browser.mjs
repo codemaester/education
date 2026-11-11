@@ -19,12 +19,21 @@ export async function testRootsLesson(browser, origin, screenshots) {
     assert.equal(await page.locator('.rl-chapter').count(),6);
     assert.equal(await page.locator('[data-root-quiz]').count(),7);
     assert.equal(await page.locator('[data-exercise]').count(),42);
+    const product = page.locator('#wurzelgesetze .rl-rule msqrt').nth(2);
+    assert.equal(await product.textContent(),'a·b');
+    assert.equal(await product.locator('mo').textContent(),'·');
+    const nestedPrompt = page.locator('[data-exercise="nested-1"] .rl-prompt');
+    assert.equal(await nestedPrompt.locator('msqrt msqrt').count(),1);
+    assert.doesNotMatch(await nestedPrompt.textContent(),/[()]/);
+    const squaredNegative = page.locator('[data-exercise="law-4"] .rl-prompt msqrt');
+    assert.equal(await squaredNegative.locator('msup').count(),1);
+    assert.match(await squaredNegative.textContent(),/\(−8\)2/);
     await page.locator('[data-course-menu] summary').click();
     await page.locator('[data-course-menu] a[href="#intervallschachtelung"]').click();
     assert.equal(await page.locator('[data-course-menu]').getAttribute('open'),null);
     const interval = page.locator('[data-explorer="intervallschachtelung"]');
     for (let d = 0; d < 3; d++) await interval.locator('[data-interval-step]').click();
-    assert.match(await interval.locator('[data-interval-rows]').textContent(),/2,645 < √7 < 2,646/);
+    assert.match(await interval.locator('[data-interval-rows]').textContent(),/2,645 < 7 < 2,646/);
     assert.match(await interval.locator('[data-explorer-output]').textContent(),/0,001/);
     await interval.locator('select').selectOption('10');
     assert.equal(await interval.locator('[data-interval-rows] > p').count(),1);
@@ -33,10 +42,12 @@ export async function testRootsLesson(browser, origin, screenshots) {
     assert.equal(await interval.locator('[data-interval-rows] > p').count(),1);
     const partial = page.locator('[data-explorer="teilweises-wurzelziehen"]');
     await partial.locator('select').selectOption('200');
-    assert.match(await partial.locator('[data-explorer-output]').textContent(),/10√2/);
+    assert.equal(await partial.locator('[data-explorer-output] msqrt').count(),3);
+    assert.equal(await partial.locator('[data-explorer-output] math').last().textContent(),'2');
+    assert.equal(await partial.locator('[data-square-factor]').textContent(),'100 = 10²');
     const nested = page.locator('[data-explorer="wurzeln-von-wurzeln"]');
     await nested.locator('select').selectOption('625');
-    assert.match(await nested.locator('[data-explorer-output]').textContent(),/√25 = 5/);
+    assert.match(await nested.locator('[data-explorer-output]').textContent(),/25 = 5/);
     const first = page.locator('#uebungen-wurzelgesetze');
     await first.locator('[data-quiz-check]').click();
     assert.match(await first.locator('[data-quiz-status]').textContent(),/0 \/ 5 beantwortet/);
@@ -73,11 +84,14 @@ export async function testRootsLesson(browser, origin, screenshots) {
     if (screenshots && [1440,390].includes(width)) {
       await page.locator('#intervallschachtelung').screenshot({path:`${screenshots}/roots-interval-${width}.png`});
       await page.locator('#wurzelsummen').screenshot({path:`${screenshots}/roots-sums-${width}.png`});
+      await page.locator('#wurzelgesetze .rl-reading').screenshot({path:`${screenshots}/roots-notation-${width}.png`});
+      await page.locator('#wurzeln-von-wurzeln .rl-reading').screenshot({path:`${screenshots}/nested-notation-${width}.png`});
     }
     assert.deepEqual(errors,[]);
     await page.goto(origin + '/mathematik/quadratwurzeln/lernzettel/');
     await page.evaluate(() => document.fonts.ready);
     assert.equal(await page.locator('.rs-page').count(),3);
+    assert.ok(await page.locator('.rs-sheet msqrt msqrt').count() > 0);
     assert.equal(await page.locator('#roots-print').isEnabled(),true);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth),false,`Sheet overflow ${width}`);
     await page.evaluate(() => { window.__printed = false; window.print = () => { window.__printed = true; }; });
@@ -99,7 +113,8 @@ export async function testRootsLesson(browser, origin, screenshots) {
   await page.goto(origin + '/mathematik/quadratwurzeln/');
   assert.equal(await page.locator('.rl-chapter').count(),6);
   await page.locator('[data-exercise="extract-1"] summary').click();
-  assert.match(await page.locator('[data-exercise="extract-1"] details').textContent(),/4√3/);
+  assert.equal(await page.locator('[data-exercise="extract-1"] details strong msqrt').textContent(),'3');
+  assert.equal(await page.locator('[data-exercise="nested-1"] .rl-prompt msqrt msqrt').count(),1);
   assert.equal(await page.locator('[data-quiz-check]').first().isDisabled(),true);
   await page.goto(origin + '/mathematik/quadratwurzeln/lernzettel/');
   assert.equal(await page.locator('.rs-page').count(),3);

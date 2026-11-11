@@ -1,0 +1,3 @@
+/* Native MathML draws the vinculum across the full, possibly nested radicand. */
+.root-math { font-size: 1em; color: inherit; white-space: nowrap; }
+@media print { .root-math { break-inside: avoid; } }

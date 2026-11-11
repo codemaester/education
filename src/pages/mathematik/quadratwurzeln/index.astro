@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import RootNotation from '../../../components/RootNotation.astro';
 import '../../../styles/square-trainer.css';
 import '../../../styles/roots-lesson.css';
 import Chapters from '../../../components/roots/Chapters.astro';
@@ -7,6 +8,7 @@ import { rootChapters } from '../../../data/roots-lesson';
 const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout title="Quadratwurzeln · Verstehen, üben und sicher rechnen" description="Quadratwurzeln für Klasse 9: Quadratzahlen-Trainer, Wurzelgesetze, Wurzelterme, Intervallschachtelung, Übungen und druckbarer Lernzettel.">
+  <RootNotation>
   <div class="page-shell sq-page">
     <nav class="breadcrumb" aria-label="Brotkrumennavigation"><a href={base}>Startseite</a><span aria-hidden="true">/</span><a href={`${base}faecher/mathematik/`}>Mathematik</a><span aria-hidden="true">/</span><span aria-current="page">Quadratwurzeln</span></nav>
     <header class="sq-hero">
@@ -47,5 +49,6 @@ const base = import.meta.env.BASE_URL;
     <section id="nachschlagen" class="sq-section" aria-labelledby="sq-reference-title"><p class="sq-eyebrow">Grundlagen / Deine Merkhilfe</p><h2 id="sq-reference-title">20 Zahlen. Ein gutes Fundament.</h2><p>Erst nachdenken, dann nachschauen. Die Tabelle bleibt beim Training zunächst zugeklappt.</p><details class="sq-reference"><summary>Alle Quadratzahlen von 1 bis 20 anzeigen</summary><div class="sq-reference-grid">{Array.from({length:20}, (_, i) => i + 1).map(n => <div><span>{n}² = <strong>{n*n}</strong></span><span>√{n*n} = <strong>{n}</strong></span></div>)}</div></details></section>
     <Chapters />
   </div>
+  </RootNotation>
 </BaseLayout>
 <script>import '../../../scripts/square-trainer'; import '../../../scripts/roots-lesson';</script>
